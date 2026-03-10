@@ -3,13 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agribotics Block IDE</title>
+<title>Ag Robotics Programming App</title>
 
-<!-- Google Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=Source+Code+Pro:wght@400;500&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
 
-<!-- Blockly (pinned version with all required modules) -->
 <script src="https://unpkg.com/blockly@10.4.3/blockly_compressed.js"></script>
 <script src="https://unpkg.com/blockly@10.4.3/blocks_compressed.js"></script>
 <script src="https://unpkg.com/blockly@10.4.3/msg/en.js"></script>
@@ -17,467 +15,198 @@
 
 <style>
   :root {
-    --green-dark:    #1a5c2e;
-    --green-mid:     #2a7d42;
-    --green-light:   #4aa85e;
-    --green-pale:    #d4edda;
-    --wheat:         #e8b84b;
-    --wheat-light:   #f5d98b;
-    --wheat-pale:    #fdf3d0;
-    --soil:          #5c3a1e;
-    --soil-mid:      #7a4e2d;
-    --soil-light:    #a0704a;
-    --sky:           #5b9bd5;
-    --sky-light:     #a8cef0;
-    --cream:         #faf6ec;
-    --cream-dark:    #f0e8d0;
-    --text-dark:     #1e2d1f;
-    --text-mid:      #3d5440;
-    --text-light:    #f5f0e8;
-    --border:        #c8b87a;
-    --shadow:        rgba(30,45,30,0.18);
+    --green-dark:   #1a5c2e;
+    --green-mid:    #2a7d42;
+    --green-light:  #4aa85e;
+    --wheat:        #e8b84b;
+    --wheat-light:  #f5d98b;
+    --wheat-pale:   #fdf3d0;
+    --soil:         #5c3a1e;
+    --soil-mid:     #7a4e2d;
+    --cream:        #faf6ec;
+    --cream-dark:   #f0e8d0;
+    --text-dark:    #1e2d1f;
+    --text-mid:     #3d5440;
+    --border:       #c8b87a;
+    --shadow:       rgba(30,45,30,0.18);
   }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--text-dark);
+       height:100vh;display:flex;flex-direction:column;overflow:hidden;}
 
-  * { margin:0; padding:0; box-sizing:border-box; }
+  /* HEADER */
+  #header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-mid) 60%,#2e7d32 100%);
+    padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;
+    box-shadow:0 3px 12px var(--shadow);flex-shrink:0;position:relative;}
+  #header::before{content:'';position:absolute;inset:0;
+    background:repeating-linear-gradient(175deg,transparent,transparent 18px,
+    rgba(255,255,255,.03) 18px,rgba(255,255,255,.03) 19px);pointer-events:none;}
+  .logo-area{display:flex;align-items:center;gap:12px;z-index:1;}
+  .logo-svg{width:38px;height:38px;flex-shrink:0;}
+  .logo-text{display:flex;flex-direction:column;line-height:1.1;}
+  .logo-title{font-family:'Zilla Slab',serif;font-weight:700;font-size:1.35rem;
+    color:var(--wheat-light);letter-spacing:.03em;}
+  .logo-sub{font-size:.65rem;color:rgba(255,255,255,.6);letter-spacing:.12em;text-transform:uppercase;}
+  .toolbar{display:flex;gap:6px;align-items:center;z-index:1;overflow:visible;position:relative;}
+  .btn{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:6px;border:none;
+    cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.78rem;
+    letter-spacing:.02em;transition:all .15s ease;white-space:nowrap;}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+  .btn:active{transform:translateY(0);filter:brightness(.95);}
+  .btn svg{width:14px;height:14px;}
+  .btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);}
+  .btn-ghost:hover{background:rgba(255,255,255,.2);}
+  .btn-connect{background:linear-gradient(135deg,#5b9bd5,#3a7ec2);color:#fff;}
+  .btn-connect.connected{background:linear-gradient(135deg,#2e8b4a,var(--green-light));}
+  .btn-upload{background:linear-gradient(135deg,#c85c00,#e07020);color:#fff;}
+  .btn-stop{background:linear-gradient(135deg,#9b1c1c,#c53030);color:#fff;}
+  .btn-example{background:linear-gradient(135deg,#1a4a6a,#2a6a9a);color:#fff;}
+  .prog-name-wrap{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.2);
+    border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;}
+  #progName{background:transparent;border:none;outline:none;color:#fff;
+    font-family:'Nunito',sans-serif;font-weight:700;font-size:.75rem;width:160px;
+    letter-spacing:.01em;}
+  #progName::placeholder{color:rgba(255,255,255,.3);}
+  .example-drop-wrap{position:relative;}
+  .example-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;
+    background:#1a2a1a;border:1px solid #3a6a3a;border-radius:6px;
+    box-shadow:0 6px 20px rgba(0,0,0,.5);z-index:9999;min-width:180px;padding:4px 0;
+    white-space:nowrap;}
+  .example-menu.open{display:block;}
+  .example-menu-section{padding:6px 12px 2px;font-size:.65rem;font-weight:800;
+    color:#4a8a4a;letter-spacing:.08em;text-transform:uppercase;}
+  .example-item{padding:6px 16px;font-size:.75rem;font-weight:600;color:#c8e8c8;
+    cursor:pointer;transition:background .15s;}
+  .example-item:hover{background:#2a4a2a;color:#fff;}
+  .slot-selector{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.2);
+    border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;}
+  .slot-selector label{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.7);
+    letter-spacing:.04em;white-space:nowrap;}
+  .slot-select{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.25);
+    color:#fff;border-radius:4px;padding:3px 6px;font-family:'Nunito',sans-serif;
+    font-weight:700;font-size:.75rem;cursor:pointer;outline:none;}
+  .slot-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;
+    box-shadow:0 0 5px currentColor;transition:background .2s;}
+  .sep{width:1px;height:28px;background:rgba(255,255,255,.2);margin:0 4px;}
+  .status-pill{display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;
+    font-size:.7rem;font-weight:700;background:rgba(0,0,0,.2);color:rgba(255,255,255,.7);
+    letter-spacing:.06em;text-transform:uppercase;}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:#ff6b6b;box-shadow:0 0 5px #ff6b6b;}
+  .status-dot.connected{background:#6bff8e;box-shadow:0 0 5px #6bff8e;}
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--cream);
-    color: var(--text-dark);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
+  /* MAIN */
+  #main{flex:1;display:flex;overflow:hidden;}
+  #blockly-panel{flex:1;position:relative;min-width:0;}
+  #blocklyDiv{width:100%;height:100%;}
 
-  /* ── HEADER ── */
-  #header {
-    background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 60%, #2e7d32 100%);
-    padding: 0 16px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 3px 12px var(--shadow);
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-  }
+  /* RIGHT PANEL */
+  #right-panel{width:360px;display:flex;flex-direction:column;
+    border-left:2px solid var(--border);background:var(--cream-dark);flex-shrink:0;}
+  .panel-tabs{display:flex;border-bottom:2px solid var(--border);background:var(--cream);flex-shrink:0;}
+  .panel-tab{flex:1;padding:9px 6px;text-align:center;font-weight:700;font-size:.72rem;
+    letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--text-mid);
+    border-bottom:3px solid transparent;transition:all .15s;}
+  .panel-tab:hover{color:var(--green-dark);}
+  .panel-tab.active{color:var(--green-dark);border-bottom-color:var(--green-mid);background:var(--cream-dark);}
+  .panel-content{flex:1;overflow:hidden;position:relative;}
+  .tab-pane{position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;}
+  .tab-pane.active{display:flex;}
 
-  /* subtle field rows pattern in header */
-  #header::before {
-    content: '';
-    position: absolute; inset:0;
-    background: repeating-linear-gradient(
-      175deg,
-      transparent, transparent 18px,
-      rgba(255,255,255,0.03) 18px, rgba(255,255,255,0.03) 19px
-    );
-    pointer-events: none;
-  }
+  /* Code tab */
+  #code-header{padding:8px 12px;background:var(--soil);display:flex;
+    align-items:center;justify-content:space-between;flex-shrink:0;}
+  #code-header span{font-family:'Zilla Slab',serif;font-size:.8rem;color:var(--wheat-light);
+    font-weight:600;letter-spacing:.05em;}
+  .btn-copy{padding:3px 10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+    color:#fff;border-radius:4px;font-size:.68rem;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;}
+  .btn-copy:hover{background:rgba(255,255,255,.2);}
+  #code-output{flex:1;overflow-y:auto;background:#1e2e1e;}
+  #code-pre{margin:0;padding:14px;font-family:'Source Code Pro',monospace;
+    font-size:.78rem;line-height:1.65;color:#c9e6c9;white-space:pre;}
 
-  .logo-area {
-    display: flex; align-items: center; gap: 12px; z-index:1;
-  }
+  /* Console tab */
+  #console-output{flex:1;padding:10px;overflow-y:auto;font-family:'Source Code Pro',monospace;
+    font-size:.75rem;line-height:1.6;background:#0e1a0e;color:#7dbf7d;
+    white-space:pre-wrap;word-break:break-word;}
+  #console-toolbar{display:flex;justify-content:flex-end;padding:4px 6px;
+    background:#0e1a0e;border-bottom:1px solid #1a3a1a;flex-shrink:0;}
+  #console-clear{background:none;border:1px solid #2a5a2a;color:#4a8a4a;
+    border-radius:4px;padding:2px 8px;font-size:.68rem;font-family:'Nunito',sans-serif;
+    font-weight:700;cursor:pointer;letter-spacing:.04em;}
+  #console-clear:hover{background:#1a3a1a;color:#7dbf7d;}
+  #console-input-row{display:flex;border-top:1px solid #2a3a2a;flex-shrink:0;}
+  #console-input{flex:1;padding:7px 10px;background:#0a130a;border:none;color:#a0e0a0;
+    font-family:'Source Code Pro',monospace;font-size:.75rem;outline:none;}
+  #console-send{padding:0 14px;background:var(--green-dark);color:var(--wheat-light);border:none;
+    cursor:pointer;font-weight:700;font-size:.75rem;font-family:'Nunito',sans-serif;}
 
-  .logo-svg {
-    width: 38px; height: 38px; flex-shrink: 0;
-  }
+  /* Reference tab - Spike Prime style */
+  #help-content{flex:1;overflow-y:auto;padding:12px;background:#f0ece0;}
+  .ref-cat{margin-bottom:20px;}
+  .ref-cat-header{display:flex;align-items:center;gap:8px;margin-bottom:10px;
+    padding-bottom:6px;border-bottom:2px solid var(--border);}
+  .ref-cat-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+  .ref-cat-header h3{font-family:'Zilla Slab',serif;font-size:.92rem;
+    color:var(--text-dark);margin:0;}
+  .ref-card{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;
+    background:#fff;border-radius:8px;padding:10px 12px;
+    border:1px solid var(--border);box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .ref-block-wrap{flex-shrink:0;width:180px;}
+  .ref-blk{display:inline-flex;align-items:center;flex-wrap:wrap;gap:3px;
+    padding:5px 10px 5px 14px;border-radius:6px;font-family:'Nunito',sans-serif;
+    font-size:.68rem;font-weight:700;color:#fff;line-height:1.4;
+    position:relative;min-width:60px;}
+  .ref-blk::before{content:'';position:absolute;left:4px;top:50%;transform:translateY(-50%);
+    width:6px;height:6px;background:rgba(255,255,255,.4);border-radius:50%;}
+  .ref-slot{background:rgba(255,255,255,.25);border-radius:3px;
+    padding:1px 5px;font-size:.63rem;white-space:nowrap;}
+  .ref-oval{background:rgba(255,255,255,.9);color:#333;border-radius:10px;
+    padding:1px 6px;font-size:.63rem;font-weight:700;white-space:nowrap;}
+  .ref-info{flex:1;min-width:0;}
+  .ref-title{font-family:'Nunito',sans-serif;font-weight:800;font-size:.78rem;
+    color:var(--text-dark);margin-bottom:2px;}
+  .ref-desc{font-size:.71rem;color:var(--text-mid);line-height:1.45;}
 
-  .logo-text {
-    display: flex; flex-direction: column; line-height: 1.1;
-  }
-  .logo-title {
-    font-family: 'Zilla Slab', serif;
-    font-weight: 700;
-    font-size: 1.35rem;
-    color: var(--wheat-light);
-    letter-spacing: 0.03em;
-  }
-  .logo-sub {
-    font-size: 0.65rem;
-    color: rgba(255,255,255,0.6);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  /* toolbar buttons */
-  .toolbar { display:flex; gap:6px; align-items:center; z-index:1; }
-
-  .btn {
-    display: flex; align-items: center; gap: 5px;
-    padding: 6px 13px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-    font-size: 0.78rem;
-    letter-spacing: 0.02em;
-    transition: all 0.15s ease;
-    white-space: nowrap;
-  }
-  .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
-  .btn:active { transform: translateY(0); filter: brightness(0.95); }
-  .btn svg { width:14px; height:14px; }
-
-  .btn-ghost {
-    background: rgba(255,255,255,0.12);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.2);
-  }
-  .btn-ghost:hover { background: rgba(255,255,255,0.2); }
-
-  .btn-wheat {
-    background: var(--wheat);
-    color: var(--soil);
-  }
-  .btn-wheat:hover { background: var(--wheat-light); }
-
-  .btn-upload {
-    background: linear-gradient(135deg, #c85c00, #e07020);
-    color: #fff;
-  }
-
-  .btn-connect {
-    background: linear-gradient(135deg, var(--sky), #3a7ec2);
-    color: #fff;
-  }
-
-  .btn-connect.connected {
-    background: linear-gradient(135deg, #2e8b4a, var(--green-light));
-  }
-
-  .sep { width:1px; height:28px; background:rgba(255,255,255,0.2); margin:0 4px; }
-
-  /* status dot */
-  .status-pill {
-    display: flex; align-items: center; gap: 5px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    background: rgba(0,0,0,0.2);
-    color: rgba(255,255,255,0.7);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-  .status-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: #ff6b6b;
-    box-shadow: 0 0 5px #ff6b6b;
-  }
-  .status-dot.connected { background: #6bff8e; box-shadow: 0 0 5px #6bff8e; }
-
-  /* ── MAIN LAYOUT ── */
-  #main {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-  }
-
-  /* ── BLOCKLY PANEL ── */
-  #blockly-panel {
-    flex: 1;
-    position: relative;
-    min-width: 0;
-  }
-
-  #blocklyDiv {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* ── RIGHT PANEL ── */
-  #right-panel {
-    width: 360px;
-    display: flex;
-    flex-direction: column;
-    border-left: 2px solid var(--border);
-    background: var(--cream-dark);
-    flex-shrink: 0;
-  }
-
-  .panel-tabs {
-    display: flex;
-    border-bottom: 2px solid var(--border);
-    background: var(--cream);
-    flex-shrink: 0;
-  }
-  .panel-tab {
-    flex: 1;
-    padding: 9px 6px;
-    text-align: center;
-    font-weight: 700;
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    cursor: pointer;
-    color: var(--text-mid);
-    border-bottom: 3px solid transparent;
-    transition: all 0.15s;
-  }
-  .panel-tab:hover { color: var(--green-dark); }
-  .panel-tab.active {
-    color: var(--green-dark);
-    border-bottom-color: var(--green-mid);
-    background: var(--cream-dark);
-  }
-
-  .panel-content {
-    flex: 1;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .tab-pane {
-    position: absolute; inset: 0;
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .tab-pane.active { display: flex; }
-
-  /* Code output */
-  #code-header {
-    padding: 8px 12px;
-    background: var(--soil);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-shrink: 0;
-  }
-  #code-header span {
-    font-family: 'Zilla Slab', serif;
-    font-size: 0.8rem;
-    color: var(--wheat-light);
-    font-weight: 600;
-    letter-spacing: 0.05em;
-  }
-  .btn-copy {
-    padding: 3px 10px;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #fff;
-    border-radius: 4px;
-    font-size: 0.68rem;
-    cursor: pointer;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 700;
-  }
-  .btn-copy:hover { background: rgba(255,255,255,0.2); }
-
-  #code-output {
-    flex: 1;
-    padding: 14px;
-    overflow-y: auto;
-    font-family: 'Source Code Pro', monospace;
-    font-size: 0.78rem;
-    line-height: 1.65;
-    color: #c9e6c9;
-    background: #1e2e1e;
-    white-space: pre;
-  }
-
-  /* syntax highlight */
-  .kw { color: #88d498; font-weight: 600; }
-  .fn { color: #ffd980; }
-  .cm { color: #6a8a6a; font-style: italic; }
-  .st { color: #f5b0b0; }
-  .nm { color: #a8d8ff; }
-
-  /* Console */
-  #console-output {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    font-family: 'Source Code Pro', monospace;
-    font-size: 0.75rem;
-    line-height: 1.6;
-    background: #0e1a0e;
-    color: #7dbf7d;
-  }
-  #console-input-row {
-    display: flex;
-    border-top: 1px solid #2a3a2a;
-    flex-shrink: 0;
-  }
-  #console-input {
-    flex: 1;
-    padding: 7px 10px;
-    background: #0a130a;
-    border: none;
-    color: #a0e0a0;
-    font-family: 'Source Code Pro', monospace;
-    font-size: 0.75rem;
-    outline: none;
-  }
-  #console-send {
-    padding: 0 14px;
-    background: var(--green-dark);
-    color: var(--wheat-light);
-    border: none;
-    cursor: pointer;
-    font-weight: 700;
-    font-size: 0.75rem;
-    font-family: 'Nunito', sans-serif;
-  }
-
-  /* Help pane */
-  #help-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 14px;
-  }
-  .help-section { margin-bottom: 18px; }
-  .help-section h3 {
-    font-family: 'Zilla Slab', serif;
-    font-size: 0.9rem;
-    color: var(--green-dark);
-    margin-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 4px;
-  }
-  .help-fn {
-    margin-bottom: 8px;
-    padding: 7px 10px;
-    background: #fff;
-    border-radius: 6px;
-    border-left: 3px solid var(--green-mid);
-  }
-  .help-fn code {
-    font-family: 'Source Code Pro', monospace;
-    font-size: 0.73rem;
-    color: var(--soil);
-    font-weight: 600;
-    display: block;
-    margin-bottom: 2px;
-  }
-  .help-fn p {
-    font-size: 0.72rem;
-    color: var(--text-mid);
-    line-height: 1.4;
-  }
-
-  /* ── BOTTOM BAR ── */
-  #bottom-bar {
-    height: 28px;
-    background: var(--soil);
-    display: flex;
-    align-items: center;
-    padding: 0 14px;
-    gap: 18px;
-    flex-shrink: 0;
-  }
-  .bottom-item {
-    display: flex; align-items: center; gap: 5px;
-    font-size: 0.68rem;
-    color: rgba(255,255,255,0.5);
-    letter-spacing: 0.04em;
-  }
-  .bottom-item svg { width:12px; height:12px; opacity:0.6; }
-  .bottom-item.highlight { color: var(--wheat-light); }
+  /* Bottom bar */
+  #bottom-bar{height:28px;background:var(--soil);display:flex;align-items:center;
+    padding:0 14px;gap:18px;flex-shrink:0;}
+  .bottom-item{display:flex;align-items:center;gap:5px;font-size:.68rem;
+    color:rgba(255,255,255,.5);letter-spacing:.04em;}
+  .bottom-item svg{width:12px;height:12px;opacity:.6;}
+  .bottom-item.highlight{color:var(--wheat-light);}
 
   /* Modal */
-  .modal-overlay {
-    position: fixed; inset:0;
-    background: rgba(0,0,0,0.55);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1000;
-    opacity: 0; pointer-events: none;
-    transition: opacity 0.2s;
-  }
-  .modal-overlay.open { opacity:1; pointer-events: all; }
-  .modal {
-    background: var(--cream);
-    border-radius: 12px;
-    border: 2px solid var(--border);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-    width: 440px;
-    max-width: 90vw;
-    padding: 28px;
-    transform: translateY(20px);
-    transition: transform 0.2s;
-  }
-  .modal-overlay.open .modal { transform: translateY(0); }
-  .modal h2 {
-    font-family: 'Zilla Slab', serif;
-    font-size: 1.3rem;
-    color: var(--green-dark);
-    margin-bottom: 16px;
-  }
-  .modal p { font-size:0.85rem; color: var(--text-mid); margin-bottom:10px; line-height:1.5; }
-  .modal-btns { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
-  .btn-primary {
-    padding: 8px 20px;
-    background: var(--green-mid);
-    color:#fff;
-    border:none; border-radius:6px;
-    font-family:'Nunito',sans-serif; font-weight:700; font-size:0.82rem;
-    cursor:pointer;
-  }
-  .btn-secondary {
-    padding:8px 20px;
-    background: var(--cream-dark);
-    color: var(--text-dark);
-    border: 1px solid var(--border);
-    border-radius:6px;
-    font-family:'Nunito',sans-serif; font-weight:700; font-size:0.82rem;
-    cursor:pointer;
-  }
-  .connect-options { display:flex; gap:12px; margin-top:12px; }
-  .connect-card {
-    flex:1; padding:16px; border-radius:8px;
-    border:2px solid var(--border);
-    background:#fff;
-    cursor:pointer;
-    text-align:center;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .connect-card:hover { border-color: var(--green-mid); box-shadow:0 2px 8px var(--shadow); }
-  .connect-card svg { width:32px;height:32px; margin-bottom:8px; }
-  .connect-card h4 { font-size:0.85rem; font-weight:700; color:var(--text-dark); }
-  .connect-card p { font-size:0.72rem; color:var(--text-mid); margin:4px 0 0; }
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;
+    align-items:center;justify-content:center;z-index:1000;opacity:0;pointer-events:none;transition:opacity .2s;}
+  .modal-overlay.open{opacity:1;pointer-events:all;}
+  .modal{background:var(--cream);border-radius:12px;border:2px solid var(--border);
+    box-shadow:0 20px 60px rgba(0,0,0,.4);width:440px;max-width:90vw;padding:28px;
+    transform:translateY(20px);transition:transform .2s;}
+  .modal-overlay.open .modal{transform:translateY(0);}
+  .modal h2{font-family:'Zilla Slab',serif;font-size:1.3rem;color:var(--green-dark);margin-bottom:16px;}
+  .modal p{font-size:.85rem;color:var(--text-mid);margin-bottom:10px;line-height:1.5;}
+  .modal-btns{display:flex;gap:10px;margin-top:20px;justify-content:flex-end;}
+  .btn-primary{padding:8px 20px;background:var(--green-mid);color:#fff;border:none;border-radius:6px;
+    font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;}
+  .btn-secondary{padding:8px 20px;background:var(--cream-dark);color:var(--text-dark);
+    border:1px solid var(--border);border-radius:6px;font-family:'Nunito',sans-serif;
+    font-weight:700;font-size:.82rem;cursor:pointer;}
+  .connect-options{display:flex;gap:12px;margin-top:12px;}
+  .connect-card{flex:1;padding:16px;border-radius:8px;border:2px solid var(--border);
+    background:#fff;cursor:pointer;text-align:center;transition:border-color .15s,box-shadow .15s;}
+  .connect-card:hover{border-color:var(--green-mid);box-shadow:0 2px 8px var(--shadow);}
+  .connect-card svg{width:32px;height:32px;margin-bottom:8px;}
+  .connect-card h4{font-size:.85rem;font-weight:700;color:var(--text-dark);}
+  .connect-card p{font-size:.72rem;color:var(--text-mid);margin:4px 0 0;}
 
-  /* Scrollbar style */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 
-  /* Blockly toolbox custom */
-  .blocklyToolboxDiv {
-    background: var(--soil) !important;
-    border-right: 2px solid var(--soil-mid) !important;
-  }
-  .blocklyTreeRow {
-    border-radius: 0 !important;
-  }
-  .blocklyTreeLabel {
-    font-family: 'Nunito', sans-serif !important;
-    font-size: 0.78rem !important;
-    font-weight: 700 !important;
-    letter-spacing: 0.04em !important;
-  }
-  .blocklyTreeSelected {
-    background: var(--green-dark) !important;
-  }
-
-  /* Notification toast */
-  #toast {
-    position: fixed; bottom: 40px; left:50%; transform:translateX(-50%);
-    background: var(--soil);
-    color: var(--wheat-light);
-    padding: 9px 22px;
-    border-radius: 20px;
-    font-size:0.8rem;
-    font-weight:700;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-    opacity:0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    z-index: 2000;
-  }
-  #toast.show { opacity:1; }
+  #toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);
+    background:var(--soil);color:var(--wheat-light);padding:9px 22px;border-radius:20px;
+    font-size:.8rem;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.3);
+    opacity:0;transition:opacity .3s;pointer-events:none;z-index:2000;}
+  #toast.show{opacity:1;}
 </style>
 </head>
 <body>
@@ -485,51 +214,89 @@
 <!-- HEADER -->
 <div id="header">
   <div class="logo-area">
-    <!-- Agribotics Logo SVG -->
     <svg class="logo-svg" viewBox="0 0 38 38" fill="none">
-      <!-- Gear/cog (robotics) with wheat stalk (agri) -->
-      <circle cx="19" cy="19" r="16" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-      <!-- 4H clover shape -->
+      <circle cx="19" cy="19" r="16" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
       <g transform="translate(19,19)">
-        <circle cx="0" cy="-6" r="5" fill="#4aa85e" opacity="0.9"/>
-        <circle cx="6" cy="0" r="5" fill="#4aa85e" opacity="0.9"/>
-        <circle cx="0" cy="6" r="5" fill="#4aa85e" opacity="0.9"/>
-        <circle cx="-6" cy="0" r="5" fill="#4aa85e" opacity="0.9"/>
+        <circle cx="0" cy="-6" r="5" fill="#4aa85e" opacity=".9"/>
+        <circle cx="6" cy="0" r="5" fill="#4aa85e" opacity=".9"/>
+        <circle cx="0" cy="6" r="5" fill="#4aa85e" opacity=".9"/>
+        <circle cx="-6" cy="0" r="5" fill="#4aa85e" opacity=".9"/>
         <circle cx="0" cy="0" r="4" fill="#2a7d42"/>
-        <text x="0" y="4" text-anchor="middle" font-family="Zilla Slab, serif" font-size="6" font-weight="700" fill="white">4H</text>
+        <text x="0" y="4" text-anchor="middle" font-family="Zilla Slab,serif" font-size="6" font-weight="700" fill="white">4H</text>
       </g>
-      <!-- tiny wheat stalks at top -->
       <line x1="19" y1="3" x2="19" y2="9" stroke="#e8b84b" stroke-width="1.5"/>
       <ellipse cx="17" cy="5" rx="1.5" ry="3" fill="#e8b84b" transform="rotate(-20 17 5)"/>
       <ellipse cx="21" cy="5" rx="1.5" ry="3" fill="#e8b84b" transform="rotate(20 21 5)"/>
     </svg>
     <div class="logo-text">
-      <span class="logo-title">Agribotics IDE</span>
+      <span class="logo-title">Ag Robotics Programming App</span>
       <span class="logo-sub">Block Programming · MicroPython · ESP32-S3</span>
     </div>
   </div>
-
   <div class="toolbar">
-    <button class="btn btn-ghost" onclick="newProgram()" title="New program">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 0a1 1 0 00-1 1v14a1 1 0 001 1h10a1 1 0 001-1V4.414L9.586 0H3zm6 1.5L13.5 5H9V1.5z"/></svg>
-      New
+    <button class="btn btn-ghost" onclick="newProgram()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 0a1 1 0 00-1 1v14a1 1 0 001 1h10a1 1 0 001-1V4.414L9.586 0H3zm6 1.5L13.5 5H9V1.5z"/></svg>New
     </button>
-    <button class="btn btn-ghost" onclick="saveProgram()" title="Save">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5zM4 9h8v1H4V9zm0 2h8v1H4v-1zm0-4h4v1H4V7z"/></svg>
-      Save
+    <button class="btn btn-ghost" onclick="saveProgram()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5z"/></svg>Save XML
     </button>
-    <button class="btn btn-ghost" onclick="loadProgram()" title="Load">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 11.854a.5.5 0 00.708 0l3-3a.5.5 0 00-.708-.708L8.5 10.293V1.5a.5.5 0 00-1 0v8.793L5.354 8.146a.5.5 0 10-.708.708l3 3z"/></svg>
-      Load
+    <button class="btn btn-ghost" onclick="savePython()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5z"/></svg>Save .py
     </button>
+    <button class="btn btn-ghost" onclick="loadProgram()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 11.854a.5.5 0 00.708 0l3-3a.5.5 0 00-.708-.708L8.5 10.293V1.5a.5.5 0 00-1 0v8.793L5.354 8.146a.5.5 0 10-.708.708l3 3z"/></svg>Load
+    </button>
+    <div class="prog-name-wrap">
+      <svg viewBox="0 0 16 16" fill="currentColor" style="width:12px;height:12px;opacity:.6;flex-shrink:0;"><path d="M9.293 0H4a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4.707L9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 01-1-1z"/></svg>
+      <input type="text" id="progName" value="Move Forward &amp; Back" placeholder="program name" spellcheck="false">
+    </div>
+    <div class="example-drop-wrap" id="exampleDropWrap">
+      <button class="btn btn-example" onclick="toggleExampleMenu(event)">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm-.5 4.5l4 3.5-4 3.5V4.5z"/></svg>Load Example
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:10px;height:10px;margin-left:2px;"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z"/></svg>
+      </button>
+      <div class="example-menu" id="exampleMenu">
+        <div class="example-menu-section">Motors &amp; Movement</div>
+        <div class="example-item" onclick="loadExample('2')">Motor Run &amp; Stop</div>
+        <div class="example-item" onclick="loadExample('3')">Wheel Rotations</div>
+        <div class="example-item" onclick="loadExample('7')">Move Forward &amp; Back</div>
+        <div class="example-item" onclick="loadExample('8')">Square Pattern</div>
+        <div class="example-menu-section">Servos</div>
+        <div class="example-item" onclick="loadExample('4')">Servo Sweep</div>
+        <div class="example-menu-section">Lights &amp; Sound</div>
+        <div class="example-item" onclick="loadExample('1')">Hello Lights</div>
+        <div class="example-item" onclick="loadExample('5')">Pixel Light Show</div>
+        <div class="example-item" onclick="loadExample('6')">Play a Tune</div>
+      </div>
+    </div>
     <div class="sep"></div>
     <button class="btn btn-connect" id="connectBtn" onclick="openConnectModal()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V1zm11 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V1zM6 7a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H7a1 1 0 01-1-1V7zM2 4v2h1V4H2zm11 0v2h1V4h-1zM8 4V2H7v2h1zM4 7.5A.5.5 0 014.5 7H6V5.5A.5.5 0 017 5a.5.5 0 01.5.5V7h1.5a.5.5 0 01.5.5v1a.5.5 0 01-.5.5H7.5V11a.5.5 0 01-.5.5.5.5 0 01-.5-.5V9H4.5A.5.5 0 014 8.5v-1z"/></svg>
-      Connect
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V1zm11 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V1z"/></svg>Connect
     </button>
+    <div class="sep"></div>
+    <div class="slot-selector">
+      <label>SLOT</label>
+      <div class="slot-dot" id="slotDot" style="background:#ff4444;color:#ff4444;"></div>
+      <select class="slot-select" id="slotSelect" onchange="updateSlotDot()">
+        <option value="1">1 — Red</option>
+        <option value="2">2 — Orange</option>
+        <option value="3">3 — Yellow</option>
+        <option value="4">4 — Green</option>
+        <option value="5">5 — Cyan</option>
+        <option value="6">6 — Blue</option>
+        <option value="7">7 — Purple</option>
+        <option value="8">8 — White</option>
+        <option value="9">9 — Pink</option>
+        <option value="10">10 — Lime</option>
+        <option value="11">11 — Teal</option>
+        <option value="12">12 — Gold</option>
+      </select>
+    </div>
     <button class="btn btn-upload" onclick="uploadToRobot()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 1.146a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 2.707V11.5a.5.5 0 01-1 0V2.707L5.354 4.854a.5.5 0 11-.708-.708l3-3z"/></svg>
-      Upload to Robot
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 1.146a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 2.707V11.5a.5.5 0 01-1 0V2.707L5.354 4.854a.5.5 0 11-.708-.708l3-3z"/></svg>Upload to Slot
+    </button>
+    <button class="btn btn-stop" onclick="stopProgram()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>Stop / Reset
     </button>
     <div class="sep"></div>
     <div class="status-pill">
@@ -541,12 +308,7 @@
 
 <!-- MAIN -->
 <div id="main">
-  <!-- BLOCKLY WORKSPACE -->
-  <div id="blockly-panel">
-    <div id="blocklyDiv"></div>
-  </div>
-
-  <!-- RIGHT PANEL -->
+  <div id="blockly-panel"><div id="blocklyDiv"></div></div>
   <div id="right-panel">
     <div class="panel-tabs">
       <div class="panel-tab active" onclick="switchTab('code',this)">⚙ MicroPython</div>
@@ -554,75 +316,459 @@
       <div class="panel-tab" onclick="switchTab('help',this)">📖 Reference</div>
     </div>
     <div class="panel-content">
-
-      <!-- CODE TAB -->
+      <!-- CODE -->
       <div class="tab-pane active" id="tab-code">
         <div id="code-header">
           <span>Generated MicroPython</span>
           <button class="btn-copy" onclick="copyCode()">Copy</button>
         </div>
-        <div id="code-output"># Connect blocks to generate code</div>
+        <div id="code-output"><pre id="code-pre"># Add blocks to generate code</pre></div>
       </div>
-
-      <!-- CONSOLE TAB -->
+      <!-- CONSOLE -->
       <div class="tab-pane" id="tab-console">
-        <div id="console-output"><span style="color:#4a7a4a"># Agribotics Console — connect a robot to begin
-# Serial output and REPL will appear here
+        <div id="console-toolbar">
+          <button id="console-clear" onclick="clearConsole()" title="Clear console">✕ Clear</button>
+        </div>
+        <div id="console-output"><span style="color:#4a7a4a"># Ag Robotics Console
+# Connect a robot to begin
 </span></div>
         <div id="console-input-row">
-          <input id="console-input" type="text" placeholder="Enter command..." onkeydown="if(event.key==='Enter')sendCommand()">
+          <input id="console-input" type="text" placeholder="Enter REPL command..." onkeydown="if(event.key==='Enter')sendCommand()">
           <button id="console-send" onclick="sendCommand()">Send</button>
         </div>
       </div>
-
-      <!-- HELP TAB -->
+      <!-- HELP -->
       <div class="tab-pane" id="tab-help">
         <div id="help-content">
-          <div class="help-section">
-            <h3>🌾 Controller Setup</h3>
-            <div class="help-fn"><code>agri.begin()</code><p>Initialize the Agri controller. Waits for button press to start.</p></div>
-            <div class="help-fn"><code>agri.end()</code><p>Gracefully stop the program and restart.</p></div>
-            <div class="help-fn"><code>agri.wait(ms)</code><p>Pause execution for <em>ms</em> milliseconds.</p></div>
+
+          <!-- USING THE IDE -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#2a5a8a"></div>
+              <h3>🖥️ Using the IDE</h3>
+            </div>
+
+            <!-- Toolbar: File -->
+            <div class="ref-card">
+              <div class="ref-block-wrap" style="flex-direction:column;gap:4px;align-items:flex-start;">
+                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">📄 New</div>
+                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">💾 Save XML</div>
+                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">🐍 Save .py</div>
+                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">📂 Load</div>
+              </div>
+              <div class="ref-info">
+                <div class="ref-title">File Buttons</div>
+                <div class="ref-desc"><b>New</b> clears the workspace after a confirmation prompt — your blocks will be lost if not saved first. <b>Save XML</b> saves the current blocks as a .xml file you can reload later with Load. <b>Save .py</b> exports the generated MicroPython code as a .py file. <b>Load</b> opens a previously saved .xml file and restores the blocks into the workspace.</div>
+              </div>
+            </div>
+
+            <!-- Toolbar: Load Example -->
+            <div class="ref-card">
+              <div class="ref-block-wrap">
+                <div class="ref-blk" style="background:#1a4a6a;font-size:.68rem;">▶ Load Example ▾</div>
+              </div>
+              <div class="ref-info">
+                <div class="ref-title">Load Example</div>
+                <div class="ref-desc">Click the Load Example button to open a drop-down menu of built-in example programs, organized by category. Selecting an example clears the workspace and loads the example blocks — a confirmation prompt will appear first so you don't lose your work by accident. Examples include: <b>Hello Lights</b> (pixels + tones), <b>Motor Run &amp; Stop</b>, <b>Wheel Rotations</b>, <b>Servo Sweep</b>, <b>Pixel Light Show</b> (animations), <b>Play a Tune</b>, <b>Move Forward &amp; Back</b>, and <b>Square Pattern</b> (turns).</div>
+              </div>
+            </div>
+
+            <!-- Toolbar: Connect -->
+            <div class="ref-card">
+              <div class="ref-block-wrap">
+                <div class="ref-blk" style="background:#1a6a3a;font-size:.68rem;">🔗 Connect</div>
+              </div>
+              <div class="ref-info">
+                <div class="ref-title">Connect</div>
+                <div class="ref-desc">Opens the connection dialog. Choose <b>Bluetooth (BLE)</b> to connect wirelessly — your browser will show a list of nearby controllers; select your SEEKER device. Choose <b>USB / Serial</b> to connect via a data cable — select the correct COM port from the browser prompt. Once connected, the button turns green and shows the connection type. Click it again to disconnect.</div>
+              </div>
+            </div>
+
+            <!-- Toolbar: Program Slot -->
+            <div class="ref-card">
+              <div class="ref-block-wrap" style="flex-direction:column;gap:4px;align-items:flex-start;">
+                <div class="ref-blk" style="background:#3a3a5a;font-size:.68rem;">● Slot <div class="ref-slot">1 — Red ▼</div></div>
+                <div class="ref-blk" style="background:#c85c00;font-size:.68rem;">⬆ Upload to Slot</div>
+              </div>
+              <div class="ref-info">
+                <div class="ref-title">Program Slot Selector &amp; Upload</div>
+                <div class="ref-desc">The controller can store up to <b>12 programs</b> at once, each in a numbered slot. Use the slot dropdown to choose which slot (1–12) to upload your program to. The colored dot updates to match the slot's color. Once connected, slots that already contain a program are shown in <span style="color:#7dbf7d;font-weight:700;">green with a ●</span> in the dropdown — empty slots are plain. Click <b>Upload to Slot</b> to send the current blocks to the selected slot. The upload compiles your blocks to MicroPython, writes it to the controller as <code>prog_N.py</code>, and automatically restarts the launcher. Each upload takes a few seconds over Bluetooth.</div>
+              </div>
+            </div>
+
+            <!-- How the Launcher Works -->
+            <div class="ref-card">
+              <div class="ref-block-wrap">
+                <div class="ref-blk" style="background:#2a5a3a;font-size:.68rem;">🤖 Launcher</div>
+              </div>
+              <div class="ref-info">
+                <div class="ref-title">How the Program Launcher Works</div>
+                <div class="ref-desc">When the controller powers on it runs a built-in launcher. The launcher lets you browse and run any of the 12 stored programs without connecting to the IDE. Use the buttons on the controller to navigate:<br><br>
+                  <b>Button A</b> — step backward through slots<br>
+                  <b>Button B</b> — step forward through slots<br>
+                  <b>Start</b> — run the selected slot's program<br><br>
+                  The four NeoPixels show the current slot's color as you scroll. An occupied slot glows at full brightness; an empty slot is the same color but dim. When the controller first boots, a slot map is printed to the console showing all 12 slots and whether each one is occupied. When a program finishes (reaches <b>Ag End</b>), the launcher restarts automatically and is ready to run again.</div>
+              </div>
+            </div>
+
+            <!-- Toolbar: Stop / Reset -->
+            <div class="ref-card">
+              <div class="ref-block-wrap">
+                <div class="ref-blk" style="background:#9b1c1c;font-size:.68rem;">■ Stop / Reset</div>
+              </div>
+              <div class="ref-info">
+                <div class="ref-title">Stop / Reset</div>
+                <div class="ref-desc">Immediately stops any running program, turns off motors, sound, and pixels, and restarts the launcher. Use this any time the robot is behaving unexpectedly or you need to return to the slot selector without waiting for the program to finish. Stop / Reset works over both Bluetooth and USB.</div>
+              </div>
+            </div>
+
+            <!-- Console -->
+            <div class="ref-card">
+              <div class="ref-block-wrap" style="flex-direction:column;gap:4px;align-items:flex-start;">
+                <div class="ref-blk" style="background:#0e2a1a;border:1px solid #2a5a2a;font-size:.68rem;color:#7dbf7d;">▶ Console</div>
+                <div class="ref-blk" style="background:#0e2a1a;border:1px solid #2a5a2a;font-size:.68rem;color:#4a8a4a;">✕ Clear</div>
+              </div>
+              <div class="ref-info">
+                <div class="ref-title">Console</div>
+                <div class="ref-desc">The Console tab shows everything printed by the controller — connection messages, the slot map at startup, output from <b>Print</b> blocks in your programs, and any errors. Use Print blocks in your program to display sensor readings or variable values here while your program runs. The <b>✕ Clear</b> button in the top-right corner of the console wipes the output. You can also type raw MicroPython commands into the input bar at the bottom of the console and press <b>Send</b> (or Enter) to run them directly on the controller.</div>
+              </div>
+            </div>
+
+            <!-- MicroPython tab -->
+            <div class="ref-card">
+              <div class="ref-block-wrap">
+                <div class="ref-blk" style="background:#1e2e1e;border:1px solid #2a5a2a;font-size:.68rem;color:#7dbf7d;">⚙ MicroPython</div>
+              </div>
+              <div class="ref-info">
+                <div class="ref-title">MicroPython Tab</div>
+                <div class="ref-desc">Shows the MicroPython code that your blocks generate, updated live as you build. You don't need to read or edit this — it's there so you can see exactly what gets uploaded to the controller. It's also a great way to start learning how the code maps to the blocks.</div>
+              </div>
+            </div>
+
           </div>
-          <div class="help-section">
-            <h3>⚙️ Motor Control</h3>
-            <div class="help-fn"><code>agri.set_motor_power(ch, pwr)</code><p>ch: 1–4 | pwr: –100 to 100</p></div>
-            <div class="help-fn"><code>agri.set_motor_powers(p1, p2, p3, p4)</code><p>Set all four motors at once.</p></div>
-            <div class="help-fn"><code>agri.set_motor_speed(ch, spd)</code><p>ch: 1–4 | spd: –720 to 720 deg/s</p></div>
-            <div class="help-fn"><code>agri.set_motor_target(ch, spd, tgt)</code><p>Move to encoder target position.</p></div>
-            <div class="help-fn"><code>agri.stop_motor(ch)</code><p>Stop a single motor channel.</p></div>
-            <div class="help-fn"><code>agri.stop_all_motors()</code><p>Stop all motor channels immediately.</p></div>
-            <div class="help-fn"><code>agri.set_motor_brake(ch, mode)</code><p>True = brake, False = coast</p></div>
-            <div class="help-fn"><code>agri.reset_encoder(ch)</code><p>Reset encoder count to zero.</p></div>
-            <div class="help-fn"><code>agri.get_encoder_count(ch)</code><p>Returns raw encoder count.</p></div>
-            <div class="help-fn"><code>agri.get_encoder_degrees(ch)</code><p>Returns position in degrees.</p></div>
+
+          <!-- CONTROLLER -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#2a7d42"></div>
+              <h3>🌾 Controller</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#2a7d42">🌾 Ag Begin</div></div>
+              <div class="ref-info"><div class="ref-title">Ag Begin</div><div class="ref-desc">Initializes the Ag Controller and waits for the Start button to be pressed. Always use this as the first block in your program.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#2a7d42">🌾 Ag End</div></div>
+              <div class="ref-info"><div class="ref-title">Ag End</div><div class="ref-desc">Stops the program and restarts main.py from the beginning. Use this as the final block when your task is complete.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#2a7d42">⏱ Wait (ms) <div class="ref-oval">1000</div></div></div>
+              <div class="ref-info"><div class="ref-title">Wait</div><div class="ref-desc">Pauses the program for the specified number of milliseconds. 1000 ms = 1 second.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#2a7d42">🖨 Print <div class="ref-oval">value</div></div></div>
+              <div class="ref-info"><div class="ref-title">Print</div><div class="ref-desc">Sends a value to the serial console. Useful for reading sensor values and debugging your program.</div></div>
+            </div>
           </div>
-          <div class="help-section">
-            <h3>🔩 Servo Control</h3>
-            <div class="help-fn"><code>agri.set_servo_position(ch, angle)</code><p>ch: 1–8 | angle: 0–180°</p></div>
-            <div class="help-fn"><code>agri.disable_servo(ch)</code><p>Disable PWM output for servo channel.</p></div>
+
+          <!-- MOVEMENT -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#0d7377"></div>
+              <h3>🤖 Movement</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Movement Motors — Left: <div class="ref-slot">1 ▼</div> Right: <div class="ref-slot">2 ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Set Movement Motors</div><div class="ref-desc">Assigns motor ports to the left and right wheels. Default is Left: 1, Right: 2. Call this once at the start of every program that uses movement blocks.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Movement Speed to <div class="ref-oval">50</div> %</div></div>
+              <div class="ref-info"><div class="ref-title">Set Movement Speed</div><div class="ref-desc">Sets the default speed used by all Move and Start blocks. Range is 0–100%. The default value is 50%. Set this once before your first movement command.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Wheel Diameter to <div class="ref-oval">80</div> mm</div></div>
+              <div class="ref-info"><div class="ref-title">Set Wheel Diameter</div><div class="ref-desc">Sets the wheel diameter so the robot can calculate accurate distances. The Ag robot uses 80mm wheels. Use this block to calibrate your specific robot.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Wheelbase to <div class="ref-oval">250</div> mm</div></div>
+              <div class="ref-info"><div class="ref-title">Set Wheelbase</div><div class="ref-desc">Sets the distance between the two wheel contact points. This is used by the Turn Degrees block to calculate accurate turn angles. Measure your robot and enter the value in millimeters.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Move <div class="ref-slot">Forward ▼</div> for <div class="ref-oval">10</div> <div class="ref-slot">cm ▼</div> Wait <div class="ref-slot">Yes ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Move For Distance</div><div class="ref-desc">Moves the robot forward or backward a specific distance, then stops. Choose cm or rotations. When Wait is Yes, the next block won't run until the move is complete.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Start Moving <div class="ref-slot">Forward ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Start Moving</div><div class="ref-desc">Starts moving the robot continuously forward or backward. The robot will keep moving until a Stop Moving block is reached. Use with a Wait block to control how long it drives.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Move steering: <div class="ref-oval">0</div> for <div class="ref-oval">20</div> <div class="ref-slot">cm ▼</div> Wait <div class="ref-slot">Yes ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Move with Steering</div><div class="ref-desc">Moves forward with differential steering for a set distance. Steering 0 = straight. +99 curves sharply right, −99 curves sharply left. +100/−100 pivots on the spot. Both motors stop at the same time.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Start Moving steering: <div class="ref-oval">0</div></div></div>
+              <div class="ref-info"><div class="ref-title">Start Moving with Steering</div><div class="ref-desc">Starts moving continuously with differential steering. Use a Stop Moving block to stop. Same steering scale as Move with Steering — 0 is straight, ±100 is a pivot.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Turn <div class="ref-slot">Right ▼</div> <div class="ref-oval">90</div> degrees Wait <div class="ref-slot">Yes ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Turn Degrees</div><div class="ref-desc">Spins the robot in place by a number of degrees. Accuracy depends on the Wheelbase setting being correct for your robot. Both wheels spin in opposite directions for a tight turn.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Stop Moving</div></div>
+              <div class="ref-info"><div class="ref-title">Stop Moving</div><div class="ref-desc">Immediately stops both movement motors. Use this after any Start Moving or Start Moving with Steering block.</div></div>
+            </div>
           </div>
-          <div class="help-section">
-            <h3>📡 Sensors</h3>
-            <div class="help-fn"><code>agri.read_ultrasonic(port)</code><p>Returns distance in centimeters.</p></div>
-            <div class="help-fn"><code>agri.read_line_sensor(port)</code><p>Returns 0 (light) or 1 (dark).</p></div>
-            <div class="help-fn"><code>agri.read_analog(port)</code><p>Returns 0–4095 (12-bit ADC).</p></div>
-            <div class="help-fn"><code>agri.read_digital(port)</code><p>Returns 0 or 1.</p></div>
-            <div class="help-fn"><code>agri.read_soil_moisture(port)</code><p>Returns moisture % (0–100).</p></div>
-            <div class="help-fn"><code>agri.read_light(port)</code><p>Returns light level (0–4095).</p></div>
-            <div class="help-fn"><code>agri.read_temperature(port)</code><p>Returns temperature in °C.</p></div>
+
+          <!-- MOTORS -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#8B4513"></div>
+              <h3>⚙️ Motors</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">⚙ Motor <div class="ref-oval">1</div> Speed % <div class="ref-oval">75</div></div></div>
+              <div class="ref-info"><div class="ref-title">Motor Speed</div><div class="ref-desc">Sets a motor to run continuously at a given speed percentage. Range is −100 to 100. Negative values reverse direction. Use motor port 1234 to set all motors at once.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">⚙ Motor <div class="ref-oval">1</div> Rotations <div class="ref-oval">3</div> at Speed % <div class="ref-oval">60</div></div></div>
+              <div class="ref-info"><div class="ref-title">Wheel Rotations</div><div class="ref-desc">Turns a single motor a specific number of wheel rotations at the given speed. Useful for low-level control of individual motors or attachments.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">⚙ Stop Motor <div class="ref-oval">1</div> <div class="ref-slot">Brake ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Motor Stop</div><div class="ref-desc">Stops a motor using Brake (holds position) or Coast (free-wheels to a stop). Brake is more abrupt and precise; Coast is gentler.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">⚙ Motor <div class="ref-oval">1</div> Invert <div class="ref-slot">Yes ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Motor Invert</div><div class="ref-desc">Reverses the direction of a motor without changing the sign of speed values. Useful when a motor is physically mounted in the opposite direction.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">Encoder Count ch <div class="ref-oval">1</div></div></div>
+              <div class="ref-info"><div class="ref-title">Encoder Count</div><div class="ref-desc">Returns the current encoder count for a motor channel. This is a reporter block — place it inside a Print or Math block. Counts accumulate until reset.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">⚙ Reset Encoder <div class="ref-oval">1</div></div></div>
+              <div class="ref-info"><div class="ref-title">Reset Encoder</div><div class="ref-desc">Resets the encoder count for a motor channel back to zero. Use 1234 to reset all encoders at once. Reset before measuring a new distance.</div></div>
+            </div>
           </div>
-          <div class="help-section">
-            <h3>💡 Lights &amp; Sound</h3>
-            <div class="help-fn"><code>agri.set_led(r, g, b)</code><p>Set onboard RGB LED color.</p></div>
-            <div class="help-fn"><code>agri.led_off()</code><p>Turn off onboard LED.</p></div>
-            <div class="help-fn"><code>agri.play_tone(freq, dur_ms)</code><p>Play a tone at frequency for duration.</p></div>
-            <div class="help-fn"><code>agri.play_note(note, dur_ms)</code><p>note: "C4", "G3", etc.</p></div>
-            <div class="help-fn"><code>agri.beep()</code><p>Short confirmation beep.</p></div>
+
+          <!-- SERVOS -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#A0522D"></div>
+              <h3>🔩 Servos</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#A0522D">🔩 Servo <div class="ref-oval">1</div> Position ° <div class="ref-oval">90</div></div></div>
+              <div class="ref-info"><div class="ref-title">Servo Position</div><div class="ref-desc">Moves a servo to a specific angle between 0° and 180°. 90° is typically center position. Use port 1234 to move all servos to the same angle simultaneously.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#A0522D">🔩 Servo <div class="ref-oval">1</div> Speed % <div class="ref-oval">50</div></div></div>
+              <div class="ref-info"><div class="ref-title">Servo Speed</div><div class="ref-desc">Sets how fast the servo moves to its target position. Range is 0–100%. Lower values make the servo move more slowly and smoothly.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#A0522D">🔩 Servo <div class="ref-oval">1</div> Invert <div class="ref-slot">Yes ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Servo Invert</div><div class="ref-desc">Reverses the direction of a servo so that 0° and 180° are swapped. Useful when a servo is physically mounted in the opposite orientation. Applies to servo ports 1–4 individually.</div></div>
+            </div>
           </div>
+
+          <!-- SENSORS -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#1565a8"></div>
+              <h3>📡 Sensors</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Sonic (cm) port <div class="ref-oval">1</div></div></div>
+              <div class="ref-info"><div class="ref-title">Ultrasonic Distance</div><div class="ref-desc">Returns the distance to the nearest object in centimeters. Range is approximately 2–350 cm. Use in an If block to react when the robot gets close to something.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 TOF (mm) port <div class="ref-oval">1</div></div></div>
+              <div class="ref-info"><div class="ref-title">Time-of-Flight Distance</div><div class="ref-desc">Returns distance in millimeters using a laser sensor. Range is 30–1000 mm. More accurate than ultrasonic at short distances, useful for precise positioning.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Line Sensor port <div class="ref-oval">1</div></div></div>
+              <div class="ref-info"><div class="ref-title">Line Sensor</div><div class="ref-desc">Returns 0 for a light surface or 1 for a dark surface. Use to follow a line on the ground or detect the edge of a field boundary.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Color <div class="ref-oval">1</div> channel <div class="ref-slot">red ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Color Sensor (Value)</div><div class="ref-desc">Returns a numeric value from the color sensor. Channel options: red, green, blue, ambient (light level), rgb (combined), hex (color code string).</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Color port <div class="ref-oval">1</div> is <div class="ref-slot">red ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Color Is</div><div class="ref-desc">Returns True if the sensor detects the selected color, False otherwise. Use directly in an If block to trigger actions based on what color the robot sees.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Temp port <div class="ref-oval">1</div> <div class="ref-slot">°C ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Temperature</div><div class="ref-desc">Returns the temperature reading from a temp/humidity sensor. Choose Celsius or Fahrenheit. Useful for weather station and greenhouse monitoring challenges.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Humidity port <div class="ref-oval">1</div></div></div>
+              <div class="ref-info"><div class="ref-title">Humidity</div><div class="ref-desc">Returns the relative humidity percentage (0–100%) from a temp/humidity sensor. Useful for soil and air moisture monitoring in agricultural challenges.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Rotary port <div class="ref-oval">1</div></div></div>
+              <div class="ref-info"><div class="ref-title">Rotary Sensor</div><div class="ref-desc">Returns a value from 0–100 based on the position of a rotary dial (potentiometer). Good for manual control inputs or position sensing.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Analog (0-4095) port <div class="ref-oval">1</div></div></div>
+              <div class="ref-info"><div class="ref-title">Analog Input</div><div class="ref-desc">Reads the raw analog voltage on a sensor port. Returns 0–4095. Use for sensors without a dedicated block, such as soil moisture probes or custom sensors.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Digital (0/1) port <div class="ref-oval">1</div></div></div>
+              <div class="ref-info"><div class="ref-title">Digital Input</div><div class="ref-desc">Reads a digital signal on a sensor port. Returns 0 or 1. Use for switches, bump sensors, or any sensor with a simple on/off output.</div></div>
+            </div>
+          </div>
+
+          <!-- BUTTONS -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#5b3fa5"></div>
+              <h3>🎮 Buttons</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#5b3fa5">🎮 Button <div class="ref-slot">A ▼</div> Pressed</div></div>
+              <div class="ref-info"><div class="ref-title">Button Pressed</div><div class="ref-desc">Returns True when the selected button is being pressed, False otherwise. Buttons available: Start, A, B, C, D. Use in an If block or a Wait Until loop to respond to button presses.</div></div>
+            </div>
+          </div>
+
+          <!-- PIXELS -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#b8860b"></div>
+              <h3>💡 Pixels</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel <div class="ref-slot">ABCD ▼</div> R <div class="ref-oval">0</div> G <div class="ref-oval">200</div> B <div class="ref-oval">50</div></div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Color (RGB)</div><div class="ref-desc">Sets a NeoPixel to a color using Red, Green, Blue values (0–255 each). Select a single pixel (A, B, C, D) or ABCD to set all four at once.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel <div class="ref-slot">A ▼</div> Color <div class="ref-oval">#00c832</div> Brightness <div class="ref-oval">75</div> %</div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Color (Hex)</div><div class="ref-desc">Sets a NeoPixel using a hex color code and a brightness level (0–100%). Type any standard hex color code such as #ff0000 for red or #0000ff for blue.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel Off <div class="ref-slot">ABCD ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Off</div><div class="ref-desc">Turns off one or all NeoPixels. Choose a single pixel or ABCD to turn them all off at once.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Blink Pixel <div class="ref-slot">A ▼</div> <div class="ref-oval">#ff8800</div> <div class="ref-oval">3</div> times</div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Blink</div><div class="ref-desc">Blinks a NeoPixel a set number of times in the chosen color. Good for signaling events like a completed task or a detected object.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel Animation <div class="ref-slot">rainbow ▼</div> for <div class="ref-oval">3</div> sec</div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Animation</div><div class="ref-desc">Plays a built-in light animation for a set number of seconds. Options include: rainbow, comet, chase, fade, sparkle, colorcycle, rainbow comet, rainbow chase, rainbow sparkle.</div></div>
+            </div>
+          </div>
+
+          <!-- SOUND -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#7b3f8c"></div>
+              <h3>🔊 Sound</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#7b3f8c">🔊 Tone (Hz) <div class="ref-oval">440</div> for (sec) <div class="ref-oval">0.5</div></div></div>
+              <div class="ref-info"><div class="ref-title">Tone</div><div class="ref-desc">Plays a tone at the specified frequency in Hz for a set duration in seconds. 440 Hz is the musical note A4. Try 262 for C4 or 523 for C5.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#7b3f8c">🔊 Play Note <div class="ref-slot">C4 ▼</div> for (sec) <div class="ref-oval">0.5</div></div></div>
+              <div class="ref-info"><div class="ref-title">Play Note</div><div class="ref-desc">Plays a musical note by name for a set duration. Choose from a full range of notes across multiple octaves (C3 through C8). No need to know Hz values.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#7b3f8c">🔊 Sound Effect <div class="ref-slot">Correct ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Sound Effect</div><div class="ref-desc">Plays one of 15 built-in sound effects. Options include: Correct, Incorrect, Siren, Whistle Up/Down, Happy Birthday, Super Mario, Close Encounters, Phaser, Red Alert, R2D2, and more.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#7b3f8c">🔊 Sound Off</div></div>
+              <div class="ref-info"><div class="ref-title">Sound Off</div><div class="ref-desc">Immediately silences the piezo buzzer. Use this after a Start Tone or during an animation to cut the sound before it finishes.</div></div>
+            </div>
+          </div>
+
+          <!-- LOOPS -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#4a5568"></div>
+              <h3>🔁 Loops</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">repeat <div class="ref-oval">10</div> times</div></div>
+              <div class="ref-info"><div class="ref-title">Repeat</div><div class="ref-desc">Runs all the blocks inside it a set number of times. Drag other blocks inside the loop to repeat them.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">repeat while <div class="ref-slot">true ▼</div></div></div>
+              <div class="ref-info"><div class="ref-title">Repeat While / Until</div><div class="ref-desc">Keeps repeating the blocks inside it while (or until) a condition is true. Use with sensor or button blocks in the condition slot.</div></div>
+            </div>
+          </div>
+
+          <!-- LOGIC -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#4a5568"></div>
+              <h3>❓ Logic</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">if <div class="ref-oval">condition</div> do</div></div>
+              <div class="ref-info"><div class="ref-title">If / If-Else</div><div class="ref-desc">Runs blocks inside only when a condition is true. The if-else version also runs a different set of blocks when the condition is false.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568"><div class="ref-oval">A</div> = <div class="ref-oval">B</div></div></div>
+              <div class="ref-info"><div class="ref-title">Compare</div><div class="ref-desc">Compares two values. Returns true or false. Options: = (equal), ≠ (not equal), &lt; (less than), &gt; (greater than), ≤, ≥. Place inside an If block.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568"><div class="ref-oval">A</div> and <div class="ref-oval">B</div></div></div>
+              <div class="ref-info"><div class="ref-title">Logic Operation</div><div class="ref-desc">Combines two true/false values. "and" is true only if both are true. "or" is true if either one is true. Use to check multiple conditions at once.</div></div>
+            </div>
+          </div>
+
+          <!-- MATH -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#4a5568"></div>
+              <h3>🔢 Math</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568"><div class="ref-oval">0</div></div></div>
+              <div class="ref-info"><div class="ref-title">Number</div><div class="ref-desc">A number value block. Click the number to type any value. Place this in any block input that expects a number.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568"><div class="ref-oval">A</div> + <div class="ref-oval">B</div></div></div>
+              <div class="ref-info"><div class="ref-title">Arithmetic</div><div class="ref-desc">Performs a math operation on two numbers. Options: + − × ÷ and ^ (power). The result can be plugged into any number input slot.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">constrain <div class="ref-oval">n</div> low <div class="ref-oval">0</div> high <div class="ref-oval">100</div></div></div>
+              <div class="ref-info"><div class="ref-title">Constrain</div><div class="ref-desc">Clamps a number so it stays within a minimum and maximum range. Useful for keeping sensor values or motor speeds within safe limits.</div></div>
+            </div>
+          </div>
+
+          <!-- VARIABLES -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#4a5568"></div>
+              <h3>📝 Variables</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">set <div class="ref-oval">myVar</div> to <div class="ref-oval">0</div></div></div>
+              <div class="ref-info"><div class="ref-title">Set Variable</div><div class="ref-desc">Creates or updates a variable with a value. Click "Create variable" in the Variables category to name your variable, then use Set to give it a value.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">change <div class="ref-oval">myVar</div> by <div class="ref-oval">1</div></div></div>
+              <div class="ref-info"><div class="ref-title">Change Variable</div><div class="ref-desc">Adds a number to the current value of a variable. Use to count up, count down, or accumulate a total.</div></div>
+            </div>
+          </div>
+
+          <!-- FUNCTIONS -->
+          <div class="ref-cat">
+            <div class="ref-cat-header">
+              <div class="ref-cat-dot" style="background:#4a5568"></div>
+              <h3>🔧 Functions</h3>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">to <div class="ref-oval">myFunction</div></div></div>
+              <div class="ref-info"><div class="ref-title">Define Function</div><div class="ref-desc">Creates a reusable group of blocks with a name you choose. Drag blocks inside the function definition. Call the function by name anywhere in your program to run those blocks.</div></div>
+            </div>
+          </div>
+
         </div>
       </div>
-
     </div>
   </div>
 </div>
@@ -630,155 +776,212 @@
 <!-- BOTTOM BAR -->
 <div id="bottom-bar">
   <div class="bottom-item highlight" id="blockCount">
-    <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="1" width="4" height="4" rx="0.5"/><rect x="7" y="1" width="4" height="4" rx="0.5"/><rect x="1" y="7" width="4" height="4" rx="0.5"/><rect x="7" y="7" width="4" height="4" rx="0.5"/></svg>
-    0 blocks
+    <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="1" width="4" height="4" rx=".5"/><rect x="7" y="1" width="4" height="4" rx=".5"/><rect x="1" y="7" width="4" height="4" rx=".5"/><rect x="7" y="7" width="4" height="4" rx=".5"/></svg>0 blocks
   </div>
   <div class="bottom-item" id="lineCount">
-    <svg viewBox="0 0 12 12" fill="currentColor"><path d="M1 2h10M1 5h10M1 8h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-    0 lines
-  </div>
-  <div class="bottom-item">
-    <svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M6 3v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-    Agri Controller v1.0
+    <svg viewBox="0 0 12 12" fill="currentColor"><path d="M1 2h10M1 5h10M1 8h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>0 lines
   </div>
   <div class="bottom-item" style="margin-left:auto">
-    <svg viewBox="0 0 12 12" fill="currentColor"><path d="M6 1a5 5 0 100 10A5 5 0 006 1zm.5 7.5h-1v-4h1v4zm0-5h-1v-1h1v1z"/></svg>
-    ESP32-S3 · MicroPython 1.23
+    <svg viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2" fill="none"/><path d="M6 3v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    Ag Controller v1.0 · ESP32-S3 · MicroPython
   </div>
 </div>
 
 <!-- Connect Modal -->
 <div class="modal-overlay" id="connectModal" onclick="if(event.target===this)closeConnectModal()">
   <div class="modal">
-    <h2>Connect to Agri Controller</h2>
-    <p>Choose a connection method to communicate with your robot controller.</p>
+    <h2>Connect to Ag Controller</h2>
+    <p>Choose a connection method.</p>
     <div class="connect-options">
       <div class="connect-card" onclick="connectUSB()">
-        <svg viewBox="0 0 32 32" fill="none">
-          <path d="M16 4v6M13 7h6M10 10h12v8H10z" stroke="#2a7d42" stroke-width="2" stroke-linecap="round"/>
-          <path d="M13 18v4M19 18v4M11 22h10" stroke="#2a7d42" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <h4>USB / Serial</h4>
-        <p>Direct cable connection via WebSerial API</p>
+        <svg viewBox="0 0 32 32" fill="none"><path d="M16 4v6M13 7h6M10 10h12v8H10z" stroke="#2a7d42" stroke-width="2" stroke-linecap="round"/><path d="M13 18v4M19 18v4M11 22h10" stroke="#2a7d42" stroke-width="2" stroke-linecap="round"/></svg>
+        <h4>USB / Serial</h4><p>WebSerial API (Chrome/Edge)</p>
       </div>
       <div class="connect-card" onclick="connectBluetooth()">
-        <svg viewBox="0 0 32 32" fill="none">
-          <path d="M16 8l6 5-6 5v-10zM16 18l6 5-6 5v-10z" stroke="#3a7ec2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M10 13l6 5M10 19l6-5" stroke="#3a7ec2" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        <h4>Bluetooth</h4>
-        <p>Wireless via Web Bluetooth API</p>
+        <svg viewBox="0 0 32 32" fill="none"><path d="M16 8l6 5-6 5v-10zM16 18l6 5-6 5v-10z" stroke="#3a7ec2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 13l6 5M10 19l6-5" stroke="#3a7ec2" stroke-width="2" stroke-linecap="round"/></svg>
+        <h4>Bluetooth</h4><p>Web Bluetooth API</p>
       </div>
     </div>
-    <div class="modal-btns">
-      <button class="btn-secondary" onclick="closeConnectModal()">Cancel</button>
-    </div>
+    <div class="modal-btns"><button class="btn-secondary" onclick="closeConnectModal()">Cancel</button></div>
   </div>
 </div>
 
-<!-- Toast -->
+<!-- Save Dialog -->
+<div class="modal-overlay" id="saveModal" onclick="if(event.target===this)closeSaveModal()">
+  <div class="modal">
+    <h2 id="saveModalTitle">Save File</h2>
+    <p id="saveModalDesc">Enter a filename:</p>
+    <input id="saveFilename" type="text" style="
+      width:100%;box-sizing:border-box;padding:9px 12px;
+      border:2px solid var(--border);border-radius:6px;
+      font-family:'Source Code Pro',monospace;font-size:.88rem;
+      color:var(--text-dark);background:#fff;margin-top:4px;
+      outline:none;transition:border-color .15s;"
+      onkeydown="if(event.key==='Enter')confirmSave()"
+      onfocus="this.style.borderColor='var(--green-mid)'"
+      onblur="this.style.borderColor='var(--border)'">
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeSaveModal()">Cancel</button>
+      <button class="btn-primary" onclick="confirmSave()">Save</button>
+    </div>
+  </div>
+</div>
 <div id="toast"></div>
+<input type="file" id="fileInput" accept=".xml" style="display:none" onchange="loadFile(event)">
 
-<!-- Hidden file input -->
-<input type="file" id="fileInput" accept=".xml,.agri" style="display:none" onchange="loadFile(event)">
-
+<!-- ═══════════════════════════════════════════════════════
+     TOOLBOX
+═══════════════════════════════════════════════════════ -->
 <xml id="toolbox" style="display:none">
+
   <category name="🌾 Controller" colour="#2a7d42">
-    <block type="agri_begin"></block>
-    <block type="agri_end"></block>
-    <block type="agri_wait">
+    <block type="ag_begin"></block>
+    <block type="ag_end"></block>
+    <block type="ag_wait">
       <value name="MS"><shadow type="math_number"><field name="NUM">1000</field></shadow></value>
     </block>
+    <block type="ag_print">
+      <value name="VALUE"><shadow type="text"><field name="TEXT">Hello</field></shadow></value>
+    </block>
   </category>
+
+  <category name="🤖 Movement" colour="#0d7377">
+    <!-- Configuration -->
+    <block type="mv_set_motors"></block>
+    <block type="mv_set_speed">
+      <value name="SPEED"><shadow type="math_number"><field name="NUM">50</field></shadow></value>
+    </block>
+    <block type="mv_set_wheel_diam">
+      <value name="DIAM"><shadow type="math_number"><field name="NUM">80</field></shadow></value>
+    </block>
+    <block type="mv_set_wheelbase">
+      <value name="WB"><shadow type="math_number"><field name="NUM">250</field></shadow></value>
+    </block>
+    <!-- Actions -->
+    <block type="mv_move_for">
+      <value name="DIST"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
+    </block>
+    <block type="mv_start"></block>
+    <block type="mv_move_steer">
+      <value name="STEER"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+      <value name="DIST"><shadow type="math_number"><field name="NUM">20</field></shadow></value>
+    </block>
+    <block type="mv_start_steer">
+      <value name="STEER"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+    </block>
+    <block type="mv_turn">
+      <value name="DEG"><shadow type="math_number"><field name="NUM">90</field></shadow></value>
+    </block>
+    <block type="mv_stop"></block>
+  </category>
+
   <category name="⚙️ Motors" colour="#8B4513">
-    <block type="agri_set_motor_power">
-      <value name="CHANNEL"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-      <value name="POWER"><shadow type="math_number"><field name="NUM">75</field></shadow></value>
+    <block type="ag_set_motor_speed">
+      <value name="MOTOR"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+      <value name="SPEED"><shadow type="math_number"><field name="NUM">75</field></shadow></value>
     </block>
-    <block type="agri_set_motor_powers">
-      <value name="P1"><shadow type="math_number"><field name="NUM">75</field></shadow></value>
-      <value name="P2"><shadow type="math_number"><field name="NUM">75</field></shadow></value>
-      <value name="P3"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
-      <value name="P4"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+    <block type="ag_set_wheel_rotations">
+      <value name="MOTOR"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+      <value name="ROTATIONS"><shadow type="math_number"><field name="NUM">3</field></shadow></value>
+      <value name="SPEED"><shadow type="math_number"><field name="NUM">60</field></shadow></value>
     </block>
-    <block type="agri_set_motor_speed">
-      <value name="CHANNEL"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-      <value name="SPEED"><shadow type="math_number"><field name="NUM">360</field></shadow></value>
+    <block type="ag_set_motor_stop">
+      <value name="MOTOR"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
-    <block type="agri_set_motor_target">
-      <value name="CHANNEL"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-      <value name="SPEED"><shadow type="math_number"><field name="NUM">360</field></shadow></value>
-      <value name="TARGET"><shadow type="math_number"><field name="NUM">720</field></shadow></value>
+    <block type="ag_set_motor_invert">
+      <value name="MOTOR"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
-    <block type="agri_stop_motor">
-      <value name="CHANNEL"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+    <block type="ag_get_encoder_count">
+      <value name="ENCODER"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
-    <block type="agri_stop_all_motors"></block>
-    <block type="agri_set_motor_brake">
-      <value name="CHANNEL"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-    </block>
-    <block type="agri_reset_encoder">
-      <value name="CHANNEL"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-    </block>
-    <block type="agri_get_encoder_count">
-      <value name="CHANNEL"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-    </block>
-    <block type="agri_get_encoder_degrees">
-      <value name="CHANNEL"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+    <block type="ag_reset_encoder">
+      <value name="ENCODER"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
   </category>
+
   <category name="🔩 Servos" colour="#A0522D">
-    <block type="agri_set_servo_position">
-      <value name="CHANNEL"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+    <block type="ag_set_servo_position">
+      <value name="SERVO"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
       <value name="ANGLE"><shadow type="math_number"><field name="NUM">90</field></shadow></value>
     </block>
-    <block type="agri_disable_servo">
-      <value name="CHANNEL"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+    <block type="ag_set_servo_speed">
+      <value name="SERVO"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+      <value name="SPEED"><shadow type="math_number"><field name="NUM">50</field></shadow></value>
+    </block>
+    <block type="ag_set_servo_invert">
+      <value name="SERVO"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
   </category>
+
   <category name="📡 Sensors" colour="#1565a8">
-    <block type="agri_read_ultrasonic">
+    <block type="ag_get_sonic">
       <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
-    <block type="agri_read_line_sensor">
+    <block type="ag_get_tof">
       <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
-    <block type="agri_read_analog">
+    <block type="ag_get_line">
       <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
-    <block type="agri_read_digital">
+    <block type="ag_get_color">
+      <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+    </block>
+    <block type="ag_color_is">
+      <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+    </block>
+    <block type="ag_get_th_temp">
+      <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+    </block>
+    <block type="ag_get_th_humid">
+      <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+    </block>
+    <block type="ag_get_rotary">
+      <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+    </block>
+    <block type="ag_get_analog">
+      <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
+    </block>
+    <block type="ag_get_digital">
       <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
     </block>
   </category>
-  <category name="🌱 Agri Sensors" colour="#4a7c2e">
-    <block type="agri_read_soil_moisture">
-      <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-    </block>
-    <block type="agri_read_light">
-      <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-    </block>
-    <block type="agri_read_temperature">
-      <value name="PORT"><shadow type="math_number"><field name="NUM">1</field></shadow></value>
-    </block>
+
+  <category name="🎮 Buttons" colour="#5b3fa5">
+    <block type="ag_button_pressed"></block>
   </category>
-  <category name="💡 Lights" colour="#b8860b">
-    <block type="agri_set_led">
+
+  <category name="💡 Pixels" colour="#b8860b">
+    <block type="ag_pixel_color">
       <value name="R"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
-      <value name="G"><shadow type="math_number"><field name="NUM">255</field></shadow></value>
-      <value name="B"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
+      <value name="G"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
+      <value name="B"><shadow type="math_number"><field name="NUM">50</field></shadow></value>
     </block>
-    <block type="agri_led_off"></block>
+    <block type="ag_pixel_hex">
+      <value name="HEX"><shadow type="text"><field name="TEXT">#00c832</field></shadow></value>
+      <value name="BRIGHT"><shadow type="math_number"><field name="NUM">75</field></shadow></value>
+    </block>
+    <block type="ag_pixel_off"></block>
+    <block type="ag_pixel_blink">
+      <value name="HEX"><shadow type="text"><field name="TEXT">#ff8800</field></shadow></value>
+      <value name="LOOPS"><shadow type="math_number"><field name="NUM">3</field></shadow></value>
+    </block>
+    <block type="ag_pixel_animation">
+      <value name="DURATION"><shadow type="math_number"><field name="NUM">3</field></shadow></value>
+    </block>
   </category>
+
   <category name="🔊 Sound" colour="#7b3f8c">
-    <block type="agri_play_tone">
+    <block type="ag_set_tone">
       <value name="FREQ"><shadow type="math_number"><field name="NUM">440</field></shadow></value>
-      <value name="DUR"><shadow type="math_number"><field name="NUM">500</field></shadow></value>
+      <value name="DUR"><shadow type="math_number"><field name="NUM">0.5</field></shadow></value>
     </block>
-    <block type="agri_play_note">
-      <value name="DUR"><shadow type="math_number"><field name="NUM">500</field></shadow></value>
+    <block type="ag_set_note">
+      <value name="DUR"><shadow type="math_number"><field name="NUM">0.5</field></shadow></value>
     </block>
-    <block type="agri_beep"></block>
+    <block type="ag_sound_effect"></block>
+    <block type="ag_sound_off"></block>
   </category>
+
   <sep></sep>
   <category name="🔁 Loops" colour="#5ba55b">
     <block type="controls_repeat_ext">
@@ -802,431 +1005,438 @@
       <value name="LOW"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
       <value name="HIGH"><shadow type="math_number"><field name="NUM">100</field></shadow></value>
     </block>
-    <block type="math_map">
-      <value name="FROM_MIN"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
-      <value name="FROM_MAX"><shadow type="math_number"><field name="NUM">4095</field></shadow></value>
-      <value name="TO_MIN"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
-      <value name="TO_MAX"><shadow type="math_number"><field name="NUM">100</field></shadow></value>
-    </block>
   </category>
   <category name="📝 Variables" colour="#a55b5b" custom="VARIABLE"></category>
   <category name="🔧 Functions" colour="#855ba5" custom="PROCEDURE"></category>
 </xml>
 
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
 <script>
-// ══════════════════════════════════════════════
-//   CUSTOM BLOCK DEFINITIONS
-// ══════════════════════════════════════════════
+// ── Color constants ──────────────────────────────────────────────────
+const C_CTRL   = '#2a7d42';
+const C_MOTOR  = '#8B4513';
+const C_SERVO  = '#A0522D';
+const C_SENSOR = '#1565a8';
+const C_BTN    = '#5b3fa5';
+const C_PIXEL  = '#b8860b';
+const C_SOUND  = '#7b3f8c';
 
-const AGRI_COLOR    = '#2a7d42';
-const MOTOR_COLOR   = '#8B4513';
-const SERVO_COLOR   = '#A0522D';
-const SENSOR_COLOR  = '#1565a8';
-const AGSENS_COLOR  = '#4a7c2e';
-const LIGHT_COLOR   = '#b8860b';
-const SOUND_COLOR   = '#7b3f8c';
+// ── Helper: dropdown field ───────────────────────────────────────────
+function dd(pairs) { return new Blockly.FieldDropdown(pairs); }
 
-// ── Controller blocks ──
-Blockly.Blocks['agri_begin'] = {
-  init() {
-    this.appendDummyInput()
-        .appendField('🌾 Agri Begin');
-    this.setNextStatement(true, null);
-    this.setColour(AGRI_COLOR);
-    this.setTooltip('Initialize the Agri controller and wait for button press.');
-  }
-};
-Blockly.Blocks['agri_end'] = {
-  init() {
-    this.appendDummyInput().appendField('🌾 Agri End');
-    this.setPreviousStatement(true, null);
-    this.setColour(AGRI_COLOR);
-    this.setTooltip('End program and restart.');
-  }
-};
-Blockly.Blocks['agri_wait'] = {
-  init() {
-    this.appendValueInput('MS').setCheck('Number').appendField('⏱ Wait (ms)');
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(AGRI_COLOR);
-    this.setTooltip('Pause for a number of milliseconds.');
-  }
-};
+// ════════════════════════════════════════════════════════════════════
+//  BLOCK DEFINITIONS
+// ════════════════════════════════════════════════════════════════════
 
-// ── Motor blocks ──
-Blockly.Blocks['agri_set_motor_power'] = {
-  init() {
-    this.appendValueInput('CHANNEL').setCheck('Number').appendField('⚙ Set Motor');
-    this.appendValueInput('POWER').setCheck('Number').appendField('Power %');
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(MOTOR_COLOR);
-    this.setTooltip('Set motor power –100 to 100.');
-  }
-};
-Blockly.Blocks['agri_set_motor_powers'] = {
-  init() {
-    this.appendDummyInput().appendField('⚙ Set All Motor Powers');
-    this.appendValueInput('P1').setCheck('Number').appendField('Motor 1 %').setAlign(Blockly.ALIGN_RIGHT);
-    this.appendValueInput('P2').setCheck('Number').appendField('Motor 2 %').setAlign(Blockly.ALIGN_RIGHT);
-    this.appendValueInput('P3').setCheck('Number').appendField('Motor 3 %').setAlign(Blockly.ALIGN_RIGHT);
-    this.appendValueInput('P4').setCheck('Number').appendField('Motor 4 %').setAlign(Blockly.ALIGN_RIGHT);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(MOTOR_COLOR);
-  }
-};
-Blockly.Blocks['agri_set_motor_speed'] = {
-  init() {
-    this.appendValueInput('CHANNEL').setCheck('Number').appendField('⚙ Set Motor');
-    this.appendValueInput('SPEED').setCheck('Number').appendField('Speed (deg/s)');
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(MOTOR_COLOR);
-  }
-};
-Blockly.Blocks['agri_set_motor_target'] = {
-  init() {
-    this.appendValueInput('CHANNEL').setCheck('Number').appendField('⚙ Motor');
-    this.appendValueInput('SPEED').setCheck('Number').appendField('Speed');
-    this.appendValueInput('TARGET').setCheck('Number').appendField('→ Target counts');
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(MOTOR_COLOR);
-    this.setTooltip('Move motor to encoder target at given speed.');
-  }
-};
-Blockly.Blocks['agri_stop_motor'] = {
-  init() {
-    this.appendValueInput('CHANNEL').setCheck('Number').appendField('⚙ Stop Motor');
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(MOTOR_COLOR);
-  }
-};
-Blockly.Blocks['agri_stop_all_motors'] = {
-  init() {
-    this.appendDummyInput().appendField('⚙ Stop All Motors');
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(MOTOR_COLOR);
-  }
-};
-Blockly.Blocks['agri_set_motor_brake'] = {
-  init() {
-    this.appendValueInput('CHANNEL').setCheck('Number').appendField('⚙ Motor');
-    this.appendDummyInput().appendField('Brake').appendField(new Blockly.FieldDropdown([['Brake','True'],['Coast','False']]), 'MODE');
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(MOTOR_COLOR);
-  }
-};
-Blockly.Blocks['agri_reset_encoder'] = {
-  init() {
-    this.appendValueInput('CHANNEL').setCheck('Number').appendField('⚙ Reset Encoder');
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(MOTOR_COLOR);
-  }
-};
-Blockly.Blocks['agri_get_encoder_count'] = {
-  init() {
-    this.appendValueInput('CHANNEL').setCheck('Number').appendField('Encoder Count of Motor');
-    this.setOutput(true, 'Number');
-    this.setColour(MOTOR_COLOR);
-  }
-};
-Blockly.Blocks['agri_get_encoder_degrees'] = {
-  init() {
-    this.appendValueInput('CHANNEL').setCheck('Number').appendField('Encoder Degrees of Motor');
-    this.setOutput(true, 'Number');
-    this.setColour(MOTOR_COLOR);
-  }
-};
+// CONTROLLER ─────────────────────────────────────────────────────────
+Blockly.Blocks['ag_begin'] = { init() {
+  this.appendDummyInput().appendField('🌾 Ag Begin');
+  this.setNextStatement(true); this.setColour(C_CTRL);
+  this.setTooltip('Initialize controller and wait for start button.');
+}};
+Blockly.Blocks['ag_end'] = { init() {
+  this.appendDummyInput().appendField('🌾 Ag End');
+  this.setPreviousStatement(true); this.setColour(C_CTRL);
+  this.setTooltip('Stop program and restart.');
+}};
+Blockly.Blocks['ag_wait'] = { init() {
+  this.appendValueInput('MS').setCheck('Number').appendField('⏱ Wait (ms)');
+  this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(C_CTRL);
+}};
+Blockly.Blocks['ag_print'] = { init() {
+  this.appendValueInput('VALUE').appendField('🖨 Print');
+  this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(C_CTRL);
+  this.setTooltip('Print a value to the serial console.');
+}};
 
-// ── Servo blocks ──
-Blockly.Blocks['agri_set_servo_position'] = {
-  init() {
-    this.appendValueInput('CHANNEL').setCheck('Number').appendField('🔩 Servo');
-    this.appendValueInput('ANGLE').setCheck('Number').appendField('Position °');
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(SERVO_COLOR);
-    this.setTooltip('Set servo channel to angle 0–180°.');
-  }
-};
-Blockly.Blocks['agri_disable_servo'] = {
-  init() {
-    this.appendValueInput('CHANNEL').setCheck('Number').appendField('🔩 Disable Servo');
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(SERVO_COLOR);
-  }
-};
+// MOTORS ─────────────────────────────────────────────────────────────
+Blockly.Blocks['ag_set_motor_speed'] = { init() {
+  this.appendValueInput('MOTOR').setCheck('Number').appendField('⚙ Motor');
+  this.appendValueInput('SPEED').setCheck('Number').appendField('Speed %');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOTOR);
+}};
+Blockly.Blocks['ag_set_wheel_rotations'] = { init() {
+  this.appendValueInput('MOTOR').setCheck('Number').appendField('⚙ Motor');
+  this.appendValueInput('ROTATIONS').setCheck('Number').appendField('Rotations');
+  this.appendValueInput('SPEED').setCheck('Number').appendField('at Speed %');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOTOR); this.setTooltip('Turn motor a specific number of wheel rotations.');
+}};
+Blockly.Blocks['ag_set_motor_stop'] = { init() {
+  this.appendValueInput('MOTOR').setCheck('Number').appendField('⚙ Stop Motor');
+  this.appendDummyInput().appendField(dd([['Brake','brake'],['Coast','coast']]), 'MODE');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOTOR);
+}};
+Blockly.Blocks['ag_set_motor_invert'] = { init() {
+  this.appendValueInput('MOTOR').setCheck('Number').appendField('⚙ Motor');
+  this.appendDummyInput().appendField('Invert').appendField(dd([['Yes','True'],['No','False']]), 'INVERT');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOTOR);
+}};
+Blockly.Blocks['ag_get_encoder_count'] = { init() {
+  this.appendValueInput('ENCODER').setCheck('Number').appendField('Encoder Count ch');
+  this.setOutput(true, 'Number'); this.setColour(C_MOTOR);
+}};
+Blockly.Blocks['ag_reset_encoder'] = { init() {
+  this.appendValueInput('ENCODER').setCheck('Number').appendField('⚙ Reset Encoder');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOTOR);
+}};
 
-// ── Sensor blocks ──
-Blockly.Blocks['agri_read_ultrasonic'] = {
-  init() {
-    this.appendValueInput('PORT').setCheck('Number').appendField('📡 Ultrasonic (cm) port');
-    this.setOutput(true, 'Number');
-    this.setColour(SENSOR_COLOR);
-  }
-};
-Blockly.Blocks['agri_read_line_sensor'] = {
-  init() {
-    this.appendValueInput('PORT').setCheck('Number').appendField('📡 Line Sensor port');
-    this.setOutput(true, 'Number');
-    this.setColour(SENSOR_COLOR);
-  }
-};
-Blockly.Blocks['agri_read_analog'] = {
-  init() {
-    this.appendValueInput('PORT').setCheck('Number').appendField('📡 Analog Read port');
-    this.setOutput(true, 'Number');
-    this.setColour(SENSOR_COLOR);
-  }
-};
-Blockly.Blocks['agri_read_digital'] = {
-  init() {
-    this.appendValueInput('PORT').setCheck('Number').appendField('📡 Digital Read port');
-    this.setOutput(true, 'Number');
-    this.setColour(SENSOR_COLOR);
-  }
-};
+// SERVOS ─────────────────────────────────────────────────────────────
+Blockly.Blocks['ag_set_servo_position'] = { init() {
+  this.appendValueInput('SERVO').setCheck('Number').appendField('🔩 Servo');
+  this.appendValueInput('ANGLE').setCheck('Number').appendField('Position °');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_SERVO);
+}};
+Blockly.Blocks['ag_set_servo_speed'] = { init() {
+  this.appendValueInput('SERVO').setCheck('Number').appendField('🔩 Servo');
+  this.appendValueInput('SPEED').setCheck('Number').appendField('Speed %');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_SERVO);
+}};
+Blockly.Blocks['ag_set_servo_invert'] = { init() {
+  this.appendValueInput('SERVO').setCheck('Number').appendField('🔩 Servo');
+  this.appendDummyInput().appendField('Invert').appendField(dd([['Yes','True'],['No','False']]), 'INVERT');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_SERVO);
+  this.setTooltip('Reverse the direction of a servo. servo: 1-4.');
+}};
 
-// ── Agri sensor blocks ──
-Blockly.Blocks['agri_read_soil_moisture'] = {
-  init() {
-    this.appendValueInput('PORT').setCheck('Number').appendField('🌱 Soil Moisture % port');
-    this.setOutput(true, 'Number');
-    this.setColour(AGSENS_COLOR);
-  }
-};
-Blockly.Blocks['agri_read_light'] = {
-  init() {
-    this.appendValueInput('PORT').setCheck('Number').appendField('🌱 Light Level port');
-    this.setOutput(true, 'Number');
-    this.setColour(AGSENS_COLOR);
-  }
-};
-Blockly.Blocks['agri_read_temperature'] = {
-  init() {
-    this.appendValueInput('PORT').setCheck('Number').appendField('🌱 Temperature °C port');
-    this.setOutput(true, 'Number');
-    this.setColour(AGSENS_COLOR);
-  }
-};
+// SENSORS ────────────────────────────────────────────────────────────
+Blockly.Blocks['ag_get_sonic'] = { init() {
+  this.appendValueInput('PORT').setCheck('Number').appendField('📡 Sonic (cm) port');
+  this.setOutput(true,'Number'); this.setColour(C_SENSOR);
+}};
+Blockly.Blocks['ag_get_tof'] = { init() {
+  this.appendValueInput('PORT').setCheck('Number').appendField('📡 TOF (mm) port');
+  this.setOutput(true,'Number'); this.setColour(C_SENSOR);
+}};
+Blockly.Blocks['ag_get_line'] = { init() {
+  this.appendValueInput('PORT').setCheck('Number').appendField('📡 Line Sensor port');
+  this.setOutput(true,'Number'); this.setColour(C_SENSOR);
+}};
+Blockly.Blocks['ag_get_color'] = { init() {
+  this.appendValueInput('PORT').setCheck('Number').appendField('📡 Color');
+  this.appendDummyInput().appendField(dd([['Red','red'],['Green','green'],['Blue','blue'],
+    ['Ambient','ambient']]), 'CH').appendField('port');
+  this.setInputsInline(true); this.setOutput(true,'Number'); this.setColour(C_SENSOR);
+}};
+Blockly.Blocks['ag_color_is'] = { init() {
+  this.appendValueInput('PORT').setCheck('Number').appendField('📡 Color port');
+  this.appendDummyInput().appendField('is')
+    .appendField(dd([['Red','red'],['Green','green'],['Blue','blue'],['Neutral','neutral']]), 'COLOR');
+  this.setInputsInline(true); this.setOutput(true,'Boolean'); this.setColour(C_SENSOR);
+}};
+Blockly.Blocks['ag_get_th_temp'] = { init() {
+  this.appendValueInput('PORT').setCheck('Number').appendField('🌡 Temp');
+  this.appendDummyInput().appendField(dd([['°C','c'],['°F','f']]), 'UNIT').appendField('port');
+  this.setInputsInline(true); this.setOutput(true,'Number'); this.setColour(C_SENSOR);
+}};
+Blockly.Blocks['ag_get_th_humid'] = { init() {
+  this.appendValueInput('PORT').setCheck('Number').appendField('💧 Humidity % port');
+  this.setOutput(true,'Number'); this.setColour(C_SENSOR);
+}};
+Blockly.Blocks['ag_get_rotary'] = { init() {
+  this.appendValueInput('PORT').setCheck('Number').appendField('🎛 Rotary (0-100) port');
+  this.setOutput(true,'Number'); this.setColour(C_SENSOR);
+}};
+Blockly.Blocks['ag_get_analog'] = { init() {
+  this.appendValueInput('PORT').setCheck('Number').appendField('📡 Analog (0-4095) port');
+  this.setOutput(true,'Number'); this.setColour(C_SENSOR);
+}};
+Blockly.Blocks['ag_get_digital'] = { init() {
+  this.appendValueInput('PORT').setCheck('Number').appendField('📡 Digital (0/1) port');
+  this.setOutput(true,'Number'); this.setColour(C_SENSOR);
+}};
 
-// ── Light blocks ──
-Blockly.Blocks['agri_set_led'] = {
-  init() {
-    this.appendDummyInput().appendField('💡 Set LED');
-    this.appendValueInput('R').setCheck('Number').appendField('R').setAlign(Blockly.ALIGN_RIGHT);
-    this.appendValueInput('G').setCheck('Number').appendField('G').setAlign(Blockly.ALIGN_RIGHT);
-    this.appendValueInput('B').setCheck('Number').appendField('B').setAlign(Blockly.ALIGN_RIGHT);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(LIGHT_COLOR);
-  }
-};
-Blockly.Blocks['agri_led_off'] = {
-  init() {
-    this.appendDummyInput().appendField('💡 LED Off');
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(LIGHT_COLOR);
-  }
-};
+// BUTTONS ────────────────────────────────────────────────────────────
+Blockly.Blocks['ag_button_pressed'] = { init() {
+  this.appendDummyInput().appendField('🎮 Button')
+    .appendField(dd([['Start','start'],['A','a'],['B','b'],['C','c'],['D','d']]), 'BTN')
+    .appendField('pressed');
+  this.setOutput(true,'Boolean'); this.setColour(C_BTN);
+}};
 
-// ── Sound blocks ──
-Blockly.Blocks['agri_play_tone'] = {
-  init() {
-    this.appendValueInput('FREQ').setCheck('Number').appendField('🔊 Play Tone Hz');
-    this.appendValueInput('DUR').setCheck('Number').appendField('for ms');
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(SOUND_COLOR);
-  }
-};
-Blockly.Blocks['agri_play_note'] = {
-  init() {
-    this.appendDummyInput()
-        .appendField('🔊 Play Note')
-        .appendField(new Blockly.FieldDropdown([
-          ['C4','C4'],['D4','D4'],['E4','E4'],['F4','F4'],
-          ['G4','G4'],['A4','A4'],['B4','B4'],
-          ['C5','C5'],['G3','G3']
-        ]), 'NOTE');
-    this.appendValueInput('DUR').setCheck('Number').appendField('for ms');
-    this.setInputsInline(true);
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(SOUND_COLOR);
-  }
-};
-Blockly.Blocks['agri_beep'] = {
-  init() {
-    this.appendDummyInput().appendField('🔊 Beep');
-    this.setPreviousStatement(true, null); this.setNextStatement(true, null);
-    this.setColour(SOUND_COLOR);
-  }
-};
+// PIXELS ─────────────────────────────────────────────────────────────
+Blockly.Blocks['ag_pixel_color'] = { init() {
+  this.appendDummyInput().appendField('💡 Pixel')
+    .appendField(dd([['A','A'],['B','B'],['C','C'],['D','D'],['All (ABCD)','ABCD']]), 'PIX');
+  this.appendValueInput('R').setCheck('Number').appendField('R').setAlign(Blockly.ALIGN_RIGHT);
+  this.appendValueInput('G').setCheck('Number').appendField('G').setAlign(Blockly.ALIGN_RIGHT);
+  this.appendValueInput('B').setCheck('Number').appendField('B').setAlign(Blockly.ALIGN_RIGHT);
+  this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(C_PIXEL);
+}};
+Blockly.Blocks['ag_pixel_hex'] = { init() {
+  this.appendDummyInput().appendField('💡 Pixel')
+    .appendField(dd([['A','A'],['B','B'],['C','C'],['D','D'],['All (ABCD)','ABCD']]), 'PIX');
+  this.appendValueInput('HEX').appendField('Color (hex)');
+  this.appendValueInput('BRIGHT').setCheck('Number').appendField('Brightness %');
+  this.setInputsInline(false); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_PIXEL);
+}};
+Blockly.Blocks['ag_pixel_off'] = { init() {
+  this.appendDummyInput().appendField('💡 Pixel')
+    .appendField(dd([['A','A'],['B','B'],['C','C'],['D','D'],['All (ABCD)','ABCD']]), 'PIX')
+    .appendField('Off');
+  this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(C_PIXEL);
+}};
+Blockly.Blocks['ag_pixel_blink'] = { init() {
+  this.appendDummyInput().appendField('💡 Blink Pixel')
+    .appendField(dd([['A','A'],['B','B'],['C','C'],['D','D'],['All (ABCD)','ABCD']]), 'PIX');
+  this.appendValueInput('HEX').appendField('Color (hex)');
+  this.appendValueInput('LOOPS').setCheck('Number').appendField('Times');
+  this.setInputsInline(false); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_PIXEL);
+}};
+Blockly.Blocks['ag_pixel_animation'] = { init() {
+  this.appendDummyInput().appendField('💡 Pixel Animation')
+    .appendField(dd([
+      ['Rainbow','rainbow'],['Comet','comet'],['Chase','chase'],['Fade','fade'],
+      ['Sparkle','sparkle'],['Color Cycle','colorcycle'],['Rainbow Comet','rainbow_comet'],
+      ['Rainbow Chase','rainbow_chase'],['Rainbow Sparkle','rainbow_sparkle']
+    ]), 'ANIM');
+  this.appendValueInput('DURATION').setCheck('Number').appendField('for (sec)');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_PIXEL);
+}};
 
-// ── Map block ──
-Blockly.Blocks['math_map'] = {
-  init() {
-    this.appendValueInput('VALUE').setCheck('Number').appendField('map');
-    this.appendValueInput('FROM_MIN').setCheck('Number').appendField('from low');
-    this.appendValueInput('FROM_MAX').setCheck('Number').appendField('high');
-    this.appendValueInput('TO_MIN').setCheck('Number').appendField('to low');
-    this.appendValueInput('TO_MAX').setCheck('Number').appendField('high');
-    this.setInputsInline(true);
-    this.setOutput(true, 'Number');
-    this.setColour('#5b5ba5');
-    this.setTooltip('Re-maps a number from one range to another.');
-  }
-};
+// SOUND ──────────────────────────────────────────────────────────────
+Blockly.Blocks['ag_set_tone'] = { init() {
+  this.appendValueInput('FREQ').setCheck('Number').appendField('🔊 Tone (Hz)');
+  this.appendValueInput('DUR').setCheck('Number').appendField('for (sec)');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_SOUND);
+}};
+Blockly.Blocks['ag_set_note'] = { init() {
+  this.appendDummyInput().appendField('🔊 Play Note')
+    .appendField(dd([
+      ['C4','C4'],['D4','D4'],['E4','E4'],['F4','F4'],['G4','G4'],['A4','A4'],['B4','B4'],
+      ['C5','C5'],['D5','D5'],['E5','E5'],['G3','G3'],['A3','A3'],['C3','C3']
+    ]), 'NOTE');
+  this.appendValueInput('DUR').setCheck('Number').appendField('for (sec)');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_SOUND);
+}};
+Blockly.Blocks['ag_sound_effect'] = { init() {
+  this.appendDummyInput().appendField('🔊 Sound Effect')
+    .appendField(dd([
+      ['Correct','correct'],['Incorrect','incorrect'],['Siren','siren'],
+      ['Whistle Up','whistle_up'],['Whistle Down','whistle_down'],
+      ['Happy Birthday','happy_birthday'],['Super Mario','super_mario'],
+      ['Close Encounters','close_encounters'],['Phaser','phaser'],
+      ['Red Alert','red_alert'],['Whoops','whoops'],['R2D2','r2d2'],
+      ['Up and Down','up_and_down'],['Random','random_sounds'],
+      ['Buzz Buzz Buzz','buzz_buzz_buzz']
+    ]), 'FX');
+  this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(C_SOUND);
+}};
+Blockly.Blocks['ag_sound_off'] = { init() {
+  this.appendDummyInput().appendField('🔊 Sound Off');
+  this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(C_SOUND);
+}};
 
-// ══════════════════════════════════════════════
-//   PYTHON CODE GENERATORS
-// ══════════════════════════════════════════════
 
-// Blockly v10: pythonGenerator lives on Blockly.Python (loaded via python_compressed.js)
+// MOVEMENT ────────────────────────────────────────────────────────────
+const C_MOVE = '#0d7377';
+
+Blockly.Blocks['mv_set_motors'] = { init() {
+  this.appendDummyInput()
+    .appendField('🤖 Set Movement Motors — Left:')
+    .appendField(dd([['1','1'],['2','2'],['3','3'],['4','4']]), 'LEFT')
+    .appendField('Right:')
+    .appendField(dd([['2','2'],['1','1'],['3','3'],['4','4']]), 'RIGHT');
+  this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(C_MOVE);
+  this.setTooltip('Assign motor ports to left and right wheels. Call once at program start.');
+}};
+
+Blockly.Blocks['mv_set_speed'] = { init() {
+  this.appendValueInput('SPEED').setCheck('Number').appendField('🤖 Set Movement Speed to');
+  this.appendDummyInput().appendField('%');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOVE);
+  this.setTooltip('Set the default speed used by all movement blocks. Range: 0-100%.');
+}};
+
+Blockly.Blocks['mv_set_wheel_diam'] = { init() {
+  this.appendValueInput('DIAM').setCheck('Number').appendField('🤖 Set Wheel Diameter to');
+  this.appendDummyInput().appendField('mm');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOVE);
+  this.setTooltip('Set the wheel diameter for accurate distance calculations. Ag robot default: 80mm.');
+}};
+
+Blockly.Blocks['mv_set_wheelbase'] = { init() {
+  this.appendValueInput('WB').setCheck('Number').appendField('🤖 Set Wheelbase to');
+  this.appendDummyInput().appendField('mm');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOVE);
+  this.setTooltip('Set the distance between wheel centers. Used for accurate turn-degree calculations.');
+}};
+
+Blockly.Blocks['mv_move_for'] = { init() {
+  this.appendDummyInput().appendField('🤖 Move')
+    .appendField(dd([['Forward','forward'],['Backward','backward']]), 'DIR');
+  this.appendValueInput('DIST').setCheck('Number').appendField('for');
+  this.appendDummyInput().appendField(dd([['cm','cm'],['rotations','rotations']]), 'UNIT');
+  this.appendDummyInput().appendField('Wait').appendField(dd([['Yes','True'],['No','False']]), 'WAIT');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOVE);
+  this.setTooltip('Move the robot forward or backward a specific distance, then stop.');
+}};
+
+Blockly.Blocks['mv_start'] = { init() {
+  this.appendDummyInput().appendField('🤖 Start Moving')
+    .appendField(dd([['Forward','forward'],['Backward','backward']]), 'DIR');
+  this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(C_MOVE);
+  this.setTooltip('Start moving continuously. Use "Stop Moving" to stop.');
+}};
+
+Blockly.Blocks['mv_move_steer'] = { init() {
+  this.appendDummyInput().appendField('🤖 Move  steering:');
+  this.appendValueInput('STEER').setCheck('Number');
+  this.appendValueInput('DIST').setCheck('Number').appendField('for');
+  this.appendDummyInput().appendField(dd([['cm','cm'],['rotations','rotations']]), 'UNIT');
+  this.appendDummyInput().appendField('Wait').appendField(dd([['Yes','True'],['No','False']]), 'WAIT');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOVE);
+  this.setTooltip('Move forward with steering. 0=straight, +100=pivot right, -100=pivot left.');
+}};
+
+Blockly.Blocks['mv_start_steer'] = { init() {
+  this.appendDummyInput().appendField('🤖 Start Moving  steering:');
+  this.appendValueInput('STEER').setCheck('Number');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOVE);
+  this.setTooltip('Start moving continuously with steering. 0=straight, ±100=pivot. Use "Stop Moving" to stop.');
+}};
+
+Blockly.Blocks['mv_turn'] = { init() {
+  this.appendDummyInput().appendField('🤖 Turn')
+    .appendField(dd([['Right','right'],['Left','left']]), 'DIR');
+  this.appendValueInput('DEG').setCheck('Number');
+  this.appendDummyInput().appendField('degrees');
+  this.appendDummyInput().appendField('Wait').appendField(dd([['Yes','True'],['No','False']]), 'WAIT');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOVE);
+  this.setTooltip('Spin-turn the robot by a number of degrees. Accuracy requires correct wheelbase setting.');
+}};
+
+Blockly.Blocks['mv_stop'] = { init() {
+  this.appendDummyInput().appendField('🤖 Stop Moving');
+  this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(C_MOVE);
+  this.setTooltip('Stop all movement motors.');
+}};
+
+
+// ════════════════════════════════════════════════════════════════════
+//  PYTHON CODE GENERATORS
+// ════════════════════════════════════════════════════════════════════
+
 const gen = Blockly.Python;
-if (!gen) { console.error('Blockly Python generator not loaded!'); }
-if (gen && !gen.forBlock) { gen.forBlock = {}; }
+if (gen && !gen.forBlock) gen.forBlock = {};
 
-gen.forBlock['agri_begin'] = () => 'agri.begin()\n';
-gen.forBlock['agri_end']   = () => 'agri.end()\n';
-gen.forBlock['agri_wait']  = (block, g) => {
-  const ms = g.valueToCode(block,'MS', g.ORDER_NONE)||'1000';
-  return `agri.wait(${ms})\n`;
-};
+// Helper
+function v(block, name, g) {
+  return g.valueToCode(block, name, g.ORDER_NONE) || '0';
+}
 
-gen.forBlock['agri_set_motor_power'] = (block, g) => {
-  const ch  = g.valueToCode(block,'CHANNEL', g.ORDER_NONE)||'1';
-  const pwr = g.valueToCode(block,'POWER',   g.ORDER_NONE)||'0';
-  return `agri.set_motor_power(${ch}, ${pwr})\n`;
-};
-gen.forBlock['agri_set_motor_powers'] = (block, g) => {
-  const p1=g.valueToCode(block,'P1',g.ORDER_NONE)||'0';
-  const p2=g.valueToCode(block,'P2',g.ORDER_NONE)||'0';
-  const p3=g.valueToCode(block,'P3',g.ORDER_NONE)||'0';
-  const p4=g.valueToCode(block,'P4',g.ORDER_NONE)||'0';
-  return `agri.set_motor_powers(${p1}, ${p2}, ${p3}, ${p4})\n`;
-};
-gen.forBlock['agri_set_motor_speed'] = (block, g) => {
-  const ch  = g.valueToCode(block,'CHANNEL', g.ORDER_NONE)||'1';
-  const spd = g.valueToCode(block,'SPEED',   g.ORDER_NONE)||'0';
-  return `agri.set_motor_speed(${ch}, ${spd})\n`;
-};
-gen.forBlock['agri_set_motor_target'] = (block, g) => {
-  const ch  = g.valueToCode(block,'CHANNEL', g.ORDER_NONE)||'1';
-  const spd = g.valueToCode(block,'SPEED',   g.ORDER_NONE)||'360';
-  const tgt = g.valueToCode(block,'TARGET',  g.ORDER_NONE)||'720';
-  return `agri.set_motor_target(${ch}, ${spd}, ${tgt})\n`;
-};
-gen.forBlock['agri_stop_motor'] = (block, g) => {
-  const ch = g.valueToCode(block,'CHANNEL', g.ORDER_NONE)||'1';
-  return `agri.stop_motor(${ch})\n`;
-};
-gen.forBlock['agri_stop_all_motors'] = () => 'agri.stop_all_motors()\n';
-gen.forBlock['agri_set_motor_brake'] = (block, g) => {
-  const ch   = g.valueToCode(block,'CHANNEL', g.ORDER_NONE)||'1';
-  const mode = block.getFieldValue('MODE');
-  return `agri.set_motor_brake(${ch}, ${mode})\n`;
-};
-gen.forBlock['agri_reset_encoder'] = (block, g) => {
-  const ch = g.valueToCode(block,'CHANNEL', g.ORDER_NONE)||'1';
-  return `agri.reset_encoder(${ch})\n`;
-};
-gen.forBlock['agri_get_encoder_count'] = (block, g) => {
-  const ch = g.valueToCode(block,'CHANNEL', g.ORDER_NONE)||'1';
-  return [`agri.get_encoder_count(${ch})`, g.ORDER_FUNCTION_CALL];
-};
-gen.forBlock['agri_get_encoder_degrees'] = (block, g) => {
-  const ch = g.valueToCode(block,'CHANNEL', g.ORDER_NONE)||'1';
-  return [`agri.get_encoder_degrees(${ch})`, g.ORDER_FUNCTION_CALL];
-};
+// Controller
+gen.forBlock['ag_begin'] = () => 'ag.Begin()\n';
+gen.forBlock['ag_end']   = () => 'ag.End()\n';
+gen.forBlock['ag_wait']  = (b,g) => `time.sleep_ms(${v(b,'MS',g)})\n`;
+gen.forBlock['ag_print'] = (b,g) => `print(${g.valueToCode(b,'VALUE',g.ORDER_NONE)||'""'})\n`;
 
-gen.forBlock['agri_set_servo_position'] = (block, g) => {
-  const ch  = g.valueToCode(block,'CHANNEL', g.ORDER_NONE)||'1';
-  const ang = g.valueToCode(block,'ANGLE',   g.ORDER_NONE)||'90';
-  return `agri.set_servo_position(${ch}, ${ang})\n`;
-};
-gen.forBlock['agri_disable_servo'] = (block, g) => {
-  const ch = g.valueToCode(block,'CHANNEL', g.ORDER_NONE)||'1';
-  return `agri.disable_servo(${ch})\n`;
-};
+// Motors
+gen.forBlock['ag_set_motor_speed']    = (b,g) => `ag.setMotorSpeed(${v(b,'MOTOR',g)}, ${v(b,'SPEED',g)})\n`;
+gen.forBlock['ag_set_wheel_rotations']= (b,g) => `ag.setWheelRotations(${v(b,'MOTOR',g)}, ${v(b,'ROTATIONS',g)}, ${v(b,'SPEED',g)})\n`;
+gen.forBlock['ag_set_motor_stop']     = (b,g) => `ag.setMotorStop(${v(b,'MOTOR',g)}, '${b.getFieldValue('MODE')}')\n`;
+gen.forBlock['ag_set_motor_invert']   = (b,g) => `ag.setMotorInvert(${v(b,'MOTOR',g)}, ${b.getFieldValue('INVERT')})\n`;
+gen.forBlock['ag_get_encoder_count']  = (b,g) => [`ag.getEncoderCount(${v(b,'ENCODER',g)})`, g.ORDER_FUNCTION_CALL];
+gen.forBlock['ag_reset_encoder']      = (b,g) => `ag.resetEncoder(${v(b,'ENCODER',g)})\n`;
 
-gen.forBlock['agri_read_ultrasonic'] = (block, g) => {
-  const port = g.valueToCode(block,'PORT', g.ORDER_NONE)||'1';
-  return [`agri.read_ultrasonic(${port})`, g.ORDER_FUNCTION_CALL];
-};
-gen.forBlock['agri_read_line_sensor'] = (block, g) => {
-  const port = g.valueToCode(block,'PORT', g.ORDER_NONE)||'1';
-  return [`agri.read_line_sensor(${port})`, g.ORDER_FUNCTION_CALL];
-};
-gen.forBlock['agri_read_analog'] = (block, g) => {
-  const port = g.valueToCode(block,'PORT', g.ORDER_NONE)||'1';
-  return [`agri.read_analog(${port})`, g.ORDER_FUNCTION_CALL];
-};
-gen.forBlock['agri_read_digital'] = (block, g) => {
-  const port = g.valueToCode(block,'PORT', g.ORDER_NONE)||'1';
-  return [`agri.read_digital(${port})`, g.ORDER_FUNCTION_CALL];
-};
-gen.forBlock['agri_read_soil_moisture'] = (block, g) => {
-  const port = g.valueToCode(block,'PORT', g.ORDER_NONE)||'1';
-  return [`agri.read_soil_moisture(${port})`, g.ORDER_FUNCTION_CALL];
-};
-gen.forBlock['agri_read_light'] = (block, g) => {
-  const port = g.valueToCode(block,'PORT', g.ORDER_NONE)||'1';
-  return [`agri.read_light(${port})`, g.ORDER_FUNCTION_CALL];
-};
-gen.forBlock['agri_read_temperature'] = (block, g) => {
-  const port = g.valueToCode(block,'PORT', g.ORDER_NONE)||'1';
-  return [`agri.read_temperature(${port})`, g.ORDER_FUNCTION_CALL];
-};
+// Servos
+gen.forBlock['ag_set_servo_position'] = (b,g) => `ag.setServoPosition(${v(b,'SERVO',g)}, ${v(b,'ANGLE',g)})\n`;
+gen.forBlock['ag_set_servo_speed']    = (b,g) => `ag.setServoSpeed(${v(b,'SERVO',g)}, ${v(b,'SPEED',g)})\n`;
+gen.forBlock['ag_set_servo_invert']   = (b,g) => `ag.setServoInvert(${v(b,'SERVO',g)}, ${b.getFieldValue('INVERT')})\n`;
 
-gen.forBlock['agri_set_led'] = (block, g) => {
-  const r = g.valueToCode(block,'R', g.ORDER_NONE)||'0';
-  const gr= g.valueToCode(block,'G', g.ORDER_NONE)||'0';
-  const b = g.valueToCode(block,'B', g.ORDER_NONE)||'0';
-  return `agri.set_led(${r}, ${gr}, ${b})\n`;
-};
-gen.forBlock['agri_led_off'] = () => 'agri.led_off()\n';
+// Sensors
+gen.forBlock['ag_get_sonic']   = (b,g) => [`ag.getSonicSensor(${v(b,'PORT',g)})`, g.ORDER_FUNCTION_CALL];
+gen.forBlock['ag_get_tof']     = (b,g) => [`ag.getTOFSensor(${v(b,'PORT',g)})`, g.ORDER_FUNCTION_CALL];
+gen.forBlock['ag_get_line']    = (b,g) => [`ag.getLineSensor(${v(b,'PORT',g)})`, g.ORDER_FUNCTION_CALL];
+gen.forBlock['ag_get_color']   = (b,g) => [`ag.getColorSensor(${v(b,'PORT',g)}, '${b.getFieldValue('CH')}')`, g.ORDER_FUNCTION_CALL];
+gen.forBlock['ag_color_is']    = (b,g) => [`ag.getColorSensorIsColor(${v(b,'PORT',g)}, '${b.getFieldValue('COLOR')}')`, g.ORDER_FUNCTION_CALL];
+gen.forBlock['ag_get_th_temp'] = (b,g) => [`ag.getTHSensor(${v(b,'PORT',g)}, 'temp', '${b.getFieldValue('UNIT')}')`, g.ORDER_FUNCTION_CALL];
+gen.forBlock['ag_get_th_humid']= (b,g) => [`ag.getTHSensor(${v(b,'PORT',g)}, 'humid')`, g.ORDER_FUNCTION_CALL];
+gen.forBlock['ag_get_rotary']  = (b,g) => [`ag.getRotarySensor(${v(b,'PORT',g)})`, g.ORDER_FUNCTION_CALL];
+gen.forBlock['ag_get_analog']  = (b,g) => [`ag.getSensorPortValue(${v(b,'PORT',g)}, 'analog')`, g.ORDER_FUNCTION_CALL];
+gen.forBlock['ag_get_digital'] = (b,g) => [`ag.getSensorPortValue(${v(b,'PORT',g)}, 'digital')`, g.ORDER_FUNCTION_CALL];
 
-gen.forBlock['agri_play_tone'] = (block, g) => {
-  const freq = g.valueToCode(block,'FREQ', g.ORDER_NONE)||'440';
-  const dur  = g.valueToCode(block,'DUR',  g.ORDER_NONE)||'500';
-  return `agri.play_tone(${freq}, ${dur})\n`;
-};
-gen.forBlock['agri_play_note'] = (block, g) => {
-  const note = block.getFieldValue('NOTE');
-  const dur  = g.valueToCode(block,'DUR', g.ORDER_NONE)||'500';
-  return `agri.play_note('${note}', ${dur})\n`;
-};
-gen.forBlock['agri_beep'] = () => 'agri.beep()\n';
+// Buttons
+gen.forBlock['ag_button_pressed'] = (b) => [`ag.getButtonStatus('${b.getFieldValue('BTN')}')`, Blockly.Python.ORDER_FUNCTION_CALL];
 
-gen.forBlock['math_map'] = (block, g) => {
-  const val  = g.valueToCode(block,'VALUE',    g.ORDER_NONE)||'0';
-  const fmin = g.valueToCode(block,'FROM_MIN', g.ORDER_NONE)||'0';
-  const fmax = g.valueToCode(block,'FROM_MAX', g.ORDER_NONE)||'1023';
-  const tmin = g.valueToCode(block,'TO_MIN',   g.ORDER_NONE)||'0';
-  const tmax = g.valueToCode(block,'TO_MAX',   g.ORDER_NONE)||'100';
-  const code = `int((${val} - ${fmin}) * (${tmax} - ${tmin}) / (${fmax} - ${fmin}) + ${tmin})`;
-  return [code, g.ORDER_FUNCTION_CALL];
+// Pixels
+gen.forBlock['ag_pixel_color']     = (b,g) => `ag.setPixelColorRGB('${b.getFieldValue('PIX')}', ${v(b,'R',g)}, ${v(b,'G',g)}, ${v(b,'B',g)})\n`;
+gen.forBlock['ag_pixel_hex']       = (b,g) => {
+  const hex   = g.valueToCode(b,'HEX',g.ORDER_NONE) || "'#00ff00'";
+  const bright= v(b,'BRIGHT',g);
+  return `ag.setPixelColor('${b.getFieldValue('PIX')}', ${hex}, ${bright})\n`;
 };
+gen.forBlock['ag_pixel_off']       = (b)   => `ag.setPixelOff('${b.getFieldValue('PIX')}')\n`;
+gen.forBlock['ag_pixel_blink']     = (b,g) => {
+  const hex   = g.valueToCode(b,'HEX',g.ORDER_NONE) || "'#ff8800'";
+  return `ag.setPixelBlink('${b.getFieldValue('PIX')}', ${hex}, ${v(b,'LOOPS',g)})\n`;
+};
+gen.forBlock['ag_pixel_animation'] = (b,g) => `ag.setPixelAnimation('${b.getFieldValue('ANIM')}', ${v(b,'DURATION',g)})\n`;
 
-// ══════════════════════════════════════════════
-//   BLOCKLY INIT
-// ══════════════════════════════════════════════
+// Sound
+gen.forBlock['ag_set_tone']     = (b,g) => `ag.setTone(${v(b,'FREQ',g)}, ${v(b,'DUR',g)})\n`;
+gen.forBlock['ag_set_note']     = (b,g) => `ag.setNote('${b.getFieldValue('NOTE')}', ${v(b,'DUR',g)})\n`;
+gen.forBlock['ag_sound_effect'] = (b)   => `ag.setSoundEffect('${b.getFieldValue('FX')}')\n`;
+gen.forBlock['ag_sound_off']    = ()    => 'ag.setSoundOff()\n';
+
+// Movement
+gen.forBlock['mv_set_motors']   = (b)   => `ag.setMovementMotors(${b.getFieldValue('LEFT')}, ${b.getFieldValue('RIGHT')})\n`;
+gen.forBlock['mv_set_speed']    = (b,g) => `ag.setMovementSpeed(${v(b,'SPEED',g)})\n`;
+gen.forBlock['mv_set_wheel_diam']= (b,g)=> `ag.setMovementWheelDiameter(${v(b,'DIAM',g)})\n`;
+gen.forBlock['mv_set_wheelbase']= (b,g) => `ag.setMovementWheelbase(${v(b,'WB',g)})\n`;
+gen.forBlock['mv_move_for']     = (b,g) => {
+  const fn  = b.getFieldValue('DIR') === 'forward' ? 'moveForDistance' : 'moveBackDistance';
+  return `ag.${fn}(${v(b,'DIST',g)}, '${b.getFieldValue('UNIT')}', ${b.getFieldValue('WAIT')})\n`;
+};
+gen.forBlock['mv_start']        = (b)   => `ag.startMoving('${b.getFieldValue('DIR')}')\n`;
+gen.forBlock['mv_move_steer']   = (b,g) => `ag.moveWithSteering(${v(b,'STEER',g)}, ${v(b,'DIST',g)}, '${b.getFieldValue('UNIT')}', ${b.getFieldValue('WAIT')})\n`;
+gen.forBlock['mv_start_steer']  = (b,g) => `ag.startMovingWithSteering(${v(b,'STEER',g)})\n`;
+gen.forBlock['mv_turn']         = (b,g) => `ag.turnDegrees('${b.getFieldValue('DIR')}', ${v(b,'DEG',g)}, ${b.getFieldValue('WAIT')})\n`;
+gen.forBlock['mv_stop']         = ()    => 'ag.stopMoving()\n';
+
+
+// ════════════════════════════════════════════════════════════════════
+//  WORKSPACE INIT
+// ════════════════════════════════════════════════════════════════════
 
 const workspace = Blockly.inject('blocklyDiv', {
   toolbox: document.getElementById('toolbox'),
   grid: { spacing: 20, length: 3, colour: '#e8e0cc', snap: true },
   zoom: { controls: true, wheel: true, startScale: 1.0, maxScale: 3, minScale: 0.3, scaleSpeed: 1.2 },
   trashcan: true,
-  sounds: false,
+  sounds: true,
   renderer: 'zelos',
   theme: {
-    name: 'agriTheme',
+    name: 'agTheme',
+    blockStyles: {
+      logic_blocks:     { colourPrimary: '#4a5568', colourSecondary: '#5a6578', colourTertiary: '#3a4558' },
+      loop_blocks:      { colourPrimary: '#4a5568', colourSecondary: '#5a6578', colourTertiary: '#3a4558' },
+      math_blocks:      { colourPrimary: '#4a5568', colourSecondary: '#5a6578', colourTertiary: '#3a4558' },
+      procedure_blocks: { colourPrimary: '#4a5568', colourSecondary: '#5a6578', colourTertiary: '#3a4558' },
+      variable_blocks:  { colourPrimary: '#4a5568', colourSecondary: '#5a6578', colourTertiary: '#3a4558' },
+      text_blocks:      { colourPrimary: '#4a5568', colourSecondary: '#5a6578', colourTertiary: '#3a4558' },
+    },
     componentStyles: {
       workspaceBackgroundColour: '#f5f0e4',
       toolboxBackgroundColour: '#3d2b1f',
@@ -1239,224 +1449,541 @@ const workspace = Blockly.inject('blocklyDiv', {
   }
 });
 
-// Load a starter demo program
-const starterXml = `
-<xml>
-  <block type="agri_begin" x="60" y="60">
-    <next><block type="agri_set_led">
-      <value name="R"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
-      <value name="G"><shadow type="math_number"><field name="NUM">200</field></shadow></value>
-      <value name="B"><shadow type="math_number"><field name="NUM">50</field></shadow></value>
-      <next><block type="controls_whileUntil">
-        <field name="MODE">WHILE</field>
-        <value name="BOOL"><shadow type="logic_boolean"><field name="BOOL">TRUE</field></shadow></value>
-        <statement name="DO">
-          <block type="agri_set_motor_powers">
-            <value name="P1"><shadow type="math_number"><field name="NUM">60</field></shadow></value>
-            <value name="P2"><shadow type="math_number"><field name="NUM">60</field></shadow></value>
-            <value name="P3"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
-            <value name="P4"><shadow type="math_number"><field name="NUM">0</field></shadow></value>
-            <next><block type="agri_wait">
-              <value name="MS"><shadow type="math_number"><field name="NUM">2000</field></shadow></value>
-              <next><block type="agri_stop_all_motors">
-                <next><block type="agri_wait">
-                  <value name="MS"><shadow type="math_number"><field name="NUM">500</field></shadow></value>
-                </block></next>
-              </block></next>
-            </block></next>
-          </block>
-        </statement>
-      </block></next>
-    </block></next>
-  </block>
-</xml>`;
+// Default program loaded below, after EXAMPLES is defined
 
-const xmlDom = Blockly.utils.xml.textToDom(starterXml);
-Blockly.Xml.domToWorkspace(xmlDom, workspace);
 
-// ── Code generation & update ──
+// ════════════════════════════════════════════════════════════════════
+//  CODE GENERATION & UI
+// ════════════════════════════════════════════════════════════════════
+
+// Clean code is always stored here — used for copy, upload, REPL
+let _cleanCode = '';
+
 function generateCode() {
   try {
-    let code = gen.workspaceToCode(workspace);
-    // Prepend standard imports
-    const header = `from agri import Agri\nimport time\n\nagri = Agri()\n\n`;
-    code = header + code;
-    return code;
+    // 'import ag' is correct — generators produce ag.xxx() calls
+    const header = 'import ag\nimport time\n\n';
+    const body   = gen.workspaceToCode(workspace) || '';
+    // Blockly Python generator sometimes emits blank leading lines — trim them
+    return header + body.replace(/^\n+/, '');
   } catch(e) {
-    return `# Code generation error:\n# ${e.message}`;
+    return '# Code generation error:\n# ' + e.message;
   }
 }
 
 function updateCodePanel() {
-  const code = generateCode();
-  const lines = code.split('\n').length - 1;
-  const blockCount = workspace.getAllBlocks(false).length;
-
-  document.getElementById('blockCount').innerHTML = `
-    <svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="1" width="4" height="4" rx="0.5"/><rect x="7" y="1" width="4" height="4" rx="0.5"/><rect x="1" y="7" width="4" height="4" rx="0.5"/><rect x="7" y="7" width="4" height="4" rx="0.5"/></svg>
-    ${blockCount} blocks`;
-  document.getElementById('lineCount').innerHTML = `
-    <svg viewBox="0 0 12 12" fill="currentColor"><path d="M1 2h10M1 5h10M1 8h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-    ${lines} lines`;
-
-  // Simple syntax highlight
-  const highlighted = highlightPython(code);
-  document.getElementById('code-output').innerHTML = highlighted;
-}
-
-function highlightPython(code) {
-  const esc = code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  return esc
-    .replace(/\b(from|import|as|def|class|if|elif|else|while|for|in|return|True|False|None|and|or|not|pass|break|continue|try|except|finally|with|lambda|yield|del|global|nonlocal)\b/g,
-      '<span class="kw">$1</span>')
-    .replace(/(agri\.[a-z_]+)/g, '<span class="fn">$1</span>')
-    .replace(/(#[^\n]*)/g, '<span class="cm">$1</span>')
-    .replace(/('[^']*'|"[^"]*")/g, '<span class="st">$1</span>')
-    .replace(/\b(\d+)\b/g, '<span class="nm">$1</span>');
+  _cleanCode = generateCode();
+  const lines = _cleanCode.split('\n').length - 1;
+  const cnt   = workspace.getAllBlocks(false).length;
+  document.getElementById('blockCount').innerHTML =
+    `<svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="1" width="4" height="4" rx=".5"/><rect x="7" y="1" width="4" height="4" rx=".5"/><rect x="1" y="7" width="4" height="4" rx=".5"/><rect x="7" y="7" width="4" height="4" rx=".5"/></svg>${cnt} blocks`;
+  document.getElementById('lineCount').innerHTML =
+    `<svg viewBox="0 0 12 12" fill="currentColor"><path d="M1 2h10M1 5h10M1 8h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>${lines} lines`;
+  // textContent guarantees raw text — no HTML parsing, no tag corruption
+  document.getElementById('code-pre').textContent = _cleanCode;
 }
 
 workspace.addChangeListener(updateCodePanel);
 updateCodePanel();
 
-// ══════════════════════════════════════════════
-//   UI FUNCTIONS
-// ══════════════════════════════════════════════
+// ── UI ───────────────────────────────────────────────────────────────
 
 function switchTab(name, el) {
-  document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.panel-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
 }
 
 function copyCode() {
-  const code = generateCode();
-  navigator.clipboard.writeText(code).then(() => showToast('Code copied to clipboard!'));
+  navigator.clipboard.writeText(_cleanCode)
+    .then(()=>showToast('Code copied!'));
 }
 
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
 }
 
 function newProgram() {
-  if (workspace.getAllBlocks().length > 0 &&
-      !confirm('Clear current program and start fresh?')) return;
-  workspace.clear();
-  updateCodePanel();
+  if(workspace.getAllBlocks().length>0 && !confirm('Clear current program?')) return;
+  workspace.clear(); updateCodePanel();
+  document.getElementById('progName').value = '';
   showToast('New program started');
 }
+
+let _savePending = null;  // { type: 'xml'|'py', blob }
 
 function saveProgram() {
   const xml  = Blockly.Xml.workspaceToDom(workspace);
   const text = Blockly.Xml.domToText(xml);
-  const blob = new Blob([text], { type: 'text/xml' });
-  const a    = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'agribotics-program.xml';
-  a.click();
-  showToast('Program saved!');
+  _savePending = { type: 'xml', blob: new Blob([text], {type:'text/xml'}) };
+  document.getElementById('saveModalTitle').textContent = 'Save Blocks (XML)';
+  document.getElementById('saveModalDesc').textContent  = 'This saves your blocks so you can reload them later.';
+  const inp = document.getElementById('saveFilename');
+  inp.value = 'ag-robotics-program.xml';
+  document.getElementById('saveModal').classList.add('open');
+  setTimeout(() => { inp.focus(); inp.select(); }, 120);
 }
 
-function loadProgram() {
-  document.getElementById('fileInput').click();
+function savePython() {
+  _savePending = { type: 'py', blob: new Blob([_cleanCode], {type:'text/plain'}) };
+  document.getElementById('saveModalTitle').textContent = 'Save MicroPython (.py)';
+  document.getElementById('saveModalDesc').textContent  = 'This saves the generated MicroPython code ready to run on the controller.';
+  const inp = document.getElementById('saveFilename');
+  inp.value = 'main.py';
+  document.getElementById('saveModal').classList.add('open');
+  setTimeout(() => { inp.focus(); inp.select(); }, 120);
+}
+
+function confirmSave() {
+  if (!_savePending) return;
+  let name = document.getElementById('saveFilename').value.trim();
+  if (!name) return;
+  // Enforce correct extension
+  if (_savePending.type === 'xml' && !name.endsWith('.xml')) name += '.xml';
+  if (_savePending.type === 'py'  && !name.endsWith('.py'))  name += '.py';
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(_savePending.blob);
+  a.download = name;
+  a.click();
+  closeSaveModal();
+  showToast('Saved as ' + name);
+}
+
+function closeSaveModal() {
+  document.getElementById('saveModal').classList.remove('open');
+  _savePending = null;
+}
+
+function loadProgram() { document.getElementById('fileInput').click(); }
+
+function toggleExampleMenu(e) {
+  e.stopPropagation();
+  document.getElementById('exampleMenu').classList.toggle('open');
+}
+document.addEventListener('click', () => {
+  const m = document.getElementById('exampleMenu');
+  if (m) m.classList.remove('open');
+});
+
+function loadExample(key) {
+  document.getElementById('exampleMenu').classList.remove('open');
+  if (!key || !EXAMPLES[key]) return;
+  const ex = EXAMPLES[key];
+  if (!confirm(`Load "${ex.name}"?\nThis will replace the current workspace.`)) return;
+  try {
+    workspace.clear();
+    Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(ex.xml), workspace);
+    document.getElementById('progName').value = ex.name;
+    showToast('Loaded: ' + ex.name);
+    switchTab('code', document.querySelectorAll('.panel-tab')[0]);
+  } catch(e) {
+    showToast('Error loading example');
+  }
 }
 
 function loadFile(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const xml = Blockly.utils.xml.textToDom(e.target.result);
+  const file=event.target.files[0]; if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
       workspace.clear();
-      Blockly.Xml.domToWorkspace(xml, workspace);
-      showToast(`Loaded: ${file.name}`);
-    } catch(err) {
-      showToast('Error loading file');
-    }
+      Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(e.target.result), workspace);
+      const name = file.name.replace(/\.[^.]+$/, '');
+      document.getElementById('progName').value = name;
+      showToast('Loaded: '+file.name);
+    }catch{ showToast('Error loading file'); }
   };
-  reader.readAsText(file);
-  event.target.value = '';
+  r.readAsText(file); event.target.value='';
 }
 
-let connected = false;
+// ═══════════════════════════════════════════════════════════════════
+//  CONNECTION STATE
+// ═══════════════════════════════════════════════════════════════════
+
+let connected      = false;
+let connType       = null;   // 'usb' | 'ble'
+
+// USB / WebSerial state
+let serialPort     = null;
+let serialWriter   = null;
+let serialReader   = null;
+let readerLoopActive = false;
+
+// BLE / Web Bluetooth state
+const NUS_SERVICE  = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+const NUS_RX_CHAR  = '6e400002-b5a3-f393-e0a9-e50e24dcca9e'; // write  (PC → device)
+const NUS_TX_CHAR  = '6e400003-b5a3-f393-e0a9-e50e24dcca9e'; // notify (device → PC)
+let bleDevice      = null;
+let bleServer      = null;
+let bleRxChar      = null;  // we write code/commands here
+let bleTxChar      = null;  // we get console output here
+
+// ═══════════════════════════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════════════════════════
 
 function openConnectModal() {
+  if(connected){ disconnect(); return; }
   document.getElementById('connectModal').classList.add('open');
 }
 function closeConnectModal() {
   document.getElementById('connectModal').classList.remove('open');
 }
 
+// ═══════════════════════════════════════════════════════════════════
+//  USB — WebSerial
+// ═══════════════════════════════════════════════════════════════════
+
 async function connectUSB() {
   closeConnectModal();
-  if (!('serial' in navigator)) {
-    showToast('WebSerial not supported — use Chrome or Edge');
-    return;
+  if(!('serial' in navigator)){
+    showToast('WebSerial requires Chrome or Edge'); return;
   }
   try {
-    const port = await navigator.serial.requestPort();
-    await port.open({ baudRate: 115200 });
-    setConnected(true, 'USB Connected');
-    showToast('Connected via USB!');
-    consolePrint('Connected via USB serial\n');
+    serialPort = await navigator.serial.requestPort();
+    await serialPort.open({ baudRate: 115200 });
+
+    serialWriter = serialPort.writable.getWriter();
+    startSerialReader();
+
+    setConnected(true, 'USB');
+    showToast('USB connected!');
+    switchTab('console', document.querySelectorAll('.panel-tab')[1]);
+    consolePrint('── USB connected at 115200 baud ──\n');
+    resetSlotStatus();
+    setTimeout(querySlotStatus, 600);
   } catch(e) {
-    if (e.name !== 'NotFoundError') showToast('USB connection failed');
+    serialPort = null;
+    if(e.name !== 'NotFoundError') showToast('USB connection failed: ' + e.message);
   }
 }
+
+function startSerialReader() {
+  readerLoopActive = true;
+  const decoder = new TextDecoder();
+  (async () => {
+    while(serialPort && serialPort.readable && readerLoopActive) {
+      try {
+        serialReader = serialPort.readable.getReader();
+        while(true) {
+          const { value, done } = await serialReader.read();
+          if(done) break;
+          if(value) {
+            const text = decoder.decode(value);
+            consolePrint(text);
+            document.dispatchEvent(new CustomEvent('_agSerialRx', { detail: text }));
+          }
+        }
+      } catch(e) {
+        if(readerLoopActive) consolePrint('\n[Serial read error: ' + e.message + ']\n');
+      } finally {
+        try { serialReader.releaseLock(); } catch(_){}
+        serialReader = null;
+      }
+      if(!readerLoopActive) break;
+      await new Promise(r => setTimeout(r, 100));
+    }
+  })();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  BLE — Web Bluetooth / Nordic UART Service
+// ═══════════════════════════════════════════════════════════════════
 
 async function connectBluetooth() {
   closeConnectModal();
-  if (!('bluetooth' in navigator)) {
-    showToast('Web Bluetooth not supported on this browser');
-    return;
+  if(!('bluetooth' in navigator)){
+    showToast('Web Bluetooth not supported in this browser'); return;
   }
-  showToast('Bluetooth pairing dialog opening...');
   try {
-    const device = await navigator.bluetooth.requestDevice({
-      filters: [{ namePrefix: 'Agri' }],
-      optionalServices: ['0000ffe0-0000-1000-8000-00805f9b34fb']
+    showToast('Opening Bluetooth scanner…');
+    bleDevice = await navigator.bluetooth.requestDevice({
+      filters: [
+        { namePrefix: 'SEEKER' },
+        { namePrefix: 'Seeker' },
+        { services: [NUS_SERVICE] }
+      ],
+      optionalServices: [NUS_SERVICE]
     });
-    setConnected(true, `BT: ${device.name}`);
-    showToast(`Connected to ${device.name}`);
-    consolePrint(`Bluetooth connected: ${device.name}\n`);
+
+    bleDevice.addEventListener('gattserverdisconnected', onBleDisconnected);
+
+    consolePrint('\n── Connecting to ' + bleDevice.name + '… ──\n');
+    bleServer = await bleDevice.gatt.connect();
+    await sleep(500); // allow GATT server to settle before service discovery
+
+    const svc = await bleServer.getPrimaryService(NUS_SERVICE);
+    bleRxChar  = await svc.getCharacteristic(NUS_RX_CHAR);
+    bleTxChar  = await svc.getCharacteristic(NUS_TX_CHAR);
+
+    // Subscribe to console output from device
+    await bleTxChar.startNotifications();
+    bleTxChar.addEventListener('characteristicvaluechanged', onBleNotify);
+
+    setConnected(true, 'BLE');
+    showToast('BLE connected to ' + bleDevice.name + '!');
+    switchTab('console', document.querySelectorAll('.panel-tab')[1]);
+    consolePrint('── BLE connected: ' + bleDevice.name + ' ──\n');
+    resetSlotStatus();
+    setTimeout(querySlotStatus, 600);
   } catch(e) {
-    if (e.name !== 'NotFoundError') showToast('Bluetooth connection failed');
+    bleDevice = null; bleServer = null; bleRxChar = null; bleTxChar = null;
+    if(e.name !== 'NotFoundError') showToast('BLE failed: ' + e.message);
   }
 }
 
-function setConnected(state, label) {
+function onBleNotify(event) {
+  const dec = new TextDecoder();
+  const text = dec.decode(event.target.value);
+  consolePrint(text);
+  document.dispatchEvent(new CustomEvent('_agSerialRx', { detail: text }));
+}
+
+function onBleDisconnected() {
+  consolePrint('\n── BLE disconnected ──\n');
+  bleServer = null; bleRxChar = null; bleTxChar = null; bleDevice = null;
+  setConnected(false);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  DISCONNECT
+// ═══════════════════════════════════════════════════════════════════
+
+async function disconnect() {
+  if(connType === 'usb') {
+    readerLoopActive = false;
+    try { if(serialReader) { await serialReader.cancel(); serialReader = null; } } catch(_){}
+    try { if(serialWriter) { await serialWriter.close(); serialWriter = null; } } catch(_){}
+    try { if(serialPort)   { await serialPort.close();   serialPort   = null; } } catch(_){}
+    consolePrint('── USB disconnected ──\n');
+  } else if(connType === 'ble') {
+    try {
+      if(bleTxChar) await bleTxChar.stopNotifications().catch(()=>{});
+      if(bleServer && bleServer.connected) bleServer.disconnect();
+    } catch(_){}
+    bleDevice = null; bleServer = null; bleRxChar = null; bleTxChar = null;
+    consolePrint('── BLE disconnected ──\n');
+  }
+  setConnected(false);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  UPLOAD — MicroPython raw REPL protocol
+//  Works identically over USB and BLE
+// ═══════════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════════
+//  SLOT COLORS  (12 slots, matches firmware launcher)
+// ═══════════════════════════════════════════════════════════════════
+const EXAMPLES = {
+  "1": { name: "Hello Lights", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_pixel_color"><field name="PIX">ABCD</field><value name="R"><block type="math_number"><field name="NUM">255</field></block></value><value name="G"><block type="math_number"><field name="NUM">0</field></block></value><value name="B"><block type="math_number"><field name="NUM">0</field></block></value><next><block type="ag_set_tone"><value name="FREQ"><block type="math_number"><field name="NUM">440</field></block></value><value name="DUR"><block type="math_number"><field name="NUM">0.3</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">800</field></block></value><next><block type="ag_pixel_color"><field name="PIX">ABCD</field><value name="R"><block type="math_number"><field name="NUM">0</field></block></value><value name="G"><block type="math_number"><field name="NUM">200</field></block></value><value name="B"><block type="math_number"><field name="NUM">0</field></block></value><next><block type="ag_set_tone"><value name="FREQ"><block type="math_number"><field name="NUM">660</field></block></value><value name="DUR"><block type="math_number"><field name="NUM">0.3</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">800</field></block></value><next><block type="ag_pixel_color"><field name="PIX">ABCD</field><value name="R"><block type="math_number"><field name="NUM">0</field></block></value><value name="G"><block type="math_number"><field name="NUM">0</field></block></value><value name="B"><block type="math_number"><field name="NUM">255</field></block></value><next><block type="ag_set_tone"><value name="FREQ"><block type="math_number"><field name="NUM">880</field></block></value><value name="DUR"><block type="math_number"><field name="NUM">0.3</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">800</field></block></value><next><block type="ag_pixel_off"><field name="PIX">ABCD</field><next><block type="ag_sound_off"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
+  "2": { name: "Motor Run & Stop", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_set_motor_speed"><value name="MOTOR"><block type="math_number"><field name="NUM">1</field></block></value><value name="SPEED"><block type="math_number"><field name="NUM">75</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">2000</field></block></value><next><block type="ag_set_motor_stop"><field name="MODE">brake</field><value name="MOTOR"><block type="math_number"><field name="NUM">1234</field></block></value><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></xml>` },
+  "3": { name: "Wheel Rotations", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_set_wheel_rotations"><value name="MOTOR"><block type="math_number"><field name="NUM">1</field></block></value><value name="ROTATIONS"><block type="math_number"><field name="NUM">3</field></block></value><value name="SPEED"><block type="math_number"><field name="NUM">60</field></block></value><next><block type="ag_set_wheel_rotations"><value name="MOTOR"><block type="math_number"><field name="NUM">2</field></block></value><value name="ROTATIONS"><block type="math_number"><field name="NUM">3</field></block></value><value name="SPEED"><block type="math_number"><field name="NUM">60</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">3000</field></block></value><next><block type="ag_set_motor_stop"><field name="MODE">coast</field><value name="MOTOR"><block type="math_number"><field name="NUM">1234</field></block></value><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></xml>` },
+  "4": { name: "Servo Sweep", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">0</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">180</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">0</field></block></value><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
+  "5": { name: "Pixel Light Show", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_pixel_animation"><field name="ANIM">rainbow</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_animation"><field name="ANIM">chase</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_animation"><field name="ANIM">sparkle</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_animation"><field name="ANIM">comet</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_off"><field name="PIX">ABCD</field><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
+  "6": { name: "Play a Tune", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_set_note"><field name="NOTE">C4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">E4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">G4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">C5</field><value name="DUR"><block type="math_number"><field name="NUM">0.3</field></block></value><next><block type="ag_set_note"><field name="NOTE">G4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">E4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">C4</field><value name="DUR"><block type="math_number"><field name="NUM">0.4</field></block></value><next><block type="ag_sound_off"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
+  "7": { name: "Move Forward & Back", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="mv_set_motors"><field name="LEFT">1</field><field name="RIGHT">2</field><next><block type="mv_set_speed"><value name="SPEED"><block type="math_number"><field name="NUM">60</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_move_for"><field name="DIR">backward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_stop"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
+  "8": { name: "Square Pattern", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="mv_set_motors"><field name="LEFT">1</field><field name="RIGHT">2</field><next><block type="mv_set_speed"><value name="SPEED"><block type="math_number"><field name="NUM">50</field></block></value><next><block type="mv_set_wheelbase"><value name="WB"><block type="math_number"><field name="NUM">120</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_stop"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` }
+};
+
+// Load "Move Forward & Back" as the default startup program
+Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(EXAMPLES['7'].xml), workspace);
+
+const SLOT_COLORS_HEX = [
+  '#ff4444', // 1  Red
+  '#ff8800', // 2  Orange
+  '#cccc00', // 3  Yellow
+  '#00dd00', // 4  Green
+  '#00cccc', // 5  Cyan
+  '#4444ff', // 6  Blue
+  '#9900ff', // 7  Purple
+  '#dddddd', // 8  White
+  '#ff44aa', // 9  Pink
+  '#88ff00', // 10 Lime
+  '#008888', // 11 Teal
+  '#ccaa00', // 12 Gold
+];
+
+function updateSlotDot() {
+  const slot = parseInt(document.getElementById('slotSelect').value) - 1;
+  const dot  = document.getElementById('slotDot');
+  dot.style.background = SLOT_COLORS_HEX[slot];
+  dot.style.color      = SLOT_COLORS_HEX[slot];
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  SHARED: write a Python file via raw REPL
+// ═══════════════════════════════════════════════════════════════════
+async function rawReplWriteFile(fname, code, writeOnly) {
+  await serialWrite('\x03');
+  await sleep(200);
+  await serialWrite('\x03');
+  await sleep(300);
+  await serialWrite('\x01');   // Ctrl-A: enter raw REPL
+  await sleep(200);
+
+  const lines = code.split('\n');
+  let script = "f=open('" + fname + "','w')\n";
+  for (const line of lines) {
+    const esc = line.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+    script += "f.write('" + esc + "\\n')\n";
+  }
+  script += "f.close()\n";
+  if (!writeOnly) script += "exec(open('" + fname + "').read())\n";
+
+  const enc = new TextEncoder();
+  const bytes = enc.encode(script);
+  const CHUNK = connType === 'ble' ? 100 : 512;
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    await serialWrite(bytes.slice(i, i + CHUNK));
+    if (connType === 'ble') await sleep(30);
+  }
+  await serialWrite('\x04');   // Ctrl-D: execute
+  await sleep(200);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  UPLOAD TO SLOT  — saves to prog_N.py then restarts launcher
+// ═══════════════════════════════════════════════════════════════════
+async function uploadToRobot() {
+  if(!connected){ showToast('Connect to a robot first!'); openConnectModal(); return; }
+  const code = _cleanCode;
+  if(!code.trim()){ showToast('No code to upload'); return; }
+
+  const slot  = parseInt(document.getElementById('slotSelect').value);
+  const fname = 'prog_' + slot + '.py';
+
+  switchTab('console', document.querySelectorAll('.panel-tab')[1]);
+  consolePrint('\n── Uploading ' + code.split('\n').length + ' lines → ' + fname + ' ──\n');
+  try {
+    // Write the slot file but don't exec it — exec main.py (launcher) instead
+    await rawReplWriteFile(fname, code, true);
+
+    // Now restart the launcher via raw REPL
+    await serialWrite('\x03');
+    await sleep(200);
+    await serialWrite('\x03');
+    await sleep(300);
+    await serialWrite('\x01');
+    await sleep(200);
+    const restart = "exec(open('main.py').read())\n";
+    await serialWrite(new TextEncoder().encode(restart));
+    await serialWrite('\x04');
+    await sleep(200);
+
+    consolePrint('\n── Saved to ' + fname + ' — launcher restarted ✓ ──\n');
+    occupiedSlots.add(slot);
+    styleSlotDropdown();
+    showToast('Slot ' + slot + ' uploaded!');
+  } catch(e) {
+    consolePrint('[Upload error: ' + e.message + ']\n');
+    showToast('Upload failed');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  STOP  — kills running program, returns to launcher
+// ═══════════════════════════════════════════════════════════════════
+
+// Shared low-level stop sequence — used by both Stop button and slot query.
+// Interrupts whatever is running, stops hardware, restarts launcher.
+async function sendStopSequence() {
+  const stopCode =
+    'import ag\n' +
+    'ag.setMotorStop(1234,"coast")\n' +
+    'ag.setSoundOff()\n' +
+    'ag.setPixelOff("ABCD")\n' +
+    'exec(open("main.py").read())\n';
+
+  await serialWrite('\x03');
+  await sleep(200);
+  await serialWrite('\x03');
+  await sleep(300);
+  await serialWrite('\x01');
+  await sleep(200);
+  const enc = new TextEncoder();
+  const bytes = enc.encode(stopCode);
+  const CHUNK = connType === 'ble' ? 100 : 512;
+  for(let i = 0; i < bytes.length; i += CHUNK) {
+    await serialWrite(bytes.slice(i, i + CHUNK));
+    if(connType === 'ble') await sleep(30);
+  }
+  await serialWrite('\x04');
+  await sleep(300);
+}
+
+async function stopProgram() {
+  if(!connected){ showToast('Not connected'); return; }
+  switchTab('console', document.querySelectorAll('.panel-tab')[1]);
+  consolePrint('\n── Stopping program ──\n');
+  try {
+    await sendStopSequence();
+    consolePrint('\n── Stopped — returning to launcher ✓ ──\n');
+    showToast('Program stopped');
+  } catch(e) {
+    consolePrint('[Stop error: ' + e.message + ']\n');
+    showToast('Stop failed');
+  }
+}
+
+// Write bytes or string to whichever transport is active
+async function serialWrite(data) {
+  const bytes = typeof data === 'string' ? new TextEncoder().encode(data) : data;
+  if(connType === 'usb') {
+    if(!serialWriter) throw new Error('No serial writer');
+    await serialWriter.write(bytes);
+  } else if(connType === 'ble') {
+    if(!bleRxChar) throw new Error('No BLE RX characteristic');
+    await bleRxChar.writeValue(bytes);
+  }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ═══════════════════════════════════════════════════════════════════
+//  CONSOLE REPL INPUT — send a single command line
+// ═══════════════════════════════════════════════════════════════════
+
+async function sendCommand() {
+  const inp = document.getElementById('console-input');
+  const cmd = inp.value.trim();
+  if(!cmd) return;
+  inp.value = '';
+  if(!connected){ consolePrint('Not connected\n'); return; }
+  consolePrint('>>> ' + cmd + '\n');
+  try {
+    await serialWrite(cmd + '\r\n');
+  } catch(e) {
+    consolePrint('[Send error: ' + e.message + ']\n');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════════════════════════════
+
+function setConnected(state, type) {
   connected = state;
+  connType  = state ? type.toLowerCase() : null;
   const dot  = document.getElementById('statusDot');
   const text = document.getElementById('statusText');
   const btn  = document.getElementById('connectBtn');
-  if (state) {
-    dot.classList.add('connected');
-    text.textContent = label || 'Connected';
+  dot.classList.toggle('connected', state);
+  if(state) {
+    const label = type === 'USB' ? 'USB Connected' : 'BLE Connected';
+    text.textContent = label;
     btn.classList.add('connected');
-    btn.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/></svg> Connected`;
+    btn.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/></svg> ${label}`;
+    btn.title = 'Click to disconnect';
   } else {
-    dot.classList.remove('connected');
     text.textContent = 'Disconnected';
     btn.classList.remove('connected');
     btn.innerHTML = `<svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V1zm11 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V1zM6 7a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H7a1 1 0 01-1-1V7z"/></svg> Connect`;
+    btn.title = 'Connect to Ag Controller';
   }
-}
-
-function uploadToRobot() {
-  if (!connected) {
-    showToast('Connect to a robot first!');
-    openConnectModal();
-    return;
-  }
-  const code = generateCode();
-  consolePrint('\n--- Uploading program ---\n');
-  consolePrint(code);
-  consolePrint('\n--- Upload complete ✓ ---\n');
-  showToast('Program uploaded!');
 }
 
 function consolePrint(text) {
@@ -1465,21 +1992,125 @@ function consolePrint(text) {
   out.scrollTop = out.scrollHeight;
 }
 
-function sendCommand() {
-  const inp = document.getElementById('console-input');
-  const cmd = inp.value.trim();
-  if (!cmd) return;
-  consolePrint(`>>> ${cmd}\n`);
-  inp.value = '';
-  if (!connected) {
-    consolePrint('Not connected\n');
-    return;
-  }
-  // placeholder — actual serial/BT write would go here
-  consolePrint('OK\n');
+function clearConsole() {
+  document.getElementById('console-output').textContent = '';
 }
 
-// Handle window resize for Blockly
+// ═══════════════════════════════════════════════════════════════════
+//  SLOT STATUS  — queried from controller filesystem on connect
+// ═══════════════════════════════════════════════════════════════════
+
+let occupiedSlots = new Set();
+
+function styleSlotDropdown() {
+  const sel = document.getElementById('slotSelect');
+  for (const opt of sel.options) {
+    const slot = parseInt(opt.value);
+    if (occupiedSlots.has(slot)) {
+      opt.style.background = '#1a3a1a';
+      opt.style.color      = '#7dbf7d';
+      if (!opt.text.includes('●')) opt.text = opt.text.replace(' —', ' ● —');
+    } else {
+      opt.style.background = '';
+      opt.style.color      = '';
+      opt.text = opt.text.replace(' ● —', ' —');
+    }
+  }
+}
+
+function resetSlotStatus() {
+  occupiedSlots = new Set();
+  styleSlotDropdown();
+}
+
+function waitForString(target, timeoutMs = 3000) {
+  return new Promise((resolve) => {
+    let buf = '';
+    const timer = setTimeout(() => {
+      document.removeEventListener('_agSerialRx', handler);
+      resolve(null);
+    }, timeoutMs);
+    function handler(e) {
+      buf += e.detail;
+      if (buf.includes(target)) {
+        clearTimeout(timer);
+        document.removeEventListener('_agSerialRx', handler);
+        resolve(buf);
+      }
+    }
+    document.addEventListener('_agSerialRx', handler);
+  });
+}
+
+async function querySlotStatus() {
+  if (!connected) return;
+  try {
+    // Step 1: interrupt whatever is running, stop hardware,
+    //         but do NOT restart the launcher yet — stay in raw REPL
+    const stopCode =
+      'import ag\n' +
+      'ag.setMotorStop(1234,"coast")\n' +
+      'ag.setSoundOff()\n' +
+      'ag.setPixelOff("ABCD")\n';
+
+    await serialWrite('\x03');
+    await sleep(200);
+    await serialWrite('\x03');
+    await sleep(300);
+    await serialWrite('\x01');   // enter raw REPL
+    await sleep(200);
+
+    const enc = new TextEncoder();
+    const stopBytes = enc.encode(stopCode);
+    const CHUNK = connType === 'ble' ? 100 : 512;
+    for (let i = 0; i < stopBytes.length; i += CHUNK) {
+      await serialWrite(stopBytes.slice(i, i + CHUNK));
+      if (connType === 'ble') await sleep(30);
+    }
+    await serialWrite('\x04');   // execute stop code
+    await sleep(400);
+
+    // Step 2: query — unique markers make parsing unambiguous
+    const queryLine = "import os;print('SLOTDATA:' + '|'.join([f for f in os.listdir() if f[:5]=='prog_' and f[-3:]=='.py']) + ':END')\n";
+    const queryBytes = enc.encode(queryLine);
+    for (let i = 0; i < queryBytes.length; i += CHUNK) {
+      await serialWrite(queryBytes.slice(i, i + CHUNK));
+      if (connType === 'ble') await sleep(30);
+    }
+    await serialWrite('\x04');   // execute query
+
+    // Step 3: wait for our end marker
+    const response = await waitForString(':END', 3000);
+    if (response) {
+      const match = response.match(/SLOTDATA:(.*?):END/);
+      const fileList = match ? match[1] : '';
+      occupiedSlots = new Set();
+      if (fileList.trim()) {
+        for (const fname of fileList.split('|')) {
+          const m = fname.trim().match(/prog_(\d+)\.py/);
+          if (m) occupiedSlots.add(parseInt(m[1]));
+        }
+      }
+      styleSlotDropdown();
+      consolePrint('\n── Slots occupied: ' +
+        (occupiedSlots.size
+          ? [...occupiedSlots].sort((a,b)=>a-b).join(', ')
+          : 'none') + ' ──\n');
+    }
+
+    // Step 4: restart launcher
+    const restartBytes = enc.encode("exec(open('main.py').read())\n");
+    for (let i = 0; i < restartBytes.length; i += CHUNK) {
+      await serialWrite(restartBytes.slice(i, i + CHUNK));
+      if (connType === 'ble') await sleep(30);
+    }
+    await serialWrite('\x04');
+
+  } catch(e) {
+    // Non-fatal — slots show as unknown this session
+  }
+}
+
 window.addEventListener('resize', () => Blockly.svgResize(workspace));
 </script>
 </body>
