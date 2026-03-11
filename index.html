@@ -36,18 +36,81 @@
 
   /* HEADER */
   #header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-mid) 60%,#2e7d32 100%);
-    padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;
+    padding:0 16px;min-height:56px;height:auto;display:flex;align-items:center;
+    justify-content:space-between;flex-wrap:wrap;gap:6px;
     box-shadow:0 3px 12px var(--shadow);flex-shrink:0;position:relative;}
   #header::before{content:'';position:absolute;inset:0;
     background:repeating-linear-gradient(175deg,transparent,transparent 18px,
     rgba(255,255,255,.03) 18px,rgba(255,255,255,.03) 19px);pointer-events:none;}
-  .logo-area{display:flex;align-items:center;gap:12px;z-index:1;}
+  .logo-area{display:flex;align-items:center;gap:12px;z-index:1;flex-shrink:0;}
   .logo-svg{width:38px;height:38px;flex-shrink:0;}
   .logo-text{display:flex;flex-direction:column;line-height:1.1;}
   .logo-title{font-family:'Zilla Slab',serif;font-weight:700;font-size:1.35rem;
     color:var(--wheat-light);letter-spacing:.03em;}
   .logo-sub{font-size:.65rem;color:rgba(255,255,255,.6);letter-spacing:.12em;text-transform:uppercase;}
-  .toolbar{display:flex;gap:6px;align-items:center;z-index:1;overflow:visible;position:relative;}
+  .toolbar{display:flex;gap:6px;align-items:center;z-index:1;overflow:visible;
+    position:relative;flex-wrap:wrap;padding:6px 0;}
+  .btn{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:6px;border:none;
+    cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.78rem;
+    letter-spacing:.02em;transition:all .15s ease;white-space:nowrap;}
+  .btn:hover{transform:translateY(-1px);filter:brightness(1.1);}
+  .btn:active{transform:translateY(0);filter:brightness(.95);}
+  .btn svg{width:14px;height:14px;flex-shrink:0;}
+  .btn-ghost{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.2);}
+  .btn-ghost:hover{background:rgba(255,255,255,.2);}
+  .btn-connect{background:linear-gradient(135deg,#5b9bd5,#3a7ec2);color:#fff;}
+  .btn-connect.connected{background:linear-gradient(135deg,#2e8b4a,var(--green-light));}
+  .btn-upload{background:linear-gradient(135deg,#c85c00,#e07020);color:#fff;}
+  .btn-stop{background:linear-gradient(135deg,#9b1c1c,#c53030);color:#fff;}
+  .btn-example{background:linear-gradient(135deg,#1a4a6a,#2a6a9a);color:#fff;}
+  .prog-name-wrap{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.2);
+    border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;}
+  #progName{background:transparent;border:none;outline:none;color:#fff;
+    font-family:'Nunito',sans-serif;font-weight:700;font-size:.75rem;width:160px;
+    letter-spacing:.01em;}
+  #progName::placeholder{color:rgba(255,255,255,.3);}
+
+  /* ── RESPONSIVE ─────────────────────────────────────────── */
+
+  /* Medium: ~1100px — shrink prog-name, tighten button padding */
+  @media (max-width:1100px) {
+    #progName { width: 100px; }
+    .btn { padding: 6px 9px; }
+  }
+
+  /* Compact: ~900px — ghost buttons icon-only, hide prog name & logo subtitle */
+  @media (max-width:900px) {
+    .btn-ghost .btn-label { display: none; }
+    .btn-ghost { padding: 6px 9px; }
+    .btn-example .btn-label { display: none; }
+    .btn-example { padding: 6px 9px; }
+    .prog-name-wrap { display: none; }
+    .logo-sub { display: none; }
+  }
+
+  /* Small: ~720px — wrap toolbar to second row, all buttons icon-only */
+  @media (max-width:720px) {
+    #header { padding: 6px 12px; justify-content: flex-start; }
+    .logo-area { flex: 1; }
+    .toolbar { width: 100%; justify-content: flex-start; padding: 4px 0 6px; gap: 4px; }
+    .btn-label { display: none; }
+    .btn { padding: 7px 9px; }
+    .btn-upload { padding: 7px 10px; }
+    .btn-upload .btn-label { display: inline; font-size: .7rem; }
+    .btn-stop .btn-label { display: none; }
+    .sep { display: none; }
+    .logo-title { font-size: 1.1rem; }
+    #progName { width: 80px; }
+    .prog-name-wrap { display: flex; }
+    .slot-selector label { display: none; }
+  }
+
+  /* Extra small: ~480px — hide logo title, just keep icon */
+  @media (max-width:480px) {
+    .logo-title { display: none; }
+    .prog-name-wrap { display: none; }
+    .btn-upload .btn-label { display: none; }
+  }
   .btn{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:6px;border:none;
     cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.78rem;
     letter-spacing:.02em;transition:all .15s ease;white-space:nowrap;}
@@ -235,16 +298,16 @@
   </div>
   <div class="toolbar">
     <button class="btn btn-ghost" onclick="newProgram()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 0a1 1 0 00-1 1v14a1 1 0 001 1h10a1 1 0 001-1V4.414L9.586 0H3zm6 1.5L13.5 5H9V1.5z"/></svg>New
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 0a1 1 0 00-1 1v14a1 1 0 001 1h10a1 1 0 001-1V4.414L9.586 0H3zm6 1.5L13.5 5H9V1.5z"/></svg><span class="btn-label">New</span>
     </button>
     <button class="btn btn-ghost" onclick="saveProgram()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5z"/></svg>Save XML
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5z"/></svg><span class="btn-label">Save XML</span>
     </button>
     <button class="btn btn-ghost" onclick="savePython()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5z"/></svg>Save .py
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5z"/></svg><span class="btn-label">Save .py</span>
     </button>
     <button class="btn btn-ghost" onclick="loadProgram()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 11.854a.5.5 0 00.708 0l3-3a.5.5 0 00-.708-.708L8.5 10.293V1.5a.5.5 0 00-1 0v8.793L5.354 8.146a.5.5 0 10-.708.708l3 3z"/></svg>Load
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 11.854a.5.5 0 00.708 0l3-3a.5.5 0 00-.708-.708L8.5 10.293V1.5a.5.5 0 00-1 0v8.793L5.354 8.146a.5.5 0 10-.708.708l3 3z"/></svg><span class="btn-label">Load</span>
     </button>
     <div class="prog-name-wrap">
       <svg viewBox="0 0 16 16" fill="currentColor" style="width:12px;height:12px;opacity:.6;flex-shrink:0;"><path d="M9.293 0H4a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4.707L9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 01-1-1z"/></svg>
@@ -252,7 +315,7 @@
     </div>
     <div class="example-drop-wrap" id="exampleDropWrap">
       <button class="btn btn-example" onclick="toggleExampleMenu(event)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm-.5 4.5l4 3.5-4 3.5V4.5z"/></svg>Load Example
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm-.5 4.5l4 3.5-4 3.5V4.5z"/></svg><span class="btn-label">Load Example</span>
         <svg viewBox="0 0 16 16" fill="currentColor" style="width:10px;height:10px;margin-left:2px;"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z"/></svg>
       </button>
       <div class="example-menu" id="exampleMenu">
@@ -293,10 +356,10 @@
       </select>
     </div>
     <button class="btn btn-upload" onclick="uploadToRobot()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 1.146a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 2.707V11.5a.5.5 0 01-1 0V2.707L5.354 4.854a.5.5 0 11-.708-.708l3-3z"/></svg>Upload to Slot
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 1.146a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 2.707V11.5a.5.5 0 01-1 0V2.707L5.354 4.854a.5.5 0 11-.708-.708l3-3z"/></svg><span class="btn-label">Upload to Slot</span>
     </button>
     <button class="btn btn-stop" onclick="stopProgram()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="3" width="10" height="10" rx="1"/></svg>Stop / Reset
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="3" width="10" height="10" rx="1"/></svg><span class="btn-label">Stop / Reset</span>
     </button>
     <div class="sep"></div>
     <div class="status-pill">
