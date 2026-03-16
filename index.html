@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ag Robotics Programming App</title>
+<title>AgRobotics Programming App</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@400;600;700&family=Source+Code+Pro:wght@400;500&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -292,7 +292,7 @@
       <ellipse cx="21" cy="5" rx="1.5" ry="3" fill="#e8b84b" transform="rotate(20 21 5)"/>
     </svg>
     <div class="logo-text">
-      <span class="logo-title">Ag Robotics Programming App</span>
+      <span class="logo-title">AgRobotics Programming App</span>
       <span class="logo-sub">Block Programming · MicroPython · ESP32-S3</span>
     </div>
   </div>
@@ -374,13 +374,13 @@
   <div id="blockly-panel"><div id="blocklyDiv"></div></div>
   <div id="right-panel">
     <div class="panel-tabs">
-      <div class="panel-tab active" onclick="switchTab('code',this)">⚙ MicroPython</div>
-      <div class="panel-tab" onclick="switchTab('console',this)">▶ Console</div>
+      <div class="panel-tab" onclick="switchTab('code',this)">⚙ MicroPython</div>
+      <div class="panel-tab active" onclick="switchTab('console',this)">▶ Console</div>
       <div class="panel-tab" onclick="switchTab('help',this)">📖 Reference</div>
     </div>
     <div class="panel-content">
       <!-- CODE -->
-      <div class="tab-pane active" id="tab-code">
+      <div class="tab-pane" id="tab-code">
         <div id="code-header">
           <span>Generated MicroPython</span>
           <button class="btn-copy" onclick="copyCode()">Copy</button>
@@ -388,11 +388,11 @@
         <div id="code-output"><pre id="code-pre"># Add blocks to generate code</pre></div>
       </div>
       <!-- CONSOLE -->
-      <div class="tab-pane" id="tab-console">
+      <div class="tab-pane active" id="tab-console">
         <div id="console-toolbar">
           <button id="console-clear" onclick="clearConsole()" title="Clear console">✕ Clear</button>
         </div>
-        <div id="console-output"><span style="color:#4a7a4a"># Ag Robotics Console
+        <div id="console-output"><span style="color:#4a7a4a"># AgRobotics Console
 # Connect a robot to begin
 </span></div>
         <div id="console-input-row">
@@ -541,12 +541,16 @@
               <h3>🤖 Movement</h3>
             </div>
             <div class="ref-card">
-              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Movement Motors — Left: <div class="ref-slot">1 ▼</div> Right: <div class="ref-slot">2 ▼</div></div></div>
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Movement Motors — Left Wheel: <div class="ref-slot">1 ▼</div> Right Wheel: <div class="ref-slot">2 ▼</div></div></div>
               <div class="ref-info"><div class="ref-title">Set Movement Motors</div><div class="ref-desc">Assigns motor ports to the left and right wheels. Default is Left: 1, Right: 2. Call this once at the start of every program that uses movement blocks.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Movement Speed to <div class="ref-oval">50</div> %</div></div>
               <div class="ref-info"><div class="ref-title">Set Movement Speed</div><div class="ref-desc">Sets the default speed used by all Move and Start blocks. Range is 0–100%. The default value is 50%. Set this once before your first movement command.</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Acceleration / Deceleration rate <div class="ref-oval">15</div></div></div>
+              <div class="ref-info"><div class="ref-title">Set Acceleration / Deceleration</div><div class="ref-desc">Sets a global ramp rate applied automatically by all movement blocks when they start and stop. A value of <b>0</b> means instant start/stop (default — no ramp). Higher values ramp faster: <b>10</b> is a gentle ramp, <b>20</b> is moderate, <b>30</b> is quick. A rate of 15 takes about 400 ms to reach 60% speed. Set once at program start alongside Set Movement Speed. Ramping reduces wheel slip, improves straight-line accuracy, and makes turns more repeatable — especially at higher speeds.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Wheel Diameter to <div class="ref-oval">80</div> mm</div></div>
@@ -705,16 +709,16 @@
               <div class="ref-info"><div class="ref-title">Pixel Color (RGB)</div><div class="ref-desc">Sets a NeoPixel to a color using Red, Green, Blue values (0–255 each). Select a single pixel (A, B, C, D) or ABCD to set all four at once.</div></div>
             </div>
             <div class="ref-card">
-              <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel <div class="ref-slot">A ▼</div> Color <div class="ref-oval">#00c832</div> Brightness <div class="ref-oval">75</div> %</div></div>
-              <div class="ref-info"><div class="ref-title">Pixel Color (Hex)</div><div class="ref-desc">Sets a NeoPixel using a hex color code and a brightness level (0–100%). Type any standard hex color code such as #ff0000 for red or #0000ff for blue.</div></div>
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel <div class="ref-slot">A ▼</div> Color <div class="ref-slot" style="background:#00c832;width:16px;height:16px;border-radius:3px;display:inline-block;"></div> Brightness <div class="ref-oval">75</div> %</div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Color (Picker)</div><div class="ref-desc">Sets a NeoPixel to a color using the built-in color picker and a brightness level (0–100%). Click the colored square on the block to open the color wheel and choose any color. Select a single pixel (A, B, C, D) or ABCD to set all four at once.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel Off <div class="ref-slot">ABCD ▼</div></div></div>
               <div class="ref-info"><div class="ref-title">Pixel Off</div><div class="ref-desc">Turns off one or all NeoPixels. Choose a single pixel or ABCD to turn them all off at once.</div></div>
             </div>
             <div class="ref-card">
-              <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Blink Pixel <div class="ref-slot">A ▼</div> <div class="ref-oval">#ff8800</div> <div class="ref-oval">3</div> times</div></div>
-              <div class="ref-info"><div class="ref-title">Pixel Blink</div><div class="ref-desc">Blinks a NeoPixel a set number of times in the chosen color. Good for signaling events like a completed task or a detected object.</div></div>
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Blink Pixel <div class="ref-slot">A ▼</div> Color <div class="ref-slot" style="background:#ff8800;width:16px;height:16px;border-radius:3px;display:inline-block;"></div> <div class="ref-oval">3</div> times</div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Blink</div><div class="ref-desc">Blinks a NeoPixel a set number of times in the chosen color. Click the colored square to open the color picker. Good for signaling events like a completed task or a detected object.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel Animation <div class="ref-slot">rainbow ▼</div> for <div class="ref-oval">3</div> sec</div></div>
@@ -914,6 +918,9 @@
     <block type="mv_set_speed">
       <value name="SPEED"><shadow type="math_number"><field name="NUM">50</field></shadow></value>
     </block>
+    <block type="mv_set_accel">
+      <value name="RATE"><shadow type="math_number"><field name="NUM">15</field></shadow></value>
+    </block>
     <block type="mv_set_wheel_diam">
       <value name="DIAM"><shadow type="math_number"><field name="NUM">80</field></shadow></value>
     </block>
@@ -1020,12 +1027,10 @@
       <value name="B"><shadow type="math_number"><field name="NUM">50</field></shadow></value>
     </block>
     <block type="ag_pixel_hex">
-      <value name="HEX"><shadow type="text"><field name="TEXT">#00c832</field></shadow></value>
       <value name="BRIGHT"><shadow type="math_number"><field name="NUM">75</field></shadow></value>
     </block>
     <block type="ag_pixel_off"></block>
     <block type="ag_pixel_blink">
-      <value name="HEX"><shadow type="text"><field name="TEXT">#ff8800</field></shadow></value>
       <value name="LOOPS"><shadow type="math_number"><field name="NUM">3</field></shadow></value>
     </block>
     <block type="ag_pixel_animation">
@@ -1237,11 +1242,13 @@ Blockly.Blocks['ag_pixel_color'] = { init() {
 }};
 Blockly.Blocks['ag_pixel_hex'] = { init() {
   this.appendDummyInput().appendField('💡 Pixel')
-    .appendField(dd([['A','A'],['B','B'],['C','C'],['D','D'],['All (ABCD)','ABCD']]), 'PIX');
-  this.appendValueInput('HEX').appendField('Color (hex)');
+    .appendField(dd([['A','A'],['B','B'],['C','C'],['D','D'],['All (ABCD)','ABCD']]), 'PIX')
+    .appendField('Color')
+    .appendField(new Blockly.FieldColour('#00cc32'), 'COLOR');
   this.appendValueInput('BRIGHT').setCheck('Number').appendField('Brightness %');
-  this.setInputsInline(false); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
   this.setColour(C_PIXEL);
+  this.setTooltip('Set a NeoPixel to a color using the color picker, with a brightness level (0–100%).');
 }};
 Blockly.Blocks['ag_pixel_off'] = { init() {
   this.appendDummyInput().appendField('💡 Pixel')
@@ -1251,11 +1258,13 @@ Blockly.Blocks['ag_pixel_off'] = { init() {
 }};
 Blockly.Blocks['ag_pixel_blink'] = { init() {
   this.appendDummyInput().appendField('💡 Blink Pixel')
-    .appendField(dd([['A','A'],['B','B'],['C','C'],['D','D'],['All (ABCD)','ABCD']]), 'PIX');
-  this.appendValueInput('HEX').appendField('Color (hex)');
+    .appendField(dd([['A','A'],['B','B'],['C','C'],['D','D'],['All (ABCD)','ABCD']]), 'PIX')
+    .appendField('Color')
+    .appendField(new Blockly.FieldColour('#ff8800'), 'COLOR');
   this.appendValueInput('LOOPS').setCheck('Number').appendField('Times');
-  this.setInputsInline(false); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
   this.setColour(C_PIXEL);
+  this.setTooltip('Blink a NeoPixel a set number of times in the chosen color.');
 }};
 Blockly.Blocks['ag_pixel_animation'] = { init() {
   this.appendDummyInput().appendField('💡 Pixel Animation')
@@ -1310,9 +1319,9 @@ const C_MOVE = '#0d7377';
 
 Blockly.Blocks['mv_set_motors'] = { init() {
   this.appendDummyInput()
-    .appendField('🤖 Set Movement Motors — Left:')
+    .appendField('🤖 Set Movement Motors — Left Wheel:')
     .appendField(dd([['1','1'],['2','2'],['3','3'],['4','4']]), 'LEFT')
-    .appendField('Right:')
+    .appendField('Right Wheel:')
     .appendField(dd([['2','2'],['1','1'],['3','3'],['4','4']]), 'RIGHT');
   this.setPreviousStatement(true); this.setNextStatement(true); this.setColour(C_MOVE);
   this.setTooltip('Assign motor ports to left and right wheels. Call once at program start.');
@@ -1324,6 +1333,14 @@ Blockly.Blocks['mv_set_speed'] = { init() {
   this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
   this.setColour(C_MOVE);
   this.setTooltip('Set the default speed used by all movement blocks. Range: 0-100%.');
+}};
+
+Blockly.Blocks['mv_set_accel'] = { init() {
+  this.appendValueInput('RATE').setCheck('Number').appendField('🤖 Set Acceleration / Deceleration rate');
+  this.appendDummyInput().appendField('(0 = instant, 10 = gentle, 30 = quick)');
+  this.setInputsInline(true); this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOVE);
+  this.setTooltip('Set the ramp rate for all movement blocks. 0 = instant start/stop. 10-20 = smooth ramp. Higher = faster ramp. Call once at program start alongside Set Movement Speed.');
 }};
 
 Blockly.Blocks['mv_set_wheel_diam'] = { init() {
@@ -1446,14 +1463,14 @@ gen.forBlock['ag_button_pressed'] = (b) => [`ag.getButtonStatus('${b.getFieldVal
 // Pixels
 gen.forBlock['ag_pixel_color']     = (b,g) => `ag.setPixelColorRGB('${b.getFieldValue('PIX')}', ${v(b,'R',g)}, ${v(b,'G',g)}, ${v(b,'B',g)})\n`;
 gen.forBlock['ag_pixel_hex']       = (b,g) => {
-  const hex   = g.valueToCode(b,'HEX',g.ORDER_NONE) || "'#00ff00'";
+  const color = b.getFieldValue('COLOR') || '#00cc32';
   const bright= v(b,'BRIGHT',g);
-  return `ag.setPixelColor('${b.getFieldValue('PIX')}', ${hex}, ${bright})\n`;
+  return `ag.setPixelColor('${b.getFieldValue('PIX')}', '${color}', ${bright})\n`;
 };
 gen.forBlock['ag_pixel_off']       = (b)   => `ag.setPixelOff('${b.getFieldValue('PIX')}')\n`;
 gen.forBlock['ag_pixel_blink']     = (b,g) => {
-  const hex   = g.valueToCode(b,'HEX',g.ORDER_NONE) || "'#ff8800'";
-  return `ag.setPixelBlink('${b.getFieldValue('PIX')}', ${hex}, ${v(b,'LOOPS',g)})\n`;
+  const color = b.getFieldValue('COLOR') || '#ff8800';
+  return `ag.setPixelBlink('${b.getFieldValue('PIX')}', '${color}', ${v(b,'LOOPS',g)})\n`;
 };
 gen.forBlock['ag_pixel_animation'] = (b,g) => `ag.setPixelAnimation('${b.getFieldValue('ANIM')}', ${v(b,'DURATION',g)})\n`;
 
@@ -1466,6 +1483,7 @@ gen.forBlock['ag_sound_off']    = ()    => 'ag.setSoundOff()\n';
 // Movement
 gen.forBlock['mv_set_motors']   = (b)   => `ag.setMovementMotors(${b.getFieldValue('LEFT')}, ${b.getFieldValue('RIGHT')})\n`;
 gen.forBlock['mv_set_speed']    = (b,g) => `ag.setMovementSpeed(${v(b,'SPEED',g)})\n`;
+gen.forBlock['mv_set_accel']    = (b,g) => `ag.setMovementAccel(${v(b,'RATE',g)})\n`;
 gen.forBlock['mv_set_wheel_diam']= (b,g)=> `ag.setMovementWheelDiameter(${v(b,'DIAM',g)})\n`;
 gen.forBlock['mv_set_wheelbase']= (b,g) => `ag.setMovementWheelbase(${v(b,'WB',g)})\n`;
 gen.forBlock['mv_move_for']     = (b,g) => {
@@ -1848,8 +1866,8 @@ const EXAMPLES = {
   "4": { name: "Servo Sweep", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">0</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">180</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">0</field></block></value><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
   "5": { name: "Pixel Light Show", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_pixel_animation"><field name="ANIM">rainbow</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_animation"><field name="ANIM">chase</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_animation"><field name="ANIM">sparkle</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_animation"><field name="ANIM">comet</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_off"><field name="PIX">ABCD</field><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
   "6": { name: "Play a Tune", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_set_note"><field name="NOTE">C4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">E4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">G4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">C5</field><value name="DUR"><block type="math_number"><field name="NUM">0.3</field></block></value><next><block type="ag_set_note"><field name="NOTE">G4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">E4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">C4</field><value name="DUR"><block type="math_number"><field name="NUM">0.4</field></block></value><next><block type="ag_sound_off"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
-  "7": { name: "Move Forward & Back", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="mv_set_motors"><field name="LEFT">1</field><field name="RIGHT">2</field><next><block type="mv_set_speed"><value name="SPEED"><block type="math_number"><field name="NUM">60</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_move_for"><field name="DIR">backward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_stop"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
-  "8": { name: "Square Pattern", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="mv_set_motors"><field name="LEFT">1</field><field name="RIGHT">2</field><next><block type="mv_set_speed"><value name="SPEED"><block type="math_number"><field name="NUM">50</field></block></value><next><block type="mv_set_wheelbase"><value name="WB"><block type="math_number"><field name="NUM">120</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_stop"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` }
+  "7": { name: "Move Forward & Back", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="mv_set_motors"><field name="LEFT">1</field><field name="RIGHT">2</field><next><block type="mv_set_speed"><value name="SPEED"><block type="math_number"><field name="NUM">60</field></block></value><next><block type="mv_set_accel"><value name="RATE"><block type="math_number"><field name="NUM">15</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_move_for"><field name="DIR">backward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_stop"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
+  "8": { name: "Square Pattern", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="mv_set_motors"><field name="LEFT">1</field><field name="RIGHT">2</field><next><block type="mv_set_speed"><value name="SPEED"><block type="math_number"><field name="NUM">50</field></block></value><next><block type="mv_set_wheelbase"><value name="WB"><block type="math_number"><field name="NUM">120</field></block></value><next><block type="mv_set_accel"><value name="RATE"><block type="math_number"><field name="NUM">15</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_stop"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` }
 };
 
 // Load "Move Forward & Back" as the default startup program
