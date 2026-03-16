@@ -874,25 +874,6 @@
 </div>
 
 <!-- Save Dialog -->
-<div class="modal-overlay" id="saveModal" onclick="if(event.target===this)closeSaveModal()">
-  <div class="modal">
-    <h2 id="saveModalTitle">Save File</h2>
-    <p id="saveModalDesc">Enter a filename:</p>
-    <input id="saveFilename" type="text" style="
-      width:100%;box-sizing:border-box;padding:9px 12px;
-      border:2px solid var(--border);border-radius:6px;
-      font-family:'Source Code Pro',monospace;font-size:.88rem;
-      color:var(--text-dark);background:#fff;margin-top:4px;
-      outline:none;transition:border-color .15s;"
-      onkeydown="if(event.key==='Enter')confirmSave()"
-      onfocus="this.style.borderColor='var(--green-mid)'"
-      onblur="this.style.borderColor='var(--border)'">
-    <div class="modal-btns">
-      <button class="btn-secondary" onclick="closeSaveModal()">Cancel</button>
-      <button class="btn-primary" onclick="confirmSave()">Save</button>
-    </div>
-  </div>
-</div>
 <div id="toast"></div>
 <input type="file" id="fileInput" accept=".xml" style="display:none" onchange="loadFile(event)">
 
@@ -1594,48 +1575,57 @@ function newProgram() {
   showToast('New program started');
 }
 
-let _savePending = null;  // { type: 'xml'|'py', blob }
+// ── File operations ──────────────────────────────────────────────────
 
-function saveProgram() {
+async function saveProgram() {
   const xml  = Blockly.Xml.workspaceToDom(workspace);
   const text = Blockly.Xml.domToText(xml);
-  _savePending = { type: 'xml', blob: new Blob([text], {type:'text/xml'}) };
-  document.getElementById('saveModalTitle').textContent = 'Save Blocks (XML)';
-  document.getElementById('saveModalDesc').textContent  = 'This saves your blocks so you can reload them later.';
-  const inp = document.getElementById('saveFilename');
-  inp.value = 'ag-robotics-program.xml';
-  document.getElementById('saveModal').classList.add('open');
-  setTimeout(() => { inp.focus(); inp.select(); }, 120);
+  const name = (document.getElementById('progName').value.trim() || 'ag-program') + '.xml';
+  try {
+    if (window.showSaveFilePicker) {
+      const fh = await window.showSaveFilePicker({
+        suggestedName: name,
+        types: [{ description: 'Blockly XML', accept: { 'text/xml': ['.xml'] } }]
+      });
+      const w = await fh.createWritable();
+      await w.write(text);
+      await w.close();
+      showToast('Saved: ' + fh.name);
+    } else {
+      // Fallback for browsers without File System Access API
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([text], { type: 'text/xml' }));
+      a.download = name;
+      a.click();
+      showToast('Saved: ' + name);
+    }
+  } catch(e) {
+    if (e.name !== 'AbortError') showToast('Save failed: ' + e.message);
+  }
 }
 
-function savePython() {
-  _savePending = { type: 'py', blob: new Blob([_cleanCode], {type:'text/plain'}) };
-  document.getElementById('saveModalTitle').textContent = 'Save MicroPython (.py)';
-  document.getElementById('saveModalDesc').textContent  = 'This saves the generated MicroPython code ready to run on the controller.';
-  const inp = document.getElementById('saveFilename');
-  inp.value = 'main.py';
-  document.getElementById('saveModal').classList.add('open');
-  setTimeout(() => { inp.focus(); inp.select(); }, 120);
-}
-
-function confirmSave() {
-  if (!_savePending) return;
-  let name = document.getElementById('saveFilename').value.trim();
-  if (!name) return;
-  // Enforce correct extension
-  if (_savePending.type === 'xml' && !name.endsWith('.xml')) name += '.xml';
-  if (_savePending.type === 'py'  && !name.endsWith('.py'))  name += '.py';
-  const a    = document.createElement('a');
-  a.href     = URL.createObjectURL(_savePending.blob);
-  a.download = name;
-  a.click();
-  closeSaveModal();
-  showToast('Saved as ' + name);
-}
-
-function closeSaveModal() {
-  document.getElementById('saveModal').classList.remove('open');
-  _savePending = null;
+async function savePython() {
+  const name = (document.getElementById('progName').value.trim() || 'ag-program') + '.py';
+  try {
+    if (window.showSaveFilePicker) {
+      const fh = await window.showSaveFilePicker({
+        suggestedName: name,
+        types: [{ description: 'MicroPython', accept: { 'text/plain': ['.py'] } }]
+      });
+      const w = await fh.createWritable();
+      await w.write(_cleanCode);
+      await w.close();
+      showToast('Saved: ' + fh.name);
+    } else {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([_cleanCode], { type: 'text/plain' }));
+      a.download = name;
+      a.click();
+      showToast('Saved: ' + name);
+    }
+  } catch(e) {
+    if (e.name !== 'AbortError') showToast('Save failed: ' + e.message);
+  }
 }
 
 function loadProgram() { document.getElementById('fileInput').click(); }
