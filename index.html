@@ -38,7 +38,7 @@
   #header{background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-mid) 60%,#2e7d32 100%);
     padding:0 16px;min-height:56px;height:auto;display:flex;align-items:center;
     justify-content:space-between;flex-wrap:wrap;gap:6px;
-    box-shadow:0 3px 12px var(--shadow);flex-shrink:0;position:relative;}
+    box-shadow:0 3px 12px var(--shadow);flex-shrink:0;position:relative;z-index:600;overflow:visible;}
   #header::before{content:'';position:absolute;inset:0;
     background:repeating-linear-gradient(175deg,transparent,transparent 18px,
     rgba(255,255,255,.03) 18px,rgba(255,255,255,.03) 19px);pointer-events:none;}
@@ -48,8 +48,38 @@
   .logo-title{font-family:'Zilla Slab',serif;font-weight:700;font-size:1.35rem;
     color:var(--wheat-light);letter-spacing:.03em;}
   .logo-sub{font-size:.65rem;color:rgba(255,255,255,.6);letter-spacing:.12em;text-transform:uppercase;}
-  .toolbar{display:flex;gap:6px;align-items:center;z-index:1;overflow:visible;
-    position:relative;flex-wrap:wrap;padding:6px 0;}
+  .toolbar{display:flex;gap:6px;align-items:center;z-index:600;overflow:visible;
+    position:relative;flex-wrap:nowrap;}
+  /* ── MENU BAR ────────────────────────────────────────────────────── */
+  #menubar{display:flex;align-items:center;gap:0;background:#1e3a1e;
+    border-bottom:1px solid rgba(255,255,255,.1);flex-shrink:0;
+    padding:0 8px;height:32px;overflow:visible;position:relative;z-index:400;}
+  .menu-item{position:relative;}
+  .menu-label{padding:5px 12px;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.8);
+    cursor:pointer;border-radius:4px;user-select:none;letter-spacing:.02em;
+    font-family:'Nunito',sans-serif;}
+  .menu-label:hover{background:rgba(255,255,255,.12);color:#fff;}
+  .menu-item.open > .menu-label{background:rgba(255,255,255,.15);color:#fff;}
+  .menu-drop{display:none;position:absolute;top:100%;left:0;
+    background:#1e2e1e;border:1px solid #3a6a3a;border-radius:6px;
+    box-shadow:0 6px 24px rgba(0,0,0,.5);z-index:9999;min-width:200px;
+    padding:4px 0;}
+  .menu-item.open > .menu-drop{display:block;}
+  .menu-row{display:flex;align-items:center;gap:8px;padding:7px 14px;
+    font-size:.78rem;font-weight:600;color:#c8e8c8;cursor:pointer;
+    font-family:'Nunito',sans-serif;white-space:nowrap;position:relative;}
+  .menu-row:hover{background:#2a4a2a;color:#fff;}
+  .menu-row svg{width:14px;height:14px;flex-shrink:0;opacity:.7;}
+  .menu-sep{height:1px;background:#2a4a2a;margin:3px 0;}
+  .menu-sub-section{padding:5px 14px 2px;font-size:.65rem;font-weight:800;
+    color:#5a9a5a;letter-spacing:.08em;text-transform:uppercase;}
+  /* Submenu (Load Example) */
+  .menu-row.has-sub{padding-right:10px;}
+  .menu-sub{display:none;position:absolute;left:100%;top:-4px;
+    background:#1e2e1e;border:1px solid #3a6a3a;border-radius:6px;
+    box-shadow:0 6px 24px rgba(0,0,0,.5);min-width:190px;padding:4px 0;z-index:10000;}
+  .menu-row.has-sub:hover > .menu-sub{display:block;}
+
   .btn{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:6px;border:none;
     cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.78rem;
     letter-spacing:.02em;transition:all .15s ease;white-space:nowrap;}
@@ -74,7 +104,6 @@
 
   /* Medium: ~1100px — shrink prog-name, tighten button padding */
   @media (max-width:1100px) {
-    #progName { width: 100px; }
     .btn { padding: 6px 9px; }
   }
 
@@ -84,7 +113,6 @@
     .btn-ghost { padding: 6px 9px; }
     .btn-example .btn-label { display: none; }
     .btn-example { padding: 6px 9px; }
-    .prog-name-wrap { display: none; }
     .logo-sub { display: none; }
   }
 
@@ -100,15 +128,12 @@
     .btn-stop .btn-label { display: none; }
     .sep { display: none; }
     .logo-title { font-size: 1.1rem; }
-    #progName { width: 80px; }
-    .prog-name-wrap { display: flex; }
     .slot-selector label { display: none; }
   }
 
   /* Extra small: ~480px — hide logo title, just keep icon */
   @media (max-width:480px) {
     .logo-title { display: none; }
-    .prog-name-wrap { display: none; }
     .btn-upload .btn-label { display: none; }
   }
   .btn{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:6px;border:none;
@@ -141,13 +166,44 @@
   .example-item{padding:6px 16px;font-size:.75rem;font-weight:600;color:#c8e8c8;
     cursor:pointer;transition:background .15s;}
   .example-item:hover{background:#2a4a2a;color:#fff;}
-  .slot-selector{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.2);
+  .slot-selector{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.2);position:relative;z-index:600;
     border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;}
   .slot-selector label{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.7);
     letter-spacing:.04em;white-space:nowrap;}
   .slot-select{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.25);
     color:#fff;border-radius:4px;padding:3px 6px;font-family:'Nunito',sans-serif;
     font-weight:700;font-size:.75rem;cursor:pointer;outline:none;}
+  /* Custom slot dropdown */
+  .custom-slot-select{position:relative;}
+  .custom-slot-btn{display:flex;align-items:center;gap:5px;
+    background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.25);
+    color:#fff;border-radius:4px;padding:3px 8px;font-family:'Nunito',sans-serif;
+    font-weight:700;font-size:.75rem;cursor:pointer;min-width:52px;
+    user-select:none;}
+  .custom-slot-btn:hover{background:rgba(255,255,255,.1);}
+  .custom-slot-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;
+    background:#1a2a1a;border:1px solid #3a6a3a;border-radius:8px;
+    box-shadow:0 6px 20px rgba(0,0,0,.6);z-index:9999;min-width:180px;
+    padding:6px 0;white-space:nowrap;}
+  .custom-slot-menu.open{display:block;}
+  .slot-group-header{padding:7px 12px 3px;font-size:.65rem;font-weight:800;
+    color:#8abf8a;letter-spacing:.08em;text-transform:uppercase;
+    display:flex;align-items:center;gap:6px;}
+  .slot-group-header .slot-color-swatch{width:10px;height:10px;
+    border-radius:50%;flex-shrink:0;box-shadow:0 0 4px currentColor;}
+  .slot-row{display:flex;align-items:center;justify-content:space-between;
+    padding:5px 12px 5px 20px;font-size:.75rem;font-weight:600;
+    color:#c8e8c8;cursor:pointer;transition:background .12s;gap:8px;}
+  .slot-row:hover{background:#2a4a2a;}
+  .slot-row.active{background:#1a3a1a;color:#fff;}
+  .slot-row .slot-row-label{flex:1;display:flex;align-items:center;gap:6px;}
+  .slot-row .slot-occ{color:#7dbf7d;font-size:.7rem;}
+  .slot-trash{opacity:0;width:18px;height:18px;flex-shrink:0;
+    color:#cc6666;cursor:pointer;transition:opacity .15s;
+    display:flex;align-items:center;justify-content:center;border-radius:3px;}
+  .slot-row:hover .slot-trash{opacity:.7;}
+  .slot-trash:hover{opacity:1 !important;background:rgba(200,80,80,.2);}
+  .slot-trash svg{width:13px;height:13px;}
   .slot-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;
     box-shadow:0 0 5px currentColor;transition:background .2s;}
   .sep{width:1px;height:28px;background:rgba(255,255,255,.2);margin:0 4px;}
@@ -159,8 +215,41 @@
 
   /* MAIN */
   #main{flex:1;display:flex;overflow:hidden;}
-  #blockly-panel{flex:1;position:relative;min-width:0;}
-  #blocklyDiv{width:100%;height:100%;}
+  #blockly-panel{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+  #ws-tabbar{display:flex;align-items:stretch;background:#2a3a2a;
+    border-bottom:2px solid #3a6a3a;flex-shrink:0;overflow-x:auto;overflow-y:hidden;
+    scrollbar-width:thin;}
+  #ws-tabbar::-webkit-scrollbar{height:3px;}
+  #ws-tabbar::-webkit-scrollbar-thumb{background:#3a6a3a;}
+  #ws-tabs{display:flex;align-items:stretch;flex:1;}
+  .ws-tab{display:flex;align-items:center;gap:5px;padding:5px 10px 5px 12px;
+    font-family:'Nunito',sans-serif;font-size:.75rem;font-weight:700;
+    color:rgba(255,255,255,.55);cursor:pointer;border-right:1px solid #1a2a1a;
+    white-space:nowrap;user-select:none;min-width:80px;max-width:160px;
+    position:relative;transition:background .12s;}
+  .ws-tab:hover{background:#3a5a3a;color:rgba(255,255,255,.8);}
+  .ws-tab.active{background:#f5f0e4;color:#2a5a2a;font-weight:800;}
+  .ws-tab.dirty::after{content:'●';font-size:.5rem;color:#e07020;
+    position:absolute;top:4px;right:20px;}
+  .ws-tab-name{flex:1;overflow:hidden;text-overflow:ellipsis;}
+  .ws-tab-close{width:16px;height:16px;border-radius:3px;display:flex;
+    align-items:center;justify-content:center;font-size:.75rem;
+    color:rgba(255,255,255,.4);flex-shrink:0;transition:all .12s;}
+  .ws-tab-close:hover{background:rgba(255,0,0,.25);color:#ff8888;}
+  .ws-tab.active .ws-tab-close{color:rgba(0,0,0,.35);}
+  .ws-tab.active .ws-tab-close:hover{background:rgba(255,0,0,.15);color:#cc3333;}
+  .ws-tab-slot-pill{display:inline-flex;align-items:center;justify-content:center;
+    width:16px;height:16px;border-radius:4px;font-size:.6rem;font-weight:800;
+    color:#fff;flex-shrink:0;letter-spacing:0;line-height:1;
+    box-shadow:0 0 4px rgba(0,0,0,.3);cursor:default;}
+  .ws-tab-rename{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4);
+    border-radius:3px;color:#fff;font-family:'Nunito',sans-serif;font-size:.75rem;
+    font-weight:700;padding:0 4px;width:100px;outline:none;}
+  #ws-add-tab{background:none;border:none;color:rgba(255,255,255,.5);
+    font-size:1.1rem;padding:0 12px;cursor:pointer;font-weight:300;
+    flex-shrink:0;transition:all .12s;}
+  #ws-add-tab:hover{color:#fff;background:#3a5a3a;}
+  #blocklyDiv{flex:1;min-height:0;}
 
   /* RIGHT PANEL */
   #right-panel{width:360px;display:flex;flex-direction:column;
@@ -278,61 +367,32 @@
 <div id="header">
   <div class="logo-area">
     <svg class="logo-svg" viewBox="0 0 38 38" fill="none">
-      <circle cx="19" cy="19" r="16" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
-      <g transform="translate(19,19)">
-        <circle cx="0" cy="-6" r="5" fill="#4aa85e" opacity=".9"/>
-        <circle cx="6" cy="0" r="5" fill="#4aa85e" opacity=".9"/>
-        <circle cx="0" cy="6" r="5" fill="#4aa85e" opacity=".9"/>
-        <circle cx="-6" cy="0" r="5" fill="#4aa85e" opacity=".9"/>
-        <circle cx="0" cy="0" r="4" fill="#2a7d42"/>
-        <text x="0" y="4" text-anchor="middle" font-family="Zilla Slab,serif" font-size="6" font-weight="700" fill="white">4H</text>
-      </g>
-      <line x1="19" y1="3" x2="19" y2="9" stroke="#e8b84b" stroke-width="1.5"/>
-      <ellipse cx="17" cy="5" rx="1.5" ry="3" fill="#e8b84b" transform="rotate(-20 17 5)"/>
-      <ellipse cx="21" cy="5" rx="1.5" ry="3" fill="#e8b84b" transform="rotate(20 21 5)"/>
+      <circle cx="19" cy="19" r="17" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+      <!-- Robot face -->
+      <rect x="10" y="12" width="18" height="14" rx="3" fill="#4aa85e" opacity=".9"/>
+      <!-- Eyes -->
+      <rect x="13" y="16" width="4" height="4" rx="1" fill="#0d2a1a"/>
+      <rect x="21" y="16" width="4" height="4" rx="1" fill="#0d2a1a"/>
+      <!-- Eye glow -->
+      <rect x="14" y="17" width="2" height="2" rx=".5" fill="#88ffcc" opacity=".8"/>
+      <rect x="22" y="17" width="2" height="2" rx=".5" fill="#88ffcc" opacity=".8"/>
+      <!-- Antenna -->
+      <line x1="19" y1="12" x2="19" y2="7" stroke="#e8b84b" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="19" cy="6" r="2" fill="#e8b84b"/>
+      <!-- Wheels -->
+      <rect x="8" y="20" width="4" height="6" rx="2" fill="#2a5a2a"/>
+      <rect x="26" y="20" width="4" height="6" rx="2" fill="#2a5a2a"/>
     </svg>
     <div class="logo-text">
-      <span class="logo-title">AgRobotics Programming App</span>
+      <div style="display:flex;align-items:baseline;gap:16px;">
+        <span class="logo-title">AgRobotics Programming App</span>
+        <span style="font-size:.65rem;font-weight:600;color:rgba(255,255,255,.45);
+          letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;">Powered by Pitsco Education</span>
+      </div>
       <span class="logo-sub">Block Programming · MicroPython · ESP32-S3</span>
     </div>
   </div>
   <div class="toolbar">
-    <button class="btn btn-ghost" onclick="newProgram()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 0a1 1 0 00-1 1v14a1 1 0 001 1h10a1 1 0 001-1V4.414L9.586 0H3zm6 1.5L13.5 5H9V1.5z"/></svg><span class="btn-label">New</span>
-    </button>
-    <button class="btn btn-ghost" onclick="saveProgram()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5z"/></svg><span class="btn-label">Save XML</span>
-    </button>
-    <button class="btn btn-ghost" onclick="savePython()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5z"/></svg><span class="btn-label">Save .py</span>
-    </button>
-    <button class="btn btn-ghost" onclick="loadProgram()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 11.854a.5.5 0 00.708 0l3-3a.5.5 0 00-.708-.708L8.5 10.293V1.5a.5.5 0 00-1 0v8.793L5.354 8.146a.5.5 0 10-.708.708l3 3z"/></svg><span class="btn-label">Load</span>
-    </button>
-    <div class="prog-name-wrap">
-      <svg viewBox="0 0 16 16" fill="currentColor" style="width:12px;height:12px;opacity:.6;flex-shrink:0;"><path d="M9.293 0H4a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4.707L9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 01-1-1z"/></svg>
-      <input type="text" id="progName" value="Move Forward &amp; Back" placeholder="program name" spellcheck="false">
-    </div>
-    <div class="example-drop-wrap" id="exampleDropWrap">
-      <button class="btn btn-example" onclick="toggleExampleMenu(event)">
-        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm-.5 4.5l4 3.5-4 3.5V4.5z"/></svg><span class="btn-label">Load Example</span>
-        <svg viewBox="0 0 16 16" fill="currentColor" style="width:10px;height:10px;margin-left:2px;"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z"/></svg>
-      </button>
-      <div class="example-menu" id="exampleMenu">
-        <div class="example-menu-section">Motors &amp; Movement</div>
-        <div class="example-item" onclick="loadExample('2')">Motor Run &amp; Stop</div>
-        <div class="example-item" onclick="loadExample('3')">Wheel Rotations</div>
-        <div class="example-item" onclick="loadExample('7')">Move Forward &amp; Back</div>
-        <div class="example-item" onclick="loadExample('8')">Square Pattern</div>
-        <div class="example-menu-section">Servos</div>
-        <div class="example-item" onclick="loadExample('4')">Servo Sweep</div>
-        <div class="example-menu-section">Lights &amp; Sound</div>
-        <div class="example-item" onclick="loadExample('1')">Hello Lights</div>
-        <div class="example-item" onclick="loadExample('5')">Pixel Light Show</div>
-        <div class="example-item" onclick="loadExample('6')">Play a Tune</div>
-      </div>
-    </div>
-    <div class="sep"></div>
     <button class="btn btn-connect" id="connectBtn" onclick="openConnectModal()">
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V1zm11 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V1z"/></svg>Connect
     </button>
@@ -340,20 +400,16 @@
     <div class="slot-selector">
       <label>SLOT</label>
       <div class="slot-dot" id="slotDot" style="background:#ff4444;color:#ff4444;"></div>
-      <select class="slot-select" id="slotSelect" onchange="updateSlotDot()">
-        <option value="1">1 — Red</option>
-        <option value="2">2 — Orange</option>
-        <option value="3">3 — Yellow</option>
-        <option value="4">4 — Green</option>
-        <option value="5">5 — Cyan</option>
-        <option value="6">6 — Blue</option>
-        <option value="7">7 — Purple</option>
-        <option value="8">8 — White</option>
-        <option value="9">9 — Pink</option>
-        <option value="10">10 — Lime</option>
-        <option value="11">11 — Teal</option>
-        <option value="12">12 — Gold</option>
-      </select>
+      <div class="custom-slot-select" id="slotDropWrap">
+        <div class="custom-slot-btn" id="slotDropBtn" onclick="toggleSlotDropdown(event)">
+          <span id="slotDropLabel">R-A</span>
+          <svg viewBox="0 0 16 16" fill="currentColor" style="width:9px;height:9px;opacity:.7;flex-shrink:0;"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 01.753 1.659l-4.796 5.48a1 1 0 01-1.506 0z"/></svg>
+        </div>
+        <div class="custom-slot-menu" id="slotDropMenu">
+          <!-- Populated by buildSlotDropdown() -->
+        </div>
+      </div>
+      <input type="hidden" id="slotSelect" value="1">
     </div>
     <button class="btn btn-upload" onclick="uploadToRobot()">
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 1.146a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 2.707V11.5a.5.5 0 01-1 0V2.707L5.354 4.854a.5.5 0 11-.708-.708l3-3z"/></svg><span class="btn-label">Upload to Slot</span>
@@ -369,9 +425,87 @@
   </div>
 </div>
 
+<!-- MENU BAR -->
+<div id="menubar">
+  <!-- File menu -->
+  <div class="menu-item" id="menuFile">
+    <div class="menu-label" onclick="toggleMenu('menuFile',event)">File</div>
+    <div class="menu-drop" id="menuFileDrop">
+      <div class="menu-row" onclick="newProgram();closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 0a1 1 0 00-1 1v14a1 1 0 001 1h10a1 1 0 001-1V4.414L9.586 0H3zm6 1.5L13.5 5H9V1.5z"/></svg>New
+      </div>
+      <div class="menu-row" onclick="loadProgram();closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 11.854a.5.5 0 00.708 0l3-3a.5.5 0 00-.708-.708L8.5 10.293V1.5a.5.5 0 00-1 0v8.793L5.354 8.146a.5.5 0 10-.708.708l3 3z"/></svg>Load Blocks
+      </div>
+      <div class="menu-sep"></div>
+      <div class="menu-row" onclick="saveProgram();closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5z"/></svg>Save Blocks
+      </div>
+      <div class="menu-row" onclick="savePython();closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11 0H2a1 1 0 00-1 1v14a1 1 0 001 1h12a1 1 0 001-1V4l-4-4zm-1 1.5L13.5 5H10V1.5z"/></svg>Save Python
+      </div>
+      <div class="menu-sep"></div>
+      <div class="menu-row has-sub" id="menuExamples">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm-.5 4.5l4 3.5-4 3.5V4.5z"/></svg>Load Example
+        <svg viewBox="0 0 16 16" fill="currentColor" style="width:9px;margin-left:auto;opacity:.6"><path d="M4.646 1.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L10.293 8 4.646 2.354a.5.5 0 010-.708z"/></svg>
+        <div class="menu-sub">
+          <div class="menu-sub-section">Motors &amp; Movement</div>
+          <div class="menu-row" onclick="loadExample('2');closeMenus()">Motor Run &amp; Stop</div>
+          <div class="menu-row" onclick="loadExample('3');closeMenus()">Wheel Rotations</div>
+          <div class="menu-row" onclick="loadExample('7');closeMenus()">Move Forward &amp; Back</div>
+          <div class="menu-row" onclick="loadExample('8');closeMenus()">Square Pattern</div>
+          <div class="menu-sub-section">Servos</div>
+          <div class="menu-row" onclick="loadExample('4');closeMenus()">Servo Sweep</div>
+          <div class="menu-sub-section">Lights &amp; Sound</div>
+          <div class="menu-row" onclick="loadExample('1');closeMenus()">Hello Lights</div>
+          <div class="menu-row" onclick="loadExample('5');closeMenus()">Pixel Light Show</div>
+          <div class="menu-row" onclick="loadExample('6');closeMenus()">Play a Tune</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- View menu -->
+  <div class="menu-item" id="menuView">
+    <div class="menu-label" onclick="toggleMenu('menuView',event)">View</div>
+    <div class="menu-drop" id="menuViewDrop">
+      <div class="menu-row" onclick="switchTab('code',document.querySelectorAll('.panel-tab')[0]);closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M10.478 1.647a.5.5 0 10-.956-.294l-4 13a.5.5 0 00.956.294l4-13zM4.854 4.146a.5.5 0 010 .708L1.707 8l3.147 3.146a.5.5 0 01-.708.708l-3.5-3.5a.5.5 0 010-.708l3.5-3.5a.5.5 0 01.708 0zm6.292 0a.5.5 0 000 .708L14.293 8l-3.147 3.146a.5.5 0 00.708.708l3.5-3.5a.5.5 0 000-.708l-3.5-3.5a.5.5 0 00-.708 0z"/></svg>MicroPython Code
+      </div>
+      <div class="menu-row" onclick="switchTab('console',document.querySelectorAll('.panel-tab')[1]);closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M0 3a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H2a2 2 0 01-2-2V3zm9.5 5.5h-3a.5.5 0 000 1h3a.5.5 0 000-1zm-6.354-.354a.5.5 0 000 .708l2 2a.5.5 0 00.708-.708L3.707 8l1.647-1.646a.5.5 0 00-.708-.708l-2 2z"/></svg>Console
+      </div>
+      <div class="menu-row" onclick="switchTab('help',document.querySelectorAll('.panel-tab')[2]);closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0 1A8 8 0 108 0a8 8 0 000 16z"/><path d="M5.255 5.786a.237.237 0 00.241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 00.25.246h.811a.25.25 0 00.25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/></svg>Block Reference
+      </div>
+    </div>
+  </div>
+  <!-- Help menu -->
+  <div class="menu-item" id="menuHelp">
+    <div class="menu-label" onclick="toggleMenu('menuHelp',event)">Help</div>
+    <div class="menu-drop" id="menuHelpDrop">
+      <div class="menu-row" onclick="switchTab('help',document.querySelectorAll('.panel-tab')[2]);closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811V2.828zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.746c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 000 2.5v11a.5.5 0 00.707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 00.78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0016 13.5v-11a.5.5 0 00-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/></svg>Block Reference
+      </div>
+      <div class="menu-row" onclick="openBuildingTips();closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8.707 1.5a1 1 0 00-1.414 0L.646 8.146a.5.5 0 00.708.708L8 2.207l6.646 6.647a.5.5 0 00.708-.708L13 5.793V2.5a.5.5 0 00-.5-.5h-1a.5.5 0 00-.5.5v1.293L8.707 1.5z"/><path d="M13 7.207l-5-5-5 5V14a1 1 0 001 1h3v-3h2v3h3a1 1 0 001-1V7.207z"/></svg>Building Tips
+      </div>
+      <div class="menu-sep"></div>
+      <div class="menu-row" onclick="closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 16A8 8 0 108 0a8 8 0 000 16zm.93-9.412l-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 110-2 1 1 0 010 2z"/></svg>About AgRobotics IDE
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MAIN -->
 <div id="main">
-  <div id="blockly-panel"><div id="blocklyDiv"></div></div>
+  <div id="blockly-panel">
+    <div id="ws-tabbar">
+      <div id="ws-tabs"></div>
+      <button id="ws-add-tab" onclick="addTab()" title="Add new program tab">+ New Tab</button>
+    </div>
+    <div id="blocklyDiv"></div>
+  </div>
   <div id="right-panel">
     <div class="panel-tabs">
       <div class="panel-tab" onclick="switchTab('code',this)">⚙ MicroPython</div>
@@ -411,81 +545,76 @@
               <h3>🖥️ Using the IDE</h3>
             </div>
 
-            <!-- Toolbar: File -->
             <div class="ref-card">
               <div class="ref-block-wrap" style="flex-direction:column;gap:4px;align-items:flex-start;">
-                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">📄 New</div>
-                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">💾 Save XML</div>
-                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">🐍 Save .py</div>
-                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">📂 Load</div>
+                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">File</div>
+                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">View</div>
+                <div class="ref-blk" style="background:#3a5a3a;font-size:.68rem;">Help</div>
               </div>
               <div class="ref-info">
-                <div class="ref-title">File Buttons</div>
-                <div class="ref-desc"><b>New</b> clears the workspace after a confirmation prompt — your blocks will be lost if not saved first. <b>Save XML</b> saves the current blocks as a .xml file you can reload later with Load. <b>Save .py</b> exports the generated MicroPython code as a .py file. <b>Load</b> opens a previously saved .xml file and restores the blocks into the workspace.</div>
+                <div class="ref-title">Menu Bar</div>
+                <div class="ref-desc">The menu bar sits below the title bar and contains three menus. <b>File</b> — New (opens a blank tab), Load Blocks (opens a saved .xml file in a new tab), Save Blocks (saves current tab to .xml), Save Python (exports generated code as .py), Load Example (loads a built-in example into the current tab). <b>View</b> — switches the right panel between MicroPython Code, Console, and Block Reference. <b>Help</b> — opens Block Reference or Building Tips.</div>
               </div>
             </div>
 
-            <!-- Toolbar: Load Example -->
             <div class="ref-card">
-              <div class="ref-block-wrap">
-                <div class="ref-blk" style="background:#1a4a6a;font-size:.68rem;">▶ Load Example ▾</div>
+              <div class="ref-block-wrap" style="flex-direction:column;gap:4px;align-items:flex-start;">
+                <div class="ref-blk" style="background:#2a3a2a;font-size:.68rem;">+ New Tab</div>
+                <div class="ref-blk" style="background:#f5f0e4;color:#2a5a2a;font-size:.68rem;">program 1 <span style="background:#ff4444;border-radius:3px;color:#fff;padding:0 3px;font-size:.6rem;">A</span> ×</div>
               </div>
               <div class="ref-info">
-                <div class="ref-title">Load Example</div>
-                <div class="ref-desc">Click the Load Example button to open a drop-down menu of built-in example programs, organized by category. Selecting an example clears the workspace and loads the example blocks — a confirmation prompt will appear first so you don't lose your work by accident. Examples include: <b>Hello Lights</b> (pixels + tones), <b>Motor Run &amp; Stop</b>, <b>Wheel Rotations</b>, <b>Servo Sweep</b>, <b>Pixel Light Show</b> (animations), <b>Play a Tune</b>, <b>Move Forward &amp; Back</b>, and <b>Square Pattern</b> (turns).</div>
+                <div class="ref-title">Program Tabs</div>
+                <div class="ref-desc">The tab bar sits above the Blockly workspace. Each tab is a separate program. Click a tab to switch to it — your work in other tabs is preserved. Double-click a tab name to rename it. Click <b>+ New Tab</b> to open a fresh tab (max 8). Click <b>×</b> to close a tab — unsaved changes trigger a warning first. Closing the last tab clears it to a blank program instead of removing it.<br><br>
+                A small orange dot on a tab means it has unsaved changes. Once a tab has been uploaded to the controller, a <b>colored slot pill</b> appears showing the slot letter (e.g. a red pill with <b>A</b> means the program is in Red-A). This pill updates when you upload to a different slot and is saved into the file so it restores correctly when you reload the program.</div>
               </div>
             </div>
 
-            <!-- Toolbar: Connect -->
             <div class="ref-card">
               <div class="ref-block-wrap">
                 <div class="ref-blk" style="background:#1a6a3a;font-size:.68rem;">🔗 Connect</div>
               </div>
               <div class="ref-info">
                 <div class="ref-title">Connect</div>
-                <div class="ref-desc">Opens the connection dialog. Choose <b>Bluetooth (BLE)</b> to connect wirelessly — your browser will show a list of nearby controllers; select your SEEKER device. Choose <b>USB / Serial</b> to connect via a data cable — select the correct COM port from the browser prompt. Once connected, the button turns green and shows the connection type. Click it again to disconnect.</div>
+                <div class="ref-desc">Opens the connection dialog. Choose <b>Bluetooth (BLE)</b> to connect wirelessly — your browser shows a list of nearby controllers; select your SEEKER device. Choose <b>USB / Serial</b> to connect via a data cable. Once connected the button turns green. Click it again to disconnect. After connecting, the IDE queries the controller and marks occupied slots in the dropdown.</div>
               </div>
             </div>
 
-            <!-- Toolbar: Program Slot -->
             <div class="ref-card">
               <div class="ref-block-wrap" style="flex-direction:column;gap:4px;align-items:flex-start;">
-                <div class="ref-blk" style="background:#3a3a5a;font-size:.68rem;">● Slot <div class="ref-slot">1 — Red ▼</div></div>
+                <div class="ref-blk" style="background:#3a3a5a;font-size:.68rem;">● SLOT R-A ▼</div>
                 <div class="ref-blk" style="background:#c85c00;font-size:.68rem;">⬆ Upload to Slot</div>
               </div>
               <div class="ref-info">
-                <div class="ref-title">Program Slot Selector &amp; Upload</div>
-                <div class="ref-desc">The controller can store up to <b>12 programs</b> at once, each in a numbered slot. Use the slot dropdown to choose which slot (1–12) to upload your program to. The colored dot updates to match the slot's color. Once connected, slots that already contain a program are shown in <span style="color:#7dbf7d;font-weight:700;">green with a ●</span> in the dropdown — empty slots are plain. Click <b>Upload to Slot</b> to send the current blocks to the selected slot. The upload compiles your blocks to MicroPython, writes it to the controller as <code>prog_N.py</code>, and automatically restarts the launcher. Each upload takes a few seconds over Bluetooth.</div>
+                <div class="ref-title">Slot Selector &amp; Upload</div>
+                <div class="ref-desc">The controller stores up to <b>16 programs</b> in 4 color groups (Red, Green, Blue, Yellow) with 4 slots each (A, B, C, D). Click the slot button to open the slot picker — occupied slots show a green <b>●</b>. A trash icon appears on occupied slots to delete them from the controller. Each tab remembers which slot it was last uploaded to and restores that slot when you switch to it.<br><br>
+                Click <b>Upload to Slot</b> to compile and send the active tab's blocks to the controller — the launcher restarts automatically and a colored slot pill appears on the tab. If the target slot belongs to another tab or is already occupied, a warning appears before overwriting.<br><br>
+                <b>Tip:</b> Upload first, then use Save Blocks — the slot information is embedded in the saved file so when you reload the program later it knows exactly which slot it belongs to.</div>
               </div>
             </div>
 
-            <!-- How the Launcher Works -->
             <div class="ref-card">
               <div class="ref-block-wrap">
                 <div class="ref-blk" style="background:#2a5a3a;font-size:.68rem;">🤖 Launcher</div>
               </div>
               <div class="ref-info">
                 <div class="ref-title">How the Program Launcher Works</div>
-                <div class="ref-desc">When the controller powers on it runs a built-in launcher. The launcher lets you browse and run any of the 12 stored programs without connecting to the IDE. Use the buttons on the controller to navigate:<br><br>
-                  <b>Button A</b> — step backward through slots<br>
-                  <b>Button B</b> — step forward through slots<br>
-                  <b>Start</b> — run the selected slot's program<br><br>
-                  The four NeoPixels show the current slot's color as you scroll. An occupied slot glows at full brightness; an empty slot is the same color but dim. When the controller first boots, a slot map is printed to the console showing all 12 slots and whether each one is occupied. When a program finishes (reaches <b>Ag End</b>), the launcher restarts automatically and is ready to run again.</div>
+                <div class="ref-desc">When the controller powers on it runs the built-in launcher — no computer needed. Navigation is two-phase:<br><br>
+                  <b>Color browsing phase:</b> All 4 NeoPixels show the current group color. Press <b>C</b> to cycle through Red → Green → Blue → Yellow. Press <b>Select</b> to enter that group (error buzz if empty).<br><br>
+                  <b>Slot selection phase:</b> Each NeoPixel (A, B, C, D) represents one slot. Occupied slots glow; empty slots flash briefly then go dark. Press <b>A, B, C,</b> or <b>D</b> to select a slot (error buzz if empty) — selected slot brightens. Press <b>Select</b> to run it. Press <b>Select</b> without selecting a slot to go back to color browsing.<br><br>
+                  When a program finishes (Ag End), the launcher returns to color browsing. A slot map of all 16 slots is printed to the console at boot.</div>
               </div>
             </div>
 
-            <!-- Toolbar: Stop / Reset -->
             <div class="ref-card">
               <div class="ref-block-wrap">
                 <div class="ref-blk" style="background:#9b1c1c;font-size:.68rem;">■ Stop / Reset</div>
               </div>
               <div class="ref-info">
                 <div class="ref-title">Stop / Reset</div>
-                <div class="ref-desc">Immediately stops any running program, turns off motors, sound, and pixels, and restarts the launcher. Use this any time the robot is behaving unexpectedly or you need to return to the slot selector without waiting for the program to finish. Stop / Reset works over both Bluetooth and USB.</div>
+                <div class="ref-desc">Immediately stops any running program, turns off all motors, sound, and pixels, and restarts the launcher. Use this any time the robot behaves unexpectedly or you need to return to the launcher without waiting for the program to finish. Works over both Bluetooth and USB.</div>
               </div>
             </div>
 
-            <!-- Console -->
             <div class="ref-card">
               <div class="ref-block-wrap" style="flex-direction:column;gap:4px;align-items:flex-start;">
                 <div class="ref-blk" style="background:#0e2a1a;border:1px solid #2a5a2a;font-size:.68rem;color:#7dbf7d;">▶ Console</div>
@@ -493,18 +622,17 @@
               </div>
               <div class="ref-info">
                 <div class="ref-title">Console</div>
-                <div class="ref-desc">The Console tab shows everything printed by the controller — connection messages, the slot map at startup, output from <b>Print</b> blocks in your programs, and any errors. Use Print blocks in your program to display sensor readings or variable values here while your program runs. The <b>✕ Clear</b> button in the top-right corner of the console wipes the output. You can also type raw MicroPython commands into the input bar at the bottom of the console and press <b>Send</b> (or Enter) to run them directly on the controller.</div>
+                <div class="ref-desc">Shows everything printed by the controller — connection messages, the slot map at startup, output from <b>Print</b> blocks, and errors. Use Print blocks to display sensor readings or variable values while your program runs. <b>✕ Clear</b> wipes the output. Type raw MicroPython commands in the input bar at the bottom and press <b>Send</b> or Enter to run them directly on the controller.</div>
               </div>
             </div>
 
-            <!-- MicroPython tab -->
             <div class="ref-card">
               <div class="ref-block-wrap">
                 <div class="ref-blk" style="background:#1e2e1e;border:1px solid #2a5a2a;font-size:.68rem;color:#7dbf7d;">⚙ MicroPython</div>
               </div>
               <div class="ref-info">
                 <div class="ref-title">MicroPython Tab</div>
-                <div class="ref-desc">Shows the MicroPython code that your blocks generate, updated live as you build. You don't need to read or edit this — it's there so you can see exactly what gets uploaded to the controller. It's also a great way to start learning how the code maps to the blocks.</div>
+                <div class="ref-desc">Shows the MicroPython code your blocks generate, updated live. You don't need to edit this — it shows exactly what gets uploaded. It's also a great way to start learning how blocks map to real code.</div>
               </div>
             </div>
 
@@ -518,19 +646,19 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#2a7d42">🌾 Ag Begin</div></div>
-              <div class="ref-info"><div class="ref-title">Ag Begin</div><div class="ref-desc">Initializes the Ag Controller and waits for the Start button to be pressed. Always use this as the first block in your program.</div></div>
+              <div class="ref-info"><div class="ref-title">Ag Begin</div><div class="ref-desc">Initializes the Ag Controller and waits for the Select button to be pressed before continuing. Always use this as the first block in every program. The controller plays a short tone and lights up when ready.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#2a7d42">🌾 Ag End</div></div>
-              <div class="ref-info"><div class="ref-title">Ag End</div><div class="ref-desc">Stops the program and restarts main.py from the beginning. Use this as the final block when your task is complete.</div></div>
+              <div class="ref-info"><div class="ref-title">Ag End</div><div class="ref-desc">Stops the program cleanly — turns off motors, sound, and pixels — and returns to the launcher. Always use this as the last block in your program.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#2a7d42">⏱ Wait (ms) <div class="ref-oval">1000</div></div></div>
-              <div class="ref-info"><div class="ref-title">Wait</div><div class="ref-desc">Pauses the program for the specified number of milliseconds. 1000 ms = 1 second.</div></div>
+              <div class="ref-info"><div class="ref-title">Wait</div><div class="ref-desc">Pauses the program for the specified number of milliseconds. 1000 ms = 1 second. Use between actions to control timing.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#2a7d42">🖨 Print <div class="ref-oval">value</div></div></div>
-              <div class="ref-info"><div class="ref-title">Print</div><div class="ref-desc">Sends a value to the serial console. Useful for reading sensor values and debugging your program.</div></div>
+              <div class="ref-info"><div class="ref-title">Print</div><div class="ref-desc">Sends a value to the Console tab. Use this to display sensor readings, variable values, or status messages while your program runs. Very useful for debugging.</div></div>
             </div>
           </div>
 
@@ -541,48 +669,36 @@
               <h3>🤖 Movement</h3>
             </div>
             <div class="ref-card">
-              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Movement Motors — Left Wheel: <div class="ref-slot">1 ▼</div> Right Wheel: <div class="ref-slot">2 ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Set Movement Motors</div><div class="ref-desc">Assigns motor ports to the left and right wheels. Default is Left: 1, Right: 2. Call this once at the start of every program that uses movement blocks.</div></div>
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Robot Config Left Wheel: <div class="ref-slot">1 ▼</div> Right Wheel: <div class="ref-slot">2 ▼</div> Wheel Diameter <div class="ref-oval">80</div> mm Wheelbase <div class="ref-oval">185</div> mm</div></div>
+              <div class="ref-info"><div class="ref-title">Set Robot Configuration</div><div class="ref-desc">Sets up the robot's motor ports and geometry in one block. Call once at program start before any movement blocks. <b>Left/Right Wheel</b> — assign motor channels (default: Left=1, Right=2). <b>Wheel Diameter</b> — diameter of drive wheels in mm for accurate distance (Ag robot: 80mm). <b>Wheelbase</b> — distance between wheel contact points in mm for accurate turns (measure your robot; Ag robot: ~185mm).</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Movement Speed to <div class="ref-oval">50</div> %</div></div>
-              <div class="ref-info"><div class="ref-title">Set Movement Speed</div><div class="ref-desc">Sets the default speed used by all Move and Start blocks. Range is 0–100%. The default value is 50%. Set this once before your first movement command.</div></div>
-            </div>
-            <div class="ref-card">
-              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Acceleration / Deceleration rate <div class="ref-oval">15</div></div></div>
-              <div class="ref-info"><div class="ref-title">Set Acceleration / Deceleration</div><div class="ref-desc">Sets a global ramp rate applied automatically by all movement blocks when they start and stop. A value of <b>0</b> means instant start/stop (default — no ramp). Higher values ramp faster: <b>10</b> is a gentle ramp, <b>20</b> is moderate, <b>30</b> is quick. A rate of 15 takes about 400 ms to reach 60% speed. Set once at program start alongside Set Movement Speed. Ramping reduces wheel slip, improves straight-line accuracy, and makes turns more repeatable — especially at higher speeds.</div></div>
-            </div>
-            <div class="ref-card">
-              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Wheel Diameter to <div class="ref-oval">80</div> mm</div></div>
-              <div class="ref-info"><div class="ref-title">Set Wheel Diameter</div><div class="ref-desc">Sets the wheel diameter so the robot can calculate accurate distances. The Ag robot uses 80mm wheels. Use this block to calibrate your specific robot.</div></div>
-            </div>
-            <div class="ref-card">
-              <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Set Wheelbase to <div class="ref-oval">250</div> mm</div></div>
-              <div class="ref-info"><div class="ref-title">Set Wheelbase</div><div class="ref-desc">Sets the distance between the two wheel contact points. This is used by the Turn Degrees block to calculate accurate turn angles. Measure your robot and enter the value in millimeters.</div></div>
+              <div class="ref-info"><div class="ref-title">Set Movement Speed</div><div class="ref-desc">Sets the default speed for all Move and Start blocks. Range 0–100%. Set once before your first movement command. Does not affect individual motor blocks.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Move <div class="ref-slot">Forward ▼</div> for <div class="ref-oval">10</div> <div class="ref-slot">cm ▼</div> Wait <div class="ref-slot">Yes ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Move For Distance</div><div class="ref-desc">Moves the robot forward or backward a specific distance, then stops. Choose cm or rotations. When Wait is Yes, the next block won't run until the move is complete.</div></div>
+              <div class="ref-info"><div class="ref-title">Move For Distance</div><div class="ref-desc">Moves the robot forward or backward a specific distance then stops. Choose cm or rotations. When Wait is Yes the next block won't run until the move is complete. Requires Robot Config to be set first.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Start Moving <div class="ref-slot">Forward ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Start Moving</div><div class="ref-desc">Starts moving the robot continuously forward or backward. The robot will keep moving until a Stop Moving block is reached. Use with a Wait block to control how long it drives.</div></div>
+              <div class="ref-info"><div class="ref-title">Start Moving</div><div class="ref-desc">Starts moving continuously in the chosen direction. The robot keeps moving until a Stop Moving block runs. Use with a Wait block to control how long it drives.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Move steering: <div class="ref-oval">0</div> for <div class="ref-oval">20</div> <div class="ref-slot">cm ▼</div> Wait <div class="ref-slot">Yes ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Move with Steering</div><div class="ref-desc">Moves forward with differential steering for a set distance. Steering 0 = straight. +99 curves sharply right, −99 curves sharply left. +100/−100 pivots on the spot. Both motors stop at the same time.</div></div>
+              <div class="ref-info"><div class="ref-title">Move with Steering</div><div class="ref-desc">Moves forward with differential steering. Steering 0 = straight. +99 curves right, −99 curves left. +100/−100 pivots on the spot. Distance is measured along the outer (faster) wheel path.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Start Moving steering: <div class="ref-oval">0</div></div></div>
-              <div class="ref-info"><div class="ref-title">Start Moving with Steering</div><div class="ref-desc">Starts moving continuously with differential steering. Use a Stop Moving block to stop. Same steering scale as Move with Steering — 0 is straight, ±100 is a pivot.</div></div>
+              <div class="ref-info"><div class="ref-title">Start Moving with Steering</div><div class="ref-desc">Starts moving continuously with differential steering. Use Stop Moving to stop. Same steering scale as Move with Steering.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Turn <div class="ref-slot">Right ▼</div> <div class="ref-oval">90</div> degrees Wait <div class="ref-slot">Yes ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Turn Degrees</div><div class="ref-desc">Spins the robot in place by a number of degrees. Accuracy depends on the Wheelbase setting being correct for your robot. Both wheels spin in opposite directions for a tight turn.</div></div>
+              <div class="ref-info"><div class="ref-title">Turn Degrees</div><div class="ref-desc">Spins the robot in place by a number of degrees. Accuracy depends on the Wheelbase in Robot Config being correct for your robot. Both wheels spin in opposite directions for a tight pivot turn.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#0d7377">🤖 Stop Moving</div></div>
-              <div class="ref-info"><div class="ref-title">Stop Moving</div><div class="ref-desc">Immediately stops both movement motors. Use this after any Start Moving or Start Moving with Steering block.</div></div>
+              <div class="ref-info"><div class="ref-title">Stop Moving</div><div class="ref-desc">Immediately stops both movement motors. Use after any Start Moving or Start Moving with Steering block.</div></div>
             </div>
           </div>
 
@@ -594,27 +710,27 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">⚙ Motor <div class="ref-oval">1</div> Speed % <div class="ref-oval">75</div></div></div>
-              <div class="ref-info"><div class="ref-title">Motor Speed</div><div class="ref-desc">Sets a motor to run continuously at a given speed percentage. Range is −100 to 100. Negative values reverse direction. Use motor port 1234 to set all motors at once.</div></div>
+              <div class="ref-info"><div class="ref-title">Motor Speed</div><div class="ref-desc">Sets an individual motor to a speed from −100 to +100%. Positive = forward, negative = backward, 0 = stop. Use motor numbers 1–4. Use 1234 to set all motors to the same speed at once.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">⚙ Motor <div class="ref-oval">1</div> Rotations <div class="ref-oval">3</div> at Speed % <div class="ref-oval">60</div></div></div>
-              <div class="ref-info"><div class="ref-title">Wheel Rotations</div><div class="ref-desc">Turns a single motor a specific number of wheel rotations at the given speed. Useful for low-level control of individual motors or attachments.</div></div>
+              <div class="ref-info"><div class="ref-title">Wheel Rotations</div><div class="ref-desc">Runs a motor a specific number of wheel rotations at a set speed then stops. Useful for precise distance control when using individual motors rather than the movement system.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">⚙ Stop Motor <div class="ref-oval">1</div> <div class="ref-slot">Brake ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Motor Stop</div><div class="ref-desc">Stops a motor using Brake (holds position) or Coast (free-wheels to a stop). Brake is more abrupt and precise; Coast is gentler.</div></div>
+              <div class="ref-info"><div class="ref-title">Motor Stop</div><div class="ref-desc">Stops a motor using <b>Brake</b> (holds position firmly) or <b>Coast</b> (lets the motor spin down freely). Use 1234 to stop all motors at once. Brake is more precise; Coast is gentler on the drivetrain.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">⚙ Motor <div class="ref-oval">1</div> Invert <div class="ref-slot">Yes ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Motor Invert</div><div class="ref-desc">Reverses the direction of a motor without changing the sign of speed values. Useful when a motor is physically mounted in the opposite direction.</div></div>
+              <div class="ref-info"><div class="ref-title">Motor Invert</div><div class="ref-desc">Reverses the direction of a motor without changing the speed sign. Useful when a motor is physically mounted in the opposite direction.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">Encoder Count ch <div class="ref-oval">1</div></div></div>
-              <div class="ref-info"><div class="ref-title">Encoder Count</div><div class="ref-desc">Returns the current encoder count for a motor channel. This is a reporter block — place it inside a Print or Math block. Counts accumulate until reset.</div></div>
+              <div class="ref-info"><div class="ref-title">Encoder Count</div><div class="ref-desc">Returns the current encoder count for a motor channel. Reporter block — place inside a Print or variable block. Counts accumulate until reset. Useful for measuring distance traveled.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#8B4513">⚙ Reset Encoder <div class="ref-oval">1</div></div></div>
-              <div class="ref-info"><div class="ref-title">Reset Encoder</div><div class="ref-desc">Resets the encoder count for a motor channel back to zero. Use 1234 to reset all encoders at once. Reset before measuring a new distance.</div></div>
+              <div class="ref-info"><div class="ref-title">Reset Encoder</div><div class="ref-desc">Resets the encoder count back to zero. Use 1234 to reset all encoders at once. Always reset before measuring a new distance.</div></div>
             </div>
           </div>
 
@@ -626,15 +742,15 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#A0522D">🔩 Servo <div class="ref-oval">1</div> Position ° <div class="ref-oval">90</div></div></div>
-              <div class="ref-info"><div class="ref-title">Servo Position</div><div class="ref-desc">Moves a servo to a specific angle between 0° and 180°. 90° is typically center position. Use port 1234 to move all servos to the same angle simultaneously.</div></div>
+              <div class="ref-info"><div class="ref-title">Servo Position</div><div class="ref-desc">Moves a servo to a specific angle between 0° and 180°. 90° is typically center. Use 1234 to move all servos to the same angle simultaneously.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#A0522D">🔩 Servo <div class="ref-oval">1</div> Speed % <div class="ref-oval">50</div></div></div>
-              <div class="ref-info"><div class="ref-title">Servo Speed</div><div class="ref-desc">Sets how fast the servo moves to its target position. Range is 0–100%. Lower values make the servo move more slowly and smoothly.</div></div>
+              <div class="ref-info"><div class="ref-title">Servo Speed</div><div class="ref-desc">Sets how fast the servo moves to its target angle. Range 0–100%. Lower values make movement slower and smoother.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#A0522D">🔩 Servo <div class="ref-oval">1</div> Invert <div class="ref-slot">Yes ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Servo Invert</div><div class="ref-desc">Reverses the direction of a servo so that 0° and 180° are swapped. Useful when a servo is physically mounted in the opposite orientation. Applies to servo ports 1–4 individually.</div></div>
+              <div class="ref-info"><div class="ref-title">Servo Invert</div><div class="ref-desc">Reverses the direction of a servo so 0° and 180° are swapped. Useful when a servo is physically mounted in the opposite orientation.</div></div>
             </div>
           </div>
 
@@ -646,43 +762,43 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Sonic (cm) port <div class="ref-oval">1</div></div></div>
-              <div class="ref-info"><div class="ref-title">Ultrasonic Distance</div><div class="ref-desc">Returns the distance to the nearest object in centimeters. Range is approximately 2–350 cm. Use in an If block to react when the robot gets close to something.</div></div>
+              <div class="ref-info"><div class="ref-title">Ultrasonic Distance</div><div class="ref-desc">Returns distance to the nearest object in centimeters. Range ~2–350 cm. Use in an If block to react when the robot gets close to something.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 TOF (mm) port <div class="ref-oval">1</div></div></div>
-              <div class="ref-info"><div class="ref-title">Time-of-Flight Distance</div><div class="ref-desc">Returns distance in millimeters using a laser sensor. Range is 30–1000 mm. More accurate than ultrasonic at short distances, useful for precise positioning.</div></div>
+              <div class="ref-info"><div class="ref-title">Time-of-Flight Distance</div><div class="ref-desc">Returns distance in millimeters using a laser. Range 30–1000 mm. More accurate than ultrasonic at short distances.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Line Sensor port <div class="ref-oval">1</div></div></div>
-              <div class="ref-info"><div class="ref-title">Line Sensor</div><div class="ref-desc">Returns 0 for a light surface or 1 for a dark surface. Use to follow a line on the ground or detect the edge of a field boundary.</div></div>
+              <div class="ref-info"><div class="ref-title">Line Sensor</div><div class="ref-desc">Returns 0 for a light surface or 1 for a dark surface. Use to follow a line or detect a field boundary.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Color <div class="ref-oval">1</div> channel <div class="ref-slot">red ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Color Sensor (Value)</div><div class="ref-desc">Returns a numeric value from the color sensor. Channel options: red, green, blue, ambient (light level), rgb (combined), hex (color code string).</div></div>
+              <div class="ref-info"><div class="ref-title">Color Sensor Value</div><div class="ref-desc">Returns a numeric value from the color sensor. Channel options: red, green, blue, ambient, rgb, hex.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Color port <div class="ref-oval">1</div> is <div class="ref-slot">red ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Color Is</div><div class="ref-desc">Returns True if the sensor detects the selected color, False otherwise. Use directly in an If block to trigger actions based on what color the robot sees.</div></div>
+              <div class="ref-info"><div class="ref-title">Color Is</div><div class="ref-desc">Returns True if the sensor detects the selected color. Use directly in an If block.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Temp port <div class="ref-oval">1</div> <div class="ref-slot">°C ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Temperature</div><div class="ref-desc">Returns the temperature reading from a temp/humidity sensor. Choose Celsius or Fahrenheit. Useful for weather station and greenhouse monitoring challenges.</div></div>
+              <div class="ref-info"><div class="ref-title">Temperature</div><div class="ref-desc">Returns temperature from a temp/humidity sensor in Celsius or Fahrenheit.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Humidity port <div class="ref-oval">1</div></div></div>
-              <div class="ref-info"><div class="ref-title">Humidity</div><div class="ref-desc">Returns the relative humidity percentage (0–100%) from a temp/humidity sensor. Useful for soil and air moisture monitoring in agricultural challenges.</div></div>
+              <div class="ref-info"><div class="ref-title">Humidity</div><div class="ref-desc">Returns relative humidity (0–100%) from a temp/humidity sensor.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Rotary port <div class="ref-oval">1</div></div></div>
-              <div class="ref-info"><div class="ref-title">Rotary Sensor</div><div class="ref-desc">Returns a value from 0–100 based on the position of a rotary dial (potentiometer). Good for manual control inputs or position sensing.</div></div>
+              <div class="ref-info"><div class="ref-title">Rotary Sensor</div><div class="ref-desc">Returns 0–100 based on the position of a rotary dial. Good for manual input or position sensing.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Analog (0-4095) port <div class="ref-oval">1</div></div></div>
-              <div class="ref-info"><div class="ref-title">Analog Input</div><div class="ref-desc">Reads the raw analog voltage on a sensor port. Returns 0–4095. Use for sensors without a dedicated block, such as soil moisture probes or custom sensors.</div></div>
+              <div class="ref-info"><div class="ref-title">Analog Input</div><div class="ref-desc">Reads the raw analog voltage on a sensor port (0–4095). Use for sensors without a dedicated block such as soil moisture probes.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#1565a8">📡 Digital (0/1) port <div class="ref-oval">1</div></div></div>
-              <div class="ref-info"><div class="ref-title">Digital Input</div><div class="ref-desc">Reads a digital signal on a sensor port. Returns 0 or 1. Use for switches, bump sensors, or any sensor with a simple on/off output.</div></div>
+              <div class="ref-info"><div class="ref-title">Digital Input</div><div class="ref-desc">Reads a digital signal (0 or 1) on a sensor port. Use for switches, bump sensors, or any on/off sensor.</div></div>
             </div>
           </div>
 
@@ -694,7 +810,7 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#5b3fa5">🎮 Button <div class="ref-slot">A ▼</div> Pressed</div></div>
-              <div class="ref-info"><div class="ref-title">Button Pressed</div><div class="ref-desc">Returns True when the selected button is being pressed, False otherwise. Buttons available: Start, A, B, C, D. Use in an If block or a Wait Until loop to respond to button presses.</div></div>
+              <div class="ref-info"><div class="ref-title">Button Pressed</div><div class="ref-desc">Returns True when the selected button is being pressed, False otherwise. Buttons: Select, A, B, C, D. Use in an If block or a Repeat While loop to respond to button presses during a running program.</div></div>
             </div>
           </div>
 
@@ -706,23 +822,23 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel <div class="ref-slot">ABCD ▼</div> R <div class="ref-oval">0</div> G <div class="ref-oval">200</div> B <div class="ref-oval">50</div></div></div>
-              <div class="ref-info"><div class="ref-title">Pixel Color (RGB)</div><div class="ref-desc">Sets a NeoPixel to a color using Red, Green, Blue values (0–255 each). Select a single pixel (A, B, C, D) or ABCD to set all four at once.</div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Color (RGB)</div><div class="ref-desc">Sets a NeoPixel using Red, Green, Blue values (0–255 each). Select a single pixel (A, B, C, D) or ABCD for all four at once.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel <div class="ref-slot">A ▼</div> Color <div class="ref-slot" style="background:#00c832;width:16px;height:16px;border-radius:3px;display:inline-block;"></div> Brightness <div class="ref-oval">75</div> %</div></div>
-              <div class="ref-info"><div class="ref-title">Pixel Color (Picker)</div><div class="ref-desc">Sets a NeoPixel to a color using the built-in color picker and a brightness level (0–100%). Click the colored square on the block to open the color wheel and choose any color. Select a single pixel (A, B, C, D) or ABCD to set all four at once.</div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Color (Picker)</div><div class="ref-desc">Sets a NeoPixel using the built-in color picker and a brightness level (0–100%). Click the colored square to open the color wheel. Select a single pixel or ABCD for all four.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel Off <div class="ref-slot">ABCD ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Pixel Off</div><div class="ref-desc">Turns off one or all NeoPixels. Choose a single pixel or ABCD to turn them all off at once.</div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Off</div><div class="ref-desc">Turns off one or all NeoPixels.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Blink Pixel <div class="ref-slot">A ▼</div> Color <div class="ref-slot" style="background:#ff8800;width:16px;height:16px;border-radius:3px;display:inline-block;"></div> <div class="ref-oval">3</div> times</div></div>
-              <div class="ref-info"><div class="ref-title">Pixel Blink</div><div class="ref-desc">Blinks a NeoPixel a set number of times in the chosen color. Click the colored square to open the color picker. Good for signaling events like a completed task or a detected object.</div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Blink</div><div class="ref-desc">Blinks a NeoPixel a set number of times in the chosen color. Click the color swatch to pick a color. Good for signaling completed tasks or detected objects.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#b8860b">💡 Pixel Animation <div class="ref-slot">rainbow ▼</div> for <div class="ref-oval">3</div> sec</div></div>
-              <div class="ref-info"><div class="ref-title">Pixel Animation</div><div class="ref-desc">Plays a built-in light animation for a set number of seconds. Options include: rainbow, comet, chase, fade, sparkle, colorcycle, rainbow comet, rainbow chase, rainbow sparkle.</div></div>
+              <div class="ref-info"><div class="ref-title">Pixel Animation</div><div class="ref-desc">Plays a built-in light animation for a set duration. Options: rainbow, comet, chase, fade, sparkle, colorcycle, rainbow comet, rainbow chase, rainbow sparkle.</div></div>
             </div>
           </div>
 
@@ -734,19 +850,19 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#7b3f8c">🔊 Tone (Hz) <div class="ref-oval">440</div> for (sec) <div class="ref-oval">0.5</div></div></div>
-              <div class="ref-info"><div class="ref-title">Tone</div><div class="ref-desc">Plays a tone at the specified frequency in Hz for a set duration in seconds. 440 Hz is the musical note A4. Try 262 for C4 or 523 for C5.</div></div>
+              <div class="ref-info"><div class="ref-title">Tone</div><div class="ref-desc">Plays a tone at the specified frequency in Hz for a set duration in seconds. 440 Hz = note A4. Try 262 for C4 or 523 for C5.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#7b3f8c">🔊 Play Note <div class="ref-slot">C4 ▼</div> for (sec) <div class="ref-oval">0.5</div></div></div>
-              <div class="ref-info"><div class="ref-title">Play Note</div><div class="ref-desc">Plays a musical note by name for a set duration. Choose from a full range of notes across multiple octaves (C3 through C8). No need to know Hz values.</div></div>
+              <div class="ref-info"><div class="ref-title">Play Note</div><div class="ref-desc">Plays a musical note by name for a set duration. Choose from a full range of notes (C3 through C8). No need to know Hz values.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#7b3f8c">🔊 Sound Effect <div class="ref-slot">Correct ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Sound Effect</div><div class="ref-desc">Plays one of 15 built-in sound effects. Options include: Correct, Incorrect, Siren, Whistle Up/Down, Happy Birthday, Super Mario, Close Encounters, Phaser, Red Alert, R2D2, and more.</div></div>
+              <div class="ref-info"><div class="ref-title">Sound Effect</div><div class="ref-desc">Plays one of 15 built-in sound effects including Correct, Incorrect, Siren, Whistle, Happy Birthday, Super Mario, Close Encounters, and more.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#7b3f8c">🔊 Sound Off</div></div>
-              <div class="ref-info"><div class="ref-title">Sound Off</div><div class="ref-desc">Immediately silences the piezo buzzer. Use this after a Start Tone or during an animation to cut the sound before it finishes.</div></div>
+              <div class="ref-info"><div class="ref-title">Sound Off</div><div class="ref-desc">Immediately silences the buzzer. Use after Start Tone or to cut an animation sound early.</div></div>
             </div>
           </div>
 
@@ -762,7 +878,7 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">repeat while <div class="ref-slot">true ▼</div></div></div>
-              <div class="ref-info"><div class="ref-title">Repeat While / Until</div><div class="ref-desc">Keeps repeating the blocks inside it while (or until) a condition is true. Use with sensor or button blocks in the condition slot.</div></div>
+              <div class="ref-info"><div class="ref-title">Repeat While / Until</div><div class="ref-desc">Keeps repeating the blocks inside it while (or until) a condition is true. Use with sensor or button blocks in the condition slot to keep looping until something happens.</div></div>
             </div>
           </div>
 
@@ -774,15 +890,15 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">if <div class="ref-oval">condition</div> do</div></div>
-              <div class="ref-info"><div class="ref-title">If / If-Else</div><div class="ref-desc">Runs blocks inside only when a condition is true. The if-else version also runs a different set of blocks when the condition is false.</div></div>
+              <div class="ref-info"><div class="ref-title">If / If-Else</div><div class="ref-desc">Runs blocks inside only when a condition is true. The if-else version also runs a different set of blocks when the condition is false. Click the gear icon on the block to add else-if branches.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568"><div class="ref-oval">A</div> = <div class="ref-oval">B</div></div></div>
-              <div class="ref-info"><div class="ref-title">Compare</div><div class="ref-desc">Compares two values. Returns true or false. Options: = (equal), ≠ (not equal), &lt; (less than), &gt; (greater than), ≤, ≥. Place inside an If block.</div></div>
+              <div class="ref-info"><div class="ref-title">Compare</div><div class="ref-desc">Compares two values and returns true or false. Options: = (equal), ≠ (not equal), &lt; (less than), &gt; (greater than), ≤, ≥. Place inside an If block condition slot.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568"><div class="ref-oval">A</div> and <div class="ref-oval">B</div></div></div>
-              <div class="ref-info"><div class="ref-title">Logic Operation</div><div class="ref-desc">Combines two true/false values. "and" is true only if both are true. "or" is true if either one is true. Use to check multiple conditions at once.</div></div>
+              <div class="ref-info"><div class="ref-title">Logic Operation</div><div class="ref-desc">"and" is true only if both values are true. "or" is true if either one is true. "not" inverts a true/false value. Use to check multiple conditions at once.</div></div>
             </div>
           </div>
 
@@ -794,15 +910,15 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568"><div class="ref-oval">0</div></div></div>
-              <div class="ref-info"><div class="ref-title">Number</div><div class="ref-desc">A number value block. Click the number to type any value. Place this in any block input that expects a number.</div></div>
+              <div class="ref-info"><div class="ref-title">Number</div><div class="ref-desc">A number value block. Click the number to type any value. Place in any block input that expects a number.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568"><div class="ref-oval">A</div> + <div class="ref-oval">B</div></div></div>
-              <div class="ref-info"><div class="ref-title">Arithmetic</div><div class="ref-desc">Performs a math operation on two numbers. Options: + − × ÷ and ^ (power). The result can be plugged into any number input slot.</div></div>
+              <div class="ref-info"><div class="ref-title">Arithmetic</div><div class="ref-desc">Performs a math operation: + − × ÷ ^ (power). The result plugs into any number input slot.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">constrain <div class="ref-oval">n</div> low <div class="ref-oval">0</div> high <div class="ref-oval">100</div></div></div>
-              <div class="ref-info"><div class="ref-title">Constrain</div><div class="ref-desc">Clamps a number so it stays within a minimum and maximum range. Useful for keeping sensor values or motor speeds within safe limits.</div></div>
+              <div class="ref-info"><div class="ref-title">Constrain</div><div class="ref-desc">Clamps a number within a minimum and maximum range. Useful for keeping sensor values or motor speeds within safe limits.</div></div>
             </div>
           </div>
 
@@ -814,11 +930,15 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">set <div class="ref-oval">myVar</div> to <div class="ref-oval">0</div></div></div>
-              <div class="ref-info"><div class="ref-title">Set Variable</div><div class="ref-desc">Creates or updates a variable with a value. Click "Create variable" in the Variables category to name your variable, then use Set to give it a value.</div></div>
+              <div class="ref-info"><div class="ref-title">Set Variable</div><div class="ref-desc">Creates or updates a variable with a value. Click "Create variable" in the Variables category to name it, then use Set to give it a value. Variables can hold numbers, text, or true/false values.</div></div>
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">change <div class="ref-oval">myVar</div> by <div class="ref-oval">1</div></div></div>
-              <div class="ref-info"><div class="ref-title">Change Variable</div><div class="ref-desc">Adds a number to the current value of a variable. Use to count up, count down, or accumulate a total.</div></div>
+              <div class="ref-info"><div class="ref-title">Change Variable</div><div class="ref-desc">Adds a number to the current value of a variable. Use to count up, count down, or accumulate a total. Use a negative number to count down (e.g. −1).</div></div>
+            </div>
+            <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568" style="background:#c53030;font-size:.7rem;">⚠ Reserved Words</div></div>
+              <div class="ref-info"><div class="ref-title">Avoid Python Reserved Words</div><div class="ref-desc">Do not use Python keywords as variable names. Words like <code>try</code>, <code>for</code>, <code>if</code>, <code>while</code>, <code>return</code>, <code>import</code>, <code>class</code>, <code>def</code>, <code>True</code>, <code>False</code>, and <code>None</code> are part of the MicroPython language. If you use one, Blockly will automatically rename it by adding a number (e.g. <code>try</code> becomes <code>try2</code>). Choose descriptive names like <code>counter</code>, <code>distance</code>, or <code>speed</code> instead.</div></div>
             </div>
           </div>
 
@@ -830,9 +950,10 @@
             </div>
             <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">to <div class="ref-oval">myFunction</div></div></div>
-              <div class="ref-info"><div class="ref-title">Define Function</div><div class="ref-desc">Creates a reusable group of blocks with a name you choose. Drag blocks inside the function definition. Call the function by name anywhere in your program to run those blocks.</div></div>
+              <div class="ref-info"><div class="ref-title">Define Function</div><div class="ref-desc">Creates a reusable group of blocks with a name you choose. Drag blocks inside the definition. Call it by name anywhere in your program to run those blocks. Great for actions you repeat multiple times — define once, use many times.</div></div>
             </div>
           </div>
+
 
         </div>
       </div>
@@ -874,6 +995,37 @@
 </div>
 
 <!-- Save Dialog -->
+<div class="modal-overlay" id="unsavedModal">
+  <div class="modal">
+    <h2>Unsaved Changes</h2>
+    <p id="unsavedModalDesc">This tab has unsaved changes. Close anyway?</p>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeUnsavedModal()">Cancel</button>
+      <button class="btn-primary" style="background:#c53030;" onclick="confirmCloseTab()">Close Without Saving</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="overwriteModal">
+  <div class="modal">
+    <h2>Overwrite Slot?</h2>
+    <p id="overwriteModalDesc">This slot already has a program. Overwrite it?</p>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeOverwriteModal()">Cancel</button>
+      <button class="btn-primary" style="background:#c85c00;" onclick="confirmUpload()">Overwrite</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="deleteModal" onclick="if(event.target===this)closeDeleteModal()">
+  <div class="modal">
+    <h2>Delete Program?</h2>
+    <p id="deleteModalDesc">This will permanently remove the program from the controller.</p>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn-primary" style="background:#c53030;" onclick="confirmDeleteSlot()">Delete</button>
+    </div>
+  </div>
+</div>
+<input type="hidden" id="progName" value="">
 <div id="toast"></div>
 <input type="file" id="fileInput" accept=".xml" style="display:none" onchange="loadFile(event)">
 
@@ -895,19 +1047,15 @@
 
   <category name="🤖 Movement" colour="#0d7377">
     <!-- Configuration -->
-    <block type="mv_set_motors"></block>
+    <block type="mv_robot_config">
+      <value name="DIAM"><shadow type="math_number"><field name="NUM">80</field></shadow></value>
+      <value name="WB"><shadow type="math_number"><field name="NUM">185</field></shadow></value>
+    </block>
     <block type="mv_set_speed">
       <value name="SPEED"><shadow type="math_number"><field name="NUM">50</field></shadow></value>
     </block>
-    <block type="mv_set_accel">
-      <value name="RATE"><shadow type="math_number"><field name="NUM">15</field></shadow></value>
-    </block>
-    <block type="mv_set_wheel_diam">
-      <value name="DIAM"><shadow type="math_number"><field name="NUM">80</field></shadow></value>
-    </block>
-    <block type="mv_set_wheelbase">
-      <value name="WB"><shadow type="math_number"><field name="NUM">250</field></shadow></value>
-    </block>
+    <!-- Hidden: mv_set_accel (kept in codebase) -->
+    <!-- Hidden: mv_set_motors, mv_set_wheel_diam, mv_set_wheelbase (kept in codebase) -->
     <!-- Actions -->
     <block type="mv_move_for">
       <value name="DIST"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
@@ -1083,7 +1231,7 @@ function dd(pairs) { return new Blockly.FieldDropdown(pairs); }
 Blockly.Blocks['ag_begin'] = { init() {
   this.appendDummyInput().appendField('🌾 Ag Begin');
   this.setNextStatement(true); this.setColour(C_CTRL);
-  this.setTooltip('Initialize controller and wait for start button.');
+  this.setTooltip('Initialize controller and wait for Select button press.');
 }};
 Blockly.Blocks['ag_end'] = { init() {
   this.appendDummyInput().appendField('🌾 Ag End');
@@ -1207,7 +1355,7 @@ Blockly.Blocks['ag_get_digital'] = { init() {
 // BUTTONS ────────────────────────────────────────────────────────────
 Blockly.Blocks['ag_button_pressed'] = { init() {
   this.appendDummyInput().appendField('🎮 Button')
-    .appendField(dd([['Start','start'],['A','a'],['B','b'],['C','c'],['D','d']]), 'BTN')
+    .appendField(dd([['Select','select'],['A','a'],['B','b'],['C','c'],['D','d']]), 'BTN')
     .appendField('pressed');
   this.setOutput(true,'Boolean'); this.setColour(C_BTN);
 }};
@@ -1340,6 +1488,23 @@ Blockly.Blocks['mv_set_wheelbase'] = { init() {
   this.setTooltip('Set the distance between wheel centers. Used for accurate turn-degree calculations.');
 }};
 
+Blockly.Blocks['mv_robot_config'] = { init() {
+  this.appendDummyInput()
+    .appendField('🤖 Robot Config')
+    .appendField('Left Wheel:')
+    .appendField(dd([['1','1'],['2','2'],['3','3'],['4','4']]), 'LEFT')
+    .appendField('Right Wheel:')
+    .appendField(dd([['2','2'],['1','1'],['3','3'],['4','4']]), 'RIGHT');
+  this.appendValueInput('DIAM').setCheck('Number').appendField('Wheel Diameter');
+  this.appendDummyInput().appendField('mm');
+  this.appendValueInput('WB').setCheck('Number').appendField('Wheelbase');
+  this.appendDummyInput().appendField('mm');
+  this.setInputsInline(true);
+  this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour(C_MOVE);
+  this.setTooltip('Set robot motor ports, wheel diameter, and wheelbase in one block. Call once at program start.');
+}};
+
 Blockly.Blocks['mv_move_for'] = { init() {
   this.appendDummyInput().appendField('🤖 Move')
     .appendField(dd([['Forward','forward'],['Backward','backward']]), 'DIR');
@@ -1467,6 +1632,10 @@ gen.forBlock['mv_set_speed']    = (b,g) => `ag.setMovementSpeed(${v(b,'SPEED',g)
 gen.forBlock['mv_set_accel']    = (b,g) => `ag.setMovementAccel(${v(b,'RATE',g)})\n`;
 gen.forBlock['mv_set_wheel_diam']= (b,g)=> `ag.setMovementWheelDiameter(${v(b,'DIAM',g)})\n`;
 gen.forBlock['mv_set_wheelbase']= (b,g) => `ag.setMovementWheelbase(${v(b,'WB',g)})\n`;
+gen.forBlock['mv_robot_config'] = (b,g) =>
+  `ag.setMovementMotors(${b.getFieldValue('LEFT')}, ${b.getFieldValue('RIGHT')})\n` +
+  `ag.setMovementWheelDiameter(${v(b,'DIAM',g)})\n` +
+  `ag.setMovementWheelbase(${v(b,'WB',g)})\n`;
 gen.forBlock['mv_move_for']     = (b,g) => {
   const fn  = b.getFieldValue('DIR') === 'forward' ? 'moveForDistance' : 'moveBackDistance';
   return `ag.${fn}(${v(b,'DIST',g)}, '${b.getFieldValue('UNIT')}', ${b.getFieldValue('WAIT')})\n`;
@@ -1476,6 +1645,15 @@ gen.forBlock['mv_move_steer']   = (b,g) => `ag.moveWithSteering(${v(b,'STEER',g)
 gen.forBlock['mv_start_steer']  = (b,g) => `ag.startMovingWithSteering(${v(b,'STEER',g)})\n`;
 gen.forBlock['mv_turn']         = (b,g) => `ag.turnDegrees('${b.getFieldValue('DIR')}', ${v(b,'DEG',g)}, ${b.getFieldValue('WAIT')})\n`;
 gen.forBlock['mv_stop']         = ()    => 'ag.stopMoving()\n';
+
+// ── MicroPython compatibility fixes ──────────────────────────────────
+// Override math_change (Change var by N) — Blockly's default imports
+// the 'numbers' module which does not exist in MicroPython.
+gen.forBlock['math_change'] = (b, g) => {
+  const varName = g.getVariableName(b.getFieldValue('VAR'));
+  const delta   = g.valueToCode(b, 'DELTA', g.ORDER_ADDITIVE) || '0';
+  return `${varName} = ${varName} + ${delta}\n`;
+};
 
 
 // ════════════════════════════════════════════════════════════════════
@@ -1517,16 +1695,243 @@ const workspace = Blockly.inject('blocklyDiv', {
 // ════════════════════════════════════════════════════════════════════
 //  CODE GENERATION & UI
 // ════════════════════════════════════════════════════════════════════
+//  TAB SYSTEM
+// ════════════════════════════════════════════════════════════════════
+
+const MAX_TABS = 16;
+let tabs = [];        // array of { id, name, xml, slot, dirty }
+let activeTabId = null;
+let nextTabId = 1;
+let _pendingCloseTabId = null;   // for unsaved-changes modal
+let _pendingUploadSlot = null;   // for overwrite modal
+
+function tabById(id) { return tabs.find(t => t.id === id); }
+
+function getEmptyXml() {
+  return `<xml xmlns="https://developers.google.com/blockly/xml">
+    <block type="ag_begin" x="40" y="40"></block>
+    <block type="ag_end" x="40" y="160"></block>
+  </xml>`;
+}
+
+function createTab(name = 'Untitled', xml = null, slot = 1) {
+  return {
+    id: nextTabId++,
+    name,
+    xml: xml || getEmptyXml(),
+    slot,
+    uploadedSlot: null,   // null until first upload
+    dirty: false
+  };
+}
+
+function slotPillHtml(uploadedSlot) {
+  if (!uploadedSlot) return '';
+  const groupIdx  = Math.floor((uploadedSlot - 1) / 4);
+  const slotIdx   = (uploadedSlot - 1) % 4;
+  const group     = SLOT_GROUPS[groupIdx];
+  const letter    = ['A','B','C','D'][slotIdx];
+  if (!group) return '';
+  return `<span class="ws-tab-slot-pill" style="background:${group.color}" title="Uploaded to ${group.name}-${letter}">${letter}</span>`;
+}
+
+function renderTabBar() {
+  const container = document.getElementById('ws-tabs');
+  container.innerHTML = '';
+  tabs.forEach(tab => {
+    const el = document.createElement('div');
+    el.className = 'ws-tab' + (tab.id === activeTabId ? ' active' : '') +
+                   (tab.dirty ? ' dirty' : '');
+    el.dataset.id = tab.id;
+    el.innerHTML = `<span class="ws-tab-name" title="Double-click to rename" ondblclick="startRenameTab(${tab.id},event)">${tab.name}</span>
+      ${slotPillHtml(tab.uploadedSlot)}
+      <span class="ws-tab-close" onclick="closeTab(${tab.id},event)" title="Close tab">×</span>`;
+    el.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('ws-tab-close') &&
+          !e.target.classList.contains('ws-tab-slot-pill')) switchWsTab(tab.id);
+    });
+    container.appendChild(el);
+  });
+  document.getElementById('ws-add-tab').style.display =
+    tabs.length >= MAX_TABS ? 'none' : '';
+}
+
+function startRenameTab(id, e) {
+  e.stopPropagation();
+  switchWsTab(id);
+  const tab      = tabById(id);
+  if (!tab) return;
+  const nameSpan = e.target;
+  const oldName  = tab.name;
+  const input    = document.createElement('input');
+  input.className = 'ws-tab-rename';
+  input.value     = oldName;
+  nameSpan.replaceWith(input);
+  input.focus();
+  input.select();
+  function commit() {
+    const newName = input.value.trim() || oldName;
+    tab.name = newName;
+    document.getElementById('progName').value = newName;
+    renderTabBar();
+  }
+  input.addEventListener('blur', commit);
+  input.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter')  { input.blur(); }
+    if (ev.key === 'Escape') { input.value = oldName; input.blur(); }
+    ev.stopPropagation();
+  });
+}
+
+function saveActiveTabState() {
+  const tab = tabById(activeTabId);
+  if (!tab) return;
+  const xml = Blockly.Xml.workspaceToDom(workspace);
+  tab.xml = Blockly.Xml.domToText(xml);
+  // Note: tab.slot is intentionally NOT synced here.
+  // It only updates on upload so browsing the slot dropdown
+  // doesn't falsely reassign tab ownership.
+}
+
+function loadTabIntoWorkspace(tab) {
+  workspace.clear();
+  try {
+    Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(tab.xml), workspace);
+  } catch(e) { /* blank workspace if XML invalid */ }
+  document.getElementById('progName').value = tab.name;
+  // Restore to uploaded slot if known, otherwise tab's default slot
+  selectSlot(tab.uploadedSlot || tab.slot);
+  updateCodePanel();
+}
+
+function switchWsTab(id) {
+  if (id === activeTabId) return;
+  saveActiveTabState();
+  activeTabId = id;
+  loadTabIntoWorkspace(tabById(id));
+  renderTabBar();
+}
+
+function addTab() {
+  if (tabs.length >= MAX_TABS) { showToast('Maximum ' + MAX_TABS + ' tabs'); return; }
+  saveActiveTabState();
+  const tab = createTab('Untitled', null,
+    parseInt(document.getElementById('slotSelect').value));
+  tabs.push(tab);
+  activeTabId = tab.id;
+  loadTabIntoWorkspace(tab);
+  renderTabBar();
+}
+
+function closeTab(id, e) {
+  e.stopPropagation();
+  const tab = tabById(id);
+  if (!tab) return;
+  if (tab.dirty) {
+    _pendingCloseTabId = id;
+    document.getElementById('unsavedModalDesc').textContent =
+      `"${tab.name}" has unsaved changes. Close it anyway?`;
+    document.getElementById('unsavedModal').classList.add('open');
+    return;
+  }
+  doCloseTab(id);
+}
+
+function closeUnsavedModal() {
+  document.getElementById('unsavedModal').classList.remove('open');
+  _pendingCloseTabId = null;
+}
+
+function confirmCloseTab() {
+  const id = _pendingCloseTabId;
+  closeUnsavedModal();
+  if (id) doCloseTab(id);
+}
+
+function doCloseTab(id) {
+  const idx = tabs.findIndex(t => t.id === id);
+  if (idx === -1) return;
+  if (tabs.length === 1) {
+    // Only tab — clear to blank like Thonny
+    tabs[0] = createTab('Untitled', null, tabs[0].slot);
+    tabs[0].id = activeTabId;  // keep same id
+    loadTabIntoWorkspace(tabs[0]);
+    renderTabBar();
+    return;
+  }
+  tabs.splice(idx, 1);
+  if (activeTabId === id) {
+    // Switch to adjacent tab
+    const newIdx = Math.min(idx, tabs.length - 1);
+    activeTabId = tabs[newIdx].id;
+    loadTabIntoWorkspace(tabs[newIdx]);
+  }
+  renderTabBar();
+}
+
+function markActiveTabDirty() {
+  const tab = tabById(activeTabId);
+  if (tab && !tab.dirty) {
+    tab.dirty = true;
+    renderTabBar();
+  }
+}
+
+function markActiveTabClean() {
+  const tab = tabById(activeTabId);
+  if (tab) {
+    tab.dirty = false;
+    renderTabBar();
+  }
+}
+
+function startRenameTab(id, e) {
+  e.stopPropagation();
+  const tab = tabById(id);
+  if (!tab) return;
+  const el = e.target;
+  const oldName = tab.name;
+  el.contentEditable = 'true';
+  el.focus();
+  // Select all text
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(range);
+
+  function finish() {
+    el.contentEditable = 'false';
+    const newName = el.textContent.trim() || oldName;
+    tab.name = newName;
+    document.getElementById('progName').value = newName;
+    renderTabBar();
+  }
+  el.addEventListener('blur', finish, { once: true });
+  el.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+    if (e.key === 'Escape') { el.textContent = oldName; el.blur(); }
+  }, { once: true });
+}
+
+// Sync program name field → active tab name
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('progName').addEventListener('input', () => {
+    const tab = tabById(activeTabId);
+    if (!tab) return;
+    tab.name = document.getElementById('progName').value || 'Untitled';
+    renderTabBar();
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════
 
 // Clean code is always stored here — used for copy, upload, REPL
 let _cleanCode = '';
 
 function generateCode() {
   try {
-    // 'import ag' is correct — generators produce ag.xxx() calls
     const header = 'import ag\nimport time\n\n';
     const body   = gen.workspaceToCode(workspace) || '';
-    // Blockly Python generator sometimes emits blank leading lines — trim them
     return header + body.replace(/^\n+/, '');
   } catch(e) {
     return '# Code generation error:\n# ' + e.message;
@@ -1541,8 +1946,8 @@ function updateCodePanel() {
     `<svg viewBox="0 0 12 12" fill="currentColor"><rect x="1" y="1" width="4" height="4" rx=".5"/><rect x="7" y="1" width="4" height="4" rx=".5"/><rect x="1" y="7" width="4" height="4" rx=".5"/><rect x="7" y="7" width="4" height="4" rx=".5"/></svg>${cnt} blocks`;
   document.getElementById('lineCount').innerHTML =
     `<svg viewBox="0 0 12 12" fill="currentColor"><path d="M1 2h10M1 5h10M1 8h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>${lines} lines`;
-  // textContent guarantees raw text — no HTML parsing, no tag corruption
   document.getElementById('code-pre').textContent = _cleanCode;
+  if (cnt > 0) markActiveTabDirty();
 }
 
 workspace.addChangeListener(updateCodePanel);
@@ -1569,17 +1974,35 @@ function showToast(msg) {
 }
 
 function newProgram() {
-  if(workspace.getAllBlocks().length>0 && !confirm('Clear current program?')) return;
-  workspace.clear(); updateCodePanel();
-  document.getElementById('progName').value = '';
-  showToast('New program started');
+  // Opens a new blank tab
+  addTab();
 }
 
 // ── File operations ──────────────────────────────────────────────────
 
+// ── Menu bar ──────────────────────────────────────────────────────────
+function toggleMenu(id, e) {
+  e.stopPropagation();
+  const item = document.getElementById(id);
+  const isOpen = item.classList.contains('open');
+  closeMenus();
+  if (!isOpen) item.classList.add('open');
+}
+function closeMenus() {
+  document.querySelectorAll('.menu-item.open').forEach(m => m.classList.remove('open'));
+}
+document.addEventListener('click', closeMenus);
+
+function openBuildingTips() {
+  window.open('building-tips.html', '_blank');
+}
+
 async function saveProgram() {
-  const xml  = Blockly.Xml.workspaceToDom(workspace);
-  const text = Blockly.Xml.domToText(xml);
+  const dom  = Blockly.Xml.workspaceToDom(workspace);
+  const tab  = tabById(activeTabId);
+  // Embed slot metadata in the XML root element so it round-trips on load
+  if (tab && tab.uploadedSlot) dom.setAttribute('ag-slot', tab.uploadedSlot);
+  const text = Blockly.Xml.domToText(dom);
   const name = (document.getElementById('progName').value.trim() || 'ag-program') + '.xml';
   try {
     if (window.showSaveFilePicker) {
@@ -1590,13 +2013,18 @@ async function saveProgram() {
       const w = await fh.createWritable();
       await w.write(text);
       await w.close();
+      const savedName = fh.name.replace(/\.xml$/i, '');
+      if (tab) { tab.name = savedName; tab.xml = text; tab.dirty = false; }
+      document.getElementById('progName').value = savedName;
+      renderTabBar();
       showToast('Saved: ' + fh.name);
     } else {
-      // Fallback for browsers without File System Access API
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([text], { type: 'text/xml' }));
       a.download = name;
       a.click();
+      if (tab) { tab.xml = text; tab.dirty = false; }
+      renderTabBar();
       showToast('Saved: ' + name);
     }
   } catch(e) {
@@ -1631,23 +2059,21 @@ async function savePython() {
 function loadProgram() { document.getElementById('fileInput').click(); }
 
 function toggleExampleMenu(e) {
-  e.stopPropagation();
-  document.getElementById('exampleMenu').classList.toggle('open');
+  // No longer used — examples are in File menu
 }
-document.addEventListener('click', () => {
-  const m = document.getElementById('exampleMenu');
-  if (m) m.classList.remove('open');
-});
 
 function loadExample(key) {
-  document.getElementById('exampleMenu').classList.remove('open');
+  closeMenus();
   if (!key || !EXAMPLES[key]) return;
   const ex = EXAMPLES[key];
-  if (!confirm(`Load "${ex.name}"?\nThis will replace the current workspace.`)) return;
+  if (!confirm(`Load "${ex.name}"?\nThis will replace the current tab.`)) return;
   try {
     workspace.clear();
     Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(ex.xml), workspace);
     document.getElementById('progName').value = ex.name;
+    const tab = tabById(activeTabId);
+    if (tab) { tab.name = ex.name; tab.xml = ex.xml; tab.dirty = false; }
+    renderTabBar();
     showToast('Loaded: ' + ex.name);
     switchTab('code', document.querySelectorAll('.panel-tab')[0]);
   } catch(e) {
@@ -1656,18 +2082,55 @@ function loadExample(key) {
 }
 
 function loadFile(event) {
-  const file=event.target.files[0]; if(!file)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    try{
+  const file = event.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = e => {
+    try {
+      const name    = file.name.replace(/\.[^.]+$/, '');
+      const xml     = e.target.result;
+
+      // Extract slot metadata embedded at save time
+      const domDoc  = Blockly.utils.xml.textToDom(xml);
+      const savedSlot = domDoc.getAttribute('ag-slot')
+                        ? parseInt(domDoc.getAttribute('ag-slot')) : null;
+
+      // If active tab is blank and untitled, load into it
+      // Otherwise open a new tab
+      const activeTab = tabById(activeTabId);
+      const isBlank   = activeTab &&
+                        activeTab.name === 'Untitled' &&
+                        !activeTab.uploadedSlot &&
+                        workspace.getAllBlocks().length === 0;
+
+      if (!isBlank && tabs.length < MAX_TABS) {
+        saveActiveTabState();
+        const newTab = createTab(name, xml, savedSlot || 1);
+        if (savedSlot) newTab.uploadedSlot = savedSlot;
+        tabs.push(newTab);
+        activeTabId = newTab.id;
+      } else {
+        if (activeTab) {
+          activeTab.name = name;
+          activeTab.xml  = xml;
+          activeTab.dirty = false;
+          if (savedSlot) { activeTab.uploadedSlot = savedSlot; activeTab.slot = savedSlot; }
+        }
+      }
+
       workspace.clear();
-      Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(e.target.result), workspace);
-      const name = file.name.replace(/\.[^.]+$/, '');
+      Blockly.Xml.domToWorkspace(domDoc, workspace);
       document.getElementById('progName').value = name;
-      showToast('Loaded: '+file.name);
-    }catch{ showToast('Error loading file'); }
+      const tab = tabById(activeTabId);
+      if (tab) {
+        tab.name = name; tab.xml = xml; tab.dirty = false;
+        if (savedSlot) { tab.uploadedSlot = savedSlot; tab.slot = savedSlot; }
+        selectSlot(tab.uploadedSlot || tab.slot);
+      }
+      renderTabBar();
+      showToast('Loaded: ' + file.name);
+    } catch { showToast('Error loading file'); }
   };
-  r.readAsText(file); event.target.value='';
+  r.readAsText(file); event.target.value = '';
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1847,7 +2310,7 @@ async function disconnect() {
 // ═══════════════════════════════════════════════════════════════════
 
 // ═══════════════════════════════════════════════════════════════════
-//  SLOT COLORS  (12 slots, matches firmware launcher)
+//  SLOT COLORS  (16 slots: 4 groups × 4 slots, matches firmware launcher)
 // ═══════════════════════════════════════════════════════════════════
 const EXAMPLES = {
   "1": { name: "Hello Lights", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_pixel_color"><field name="PIX">ABCD</field><value name="R"><block type="math_number"><field name="NUM">255</field></block></value><value name="G"><block type="math_number"><field name="NUM">0</field></block></value><value name="B"><block type="math_number"><field name="NUM">0</field></block></value><next><block type="ag_set_tone"><value name="FREQ"><block type="math_number"><field name="NUM">440</field></block></value><value name="DUR"><block type="math_number"><field name="NUM">0.3</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">800</field></block></value><next><block type="ag_pixel_color"><field name="PIX">ABCD</field><value name="R"><block type="math_number"><field name="NUM">0</field></block></value><value name="G"><block type="math_number"><field name="NUM">200</field></block></value><value name="B"><block type="math_number"><field name="NUM">0</field></block></value><next><block type="ag_set_tone"><value name="FREQ"><block type="math_number"><field name="NUM">660</field></block></value><value name="DUR"><block type="math_number"><field name="NUM">0.3</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">800</field></block></value><next><block type="ag_pixel_color"><field name="PIX">ABCD</field><value name="R"><block type="math_number"><field name="NUM">0</field></block></value><value name="G"><block type="math_number"><field name="NUM">0</field></block></value><value name="B"><block type="math_number"><field name="NUM">255</field></block></value><next><block type="ag_set_tone"><value name="FREQ"><block type="math_number"><field name="NUM">880</field></block></value><value name="DUR"><block type="math_number"><field name="NUM">0.3</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">800</field></block></value><next><block type="ag_pixel_off"><field name="PIX">ABCD</field><next><block type="ag_sound_off"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
@@ -1864,18 +2327,30 @@ const EXAMPLES = {
 Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(EXAMPLES['7'].xml), workspace);
 
 const SLOT_COLORS_HEX = [
-  '#ff4444', // 1  Red
-  '#ff8800', // 2  Orange
-  '#cccc00', // 3  Yellow
-  '#00dd00', // 4  Green
-  '#00cccc', // 5  Cyan
-  '#4444ff', // 6  Blue
-  '#9900ff', // 7  Purple
-  '#dddddd', // 8  White
-  '#ff44aa', // 9  Pink
-  '#88ff00', // 10 Lime
-  '#008888', // 11 Teal
-  '#ccaa00', // 12 Gold
+  '#ff4444', // 1  Red-A
+  '#ff4444', // 2  Red-B
+  '#ff4444', // 3  Red-C
+  '#ff4444', // 4  Red-D
+  '#00cc00', // 5  Green-A
+  '#00cc00', // 6  Green-B
+  '#00cc00', // 7  Green-C
+  '#00cc00', // 8  Green-D
+  '#0044ff', // 9  Blue-A
+  '#0044ff', // 10 Blue-B
+  '#0044ff', // 11 Blue-C
+  '#0044ff', // 12 Blue-D
+  '#ccaa00', // 13 Yellow-A
+  '#ccaa00', // 14 Yellow-B
+  '#ccaa00', // 15 Yellow-C
+  '#ccaa00', // 16 Yellow-D
+];
+
+// Group names and labels for display
+const SLOT_LABELS = [
+  'R-A','R-B','R-C','R-D',
+  'G-A','G-B','G-C','G-D',
+  'B-A','B-B','B-C','B-D',
+  'Y-A','Y-B','Y-C','Y-D',
 ];
 
 function updateSlotDot() {
@@ -1924,16 +2399,46 @@ async function uploadToRobot() {
   const code = _cleanCode;
   if(!code.trim()){ showToast('No code to upload'); return; }
 
-  const slot  = parseInt(document.getElementById('slotSelect').value);
+  const slot      = parseInt(document.getElementById('slotSelect').value);
+  const activeTab = tabById(activeTabId);
+
+  // "owns" this slot only if it was previously uploaded to it
+  const tabOwnsSlot = activeTab && activeTab.uploadedSlot === slot;
+  const otherTab    = tabs.find(t => t.id !== activeTabId && t.uploadedSlot === slot);
+
+  if (!tabOwnsSlot && (occupiedSlots.has(slot) || otherTab)) {
+    _pendingUploadSlot = slot;
+    let msg = `Slot ${SLOT_LABELS[slot-1]} already has a program`;
+    if (otherTab) msg += ` (assigned to tab "${otherTab.name}")`;
+    msg += '. Overwrite it?';
+    document.getElementById('overwriteModalDesc').textContent = msg;
+    document.getElementById('overwriteModal').classList.add('open');
+    return;
+  }
+
+  await doUpload(slot);
+}
+
+function closeOverwriteModal() {
+  document.getElementById('overwriteModal').classList.remove('open');
+  _pendingUploadSlot = null;
+}
+
+async function confirmUpload() {
+  const slot = _pendingUploadSlot;
+  closeOverwriteModal();
+  if (slot) await doUpload(slot);
+}
+
+async function doUpload(slot) {
+  const code  = _cleanCode;
   const fname = 'prog_' + slot + '.py';
 
   switchTab('console', document.querySelectorAll('.panel-tab')[1]);
-  consolePrint('\n── Uploading ' + code.split('\n').length + ' lines → ' + fname + ' ──\n');
+  consolePrint('\n-- Uploading ' + code.split('\n').length + ' lines to ' + fname + ' --\n');
   try {
-    // Write the slot file but don't exec it — exec main.py (launcher) instead
     await rawReplWriteFile(fname, code, true);
 
-    // Now restart the launcher via raw REPL
     await serialWrite('\x03');
     await sleep(200);
     await serialWrite('\x03');
@@ -1945,10 +2450,23 @@ async function uploadToRobot() {
     await serialWrite('\x04');
     await sleep(200);
 
-    consolePrint('\n── Saved to ' + fname + ' — launcher restarted ✓ ──\n');
+    consolePrint('-- Saved to ' + fname + ' -- launcher restarted\n');
     occupiedSlots.add(slot);
+
+    // Update slot memory for active tab
+    const tab = tabById(activeTabId);
+    if (tab) {
+      tab.slot = slot; tab.uploadedSlot = slot; tab.dirty = false;
+      // Embed slot into the tab's stored XML so Save Blocks captures it
+      try {
+        const dom = Blockly.utils.xml.textToDom(tab.xml);
+        dom.setAttribute('ag-slot', slot);
+        tab.xml = Blockly.Xml.domToText(dom);
+      } catch(e) { /* non-fatal — slot still tracked in memory */ }
+    }
+    renderTabBar();
     styleSlotDropdown();
-    showToast('Slot ' + slot + ' uploaded!');
+    showToast('Slot ' + SLOT_LABELS[slot-1] + ' uploaded!');
   } catch(e) {
     consolePrint('[Upload error: ' + e.message + ']\n');
     showToast('Upload failed');
@@ -2058,8 +2576,11 @@ function setConnected(state, type) {
 }
 
 function consolePrint(text) {
+  // Strip raw REPL control chars (Ctrl-D \x04, Ctrl-A \x01, etc.)
+  // Keep tab \x09, newline \x0a, carriage return \x0d and normal printable chars
+  const clean = text.replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g, '');
   const out = document.getElementById('console-output');
-  out.textContent += text;
+  out.textContent += clean;
   out.scrollTop = out.scrollHeight;
 }
 
@@ -2073,25 +2594,155 @@ function clearConsole() {
 
 let occupiedSlots = new Set();
 
-function styleSlotDropdown() {
-  const sel = document.getElementById('slotSelect');
-  for (const opt of sel.options) {
-    const slot = parseInt(opt.value);
-    if (occupiedSlots.has(slot)) {
-      opt.style.background = '#1a3a1a';
-      opt.style.color      = '#7dbf7d';
-      if (!opt.text.includes('●')) opt.text = opt.text.replace(' —', ' ● —');
-    } else {
-      opt.style.background = '';
-      opt.style.color      = '';
-      opt.text = opt.text.replace(' ● —', ' —');
-    }
+// ── Custom slot dropdown ──────────────────────────────────────────────
+
+const SLOT_GROUPS = [
+  { name: 'Red',    emoji: '🔴', color: '#ff4444', slots: [1,2,3,4]   },
+  { name: 'Green',  emoji: '🟢', color: '#00cc00', slots: [5,6,7,8]   },
+  { name: 'Blue',   emoji: '🔵', color: '#0044ff', slots: [9,10,11,12] },
+  { name: 'Yellow', emoji: '🟡', color: '#ccaa00', slots: [13,14,15,16] },
+];
+const SLOT_LETTERS = ['A','B','C','D'];
+
+function buildSlotDropdown() {
+  const menu = document.getElementById('slotDropMenu');
+  const currentSlot = parseInt(document.getElementById('slotSelect').value);
+  menu.innerHTML = '';
+  SLOT_GROUPS.forEach(group => {
+    // Group header
+    const hdr = document.createElement('div');
+    hdr.className = 'slot-group-header';
+    hdr.innerHTML = `<span class="slot-color-swatch" style="background:${group.color};color:${group.color}"></span>${group.emoji} ${group.name}`;
+    menu.appendChild(hdr);
+    // Slots
+    group.slots.forEach((slotNum, i) => {
+      const label = group.name[0] + '-' + SLOT_LETTERS[i];
+      const occupied = occupiedSlots.has(slotNum);
+      const row = document.createElement('div');
+      row.className = 'slot-row' + (slotNum === currentSlot ? ' active' : '');
+      row.dataset.slot = slotNum;
+      row.innerHTML = `
+        <div class="slot-row-label" onclick="selectSlot(${slotNum})">
+          ${label}${occupied ? ' <span class="slot-occ">●</span>' : ''}
+        </div>
+        ${occupied ? `<div class="slot-trash" onclick="promptDeleteSlot(${slotNum},'${label}',event)" title="Delete ${label}">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 016 6v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm2.5 0a.5.5 0 01.5.5v6a.5.5 0 01-1 0V6a.5.5 0 01.5-.5zm3 .5a.5.5 0 00-1 0v6a.5.5 0 001 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 01-1 1H13v9a2 2 0 01-2 2H5a2 2 0 01-2-2V4h-.5a1 1 0 010-2H5a1 1 0 011-1h4a1 1 0 011 1h2.5a1 1 0 011 1zM4.118 4L4 4.059V13a1 1 0 001 1h6a1 1 0 001-1V4.059L11.882 4H4.118zM2.5 3a.5.5 0 000 1H13.5a.5.5 0 000-1h-11z"/></svg>
+        </div>` : ''}`;
+      menu.appendChild(row);
+    });
+  });
+}
+
+function selectSlot(slotNum) {
+  document.getElementById('slotSelect').value = slotNum;
+  document.getElementById('slotDropLabel').textContent = SLOT_LABELS[slotNum - 1];
+  updateSlotDot();
+  closeSlotDropdown();
+}
+
+function toggleSlotDropdown(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('slotDropMenu');
+  const isOpen = menu.classList.contains('open');
+  if (!isOpen) buildSlotDropdown();
+  menu.classList.toggle('open');
+}
+
+function closeSlotDropdown() {
+  document.getElementById('slotDropMenu').classList.remove('open');
+}
+
+document.addEventListener('click', (e) => {
+  if (!document.getElementById('slotDropWrap').contains(e.target)) {
+    closeSlotDropdown();
   }
+});
+
+// ── Delete slot ───────────────────────────────────────────────────────
+
+let _deleteSlotPending = null;
+
+function promptDeleteSlot(slotNum, label, e) {
+  e.stopPropagation();
+  closeSlotDropdown();
+  _deleteSlotPending = slotNum;
+  document.getElementById('deleteModalDesc').textContent =
+    `Delete "${label}" (prog_${slotNum}.py) from the controller? This cannot be undone.`;
+  document.getElementById('deleteModal').classList.add('open');
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.remove('open');
+  _deleteSlotPending = null;
+}
+
+async function confirmDeleteSlot() {
+  if (!_deleteSlotPending) return;
+  const slot = _deleteSlotPending;   // grab value BEFORE closeDeleteModal nulls it
+  closeDeleteModal();
+  if (!connected) { showToast('Not connected'); return; }
+
+  const fname = `prog_${slot}.py`;
+  switchTab('console', document.querySelectorAll('.panel-tab')[1]);
+  consolePrint(`\n── Deleting ${fname} ──\n`);
+  try {
+    const enc   = new TextEncoder();
+    const CHUNK = connType === 'ble' ? 100 : 512;
+
+    // Step 1: interrupt + enter raw REPL
+    await serialWrite('\x03'); await sleep(200);
+    await serialWrite('\x03'); await sleep(300);
+    await serialWrite('\x01'); await sleep(200);
+
+    // Step 2: delete the file
+    const delScript = `import os\nos.remove('${fname}')\n`;
+    const delBytes  = enc.encode(delScript);
+    for (let i = 0; i < delBytes.length; i += CHUNK) {
+      await serialWrite(delBytes.slice(i, i + CHUNK));
+      if (connType === 'ble') await sleep(30);
+    }
+    await serialWrite('\x04');
+    await sleep(400);
+
+    // Step 3: restart launcher (same as upload)
+    await serialWrite('\x03'); await sleep(200);
+    await serialWrite('\x03'); await sleep(300);
+    await serialWrite('\x01'); await sleep(200);
+    const restart = enc.encode("exec(open('main.py').read())\n");
+    for (let i = 0; i < restart.length; i += CHUNK) {
+      await serialWrite(restart.slice(i, i + CHUNK));
+      if (connType === 'ble') await sleep(30);
+    }
+    await serialWrite('\x04');
+    await sleep(200);
+
+    // Update local state
+    occupiedSlots.delete(slot);
+    // Clear uploadedSlot for any tab that owned this slot
+    tabs.forEach(t => { if (t.uploadedSlot === slot) t.uploadedSlot = null; });
+    styleSlotDropdown();
+    consolePrint(`── Deleted ${fname} ✓ ──\n`);
+    showToast(`${SLOT_LABELS[slot-1]} deleted`);
+  } catch(e) {
+    consolePrint(`[Delete error: ${e.message}]\n`);
+    showToast('Delete failed');
+  }
+}
+
+function styleSlotDropdown() {
+  // Rebuild the custom dropdown to reflect occupancy changes
+  buildSlotDropdown();
+  // Also update the label in case current slot occupancy changed
+  const slot = parseInt(document.getElementById('slotSelect').value);
+  document.getElementById('slotDropLabel').textContent =
+    SLOT_LABELS[slot - 1] + (occupiedSlots.has(slot) ? ' ●' : '');
 }
 
 function resetSlotStatus() {
   occupiedSlots = new Set();
-  styleSlotDropdown();
+  buildSlotDropdown();
+  const slot = parseInt(document.getElementById('slotSelect').value);
+  document.getElementById('slotDropLabel').textContent = SLOT_LABELS[slot - 1];
 }
 
 function waitForString(target, timeoutMs = 3000) {
@@ -2183,6 +2834,17 @@ async function querySlotStatus() {
 }
 
 window.addEventListener('resize', () => Blockly.svgResize(workspace));
+
+// Initialize tab system with one blank Untitled tab
+(function initTabs() {
+  const firstTab = createTab('Untitled', getEmptyXml(), 1);
+  tabs.push(firstTab);
+  activeTabId = firstTab.id;
+  document.getElementById('progName').value = '';
+  loadTabIntoWorkspace(firstTab);
+  renderTabBar();
+  buildSlotDropdown();
+})();
 </script>
 </body>
 </html>
