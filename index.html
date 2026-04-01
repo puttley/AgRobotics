@@ -278,16 +278,16 @@
 
   /* Console tab */
   #console-output{flex:1;padding:10px;overflow-y:auto;font-family:'Source Code Pro',monospace;
-    font-size:.75rem;line-height:1.6;background:#0e1a0e;color:#7dbf7d;
+    font-size:.75rem;line-height:1.6;background:#1e2e1e;color:#c9e6c9;
     white-space:pre-wrap;word-break:break-word;}
   #console-toolbar{display:flex;justify-content:flex-end;padding:4px 6px;
-    background:#0e1a0e;border-bottom:1px solid #1a3a1a;flex-shrink:0;}
+    background:#1e2e1e;border-bottom:1px solid #2a4a2a;flex-shrink:0;}
   #console-clear{background:none;border:1px solid #2a5a2a;color:#4a8a4a;
     border-radius:4px;padding:2px 8px;font-size:.68rem;font-family:'Nunito',sans-serif;
     font-weight:700;cursor:pointer;letter-spacing:.04em;}
   #console-clear:hover{background:#1a3a1a;color:#7dbf7d;}
   #console-input-row{display:flex;border-top:1px solid #2a3a2a;flex-shrink:0;}
-  #console-input{flex:1;padding:7px 10px;background:#0a130a;border:none;color:#a0e0a0;
+  #console-input{flex:1;padding:7px 10px;background:#162616;border:none;color:#c9e6c9;
     font-family:'Source Code Pro',monospace;font-size:.75rem;outline:none;}
   #console-send{padding:0 14px;background:var(--green-dark);color:var(--wheat-light);border:none;
     cursor:pointer;font-weight:700;font-size:.75rem;font-family:'Nunito',sans-serif;}
@@ -367,6 +367,7 @@
     font-size:.8rem;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.3);
     opacity:0;transition:opacity .3s;pointer-events:none;z-index:2000;}
   #toast.show{opacity:1;}
+
 </style>
 </head>
 <body>
@@ -470,6 +471,10 @@
         </div>
       </div>
       <div class="menu-sep"></div>
+      <div class="menu-row" onclick="openRenameBluetoothModal();closeMenus()">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.5 2h-7A1.5 1.5 0 003 3.5v9A1.5 1.5 0 004.5 14h7a1.5 1.5 0 001.5-1.5v-9A1.5 1.5 0 0011.5 2zM5 5.5A.5.5 0 015.5 5h5a.5.5 0 010 1h-5A.5.5 0 015 5.5zm0 2A.5.5 0 015.5 7h5a.5.5 0 010 1h-5A.5.5 0 015 7.5zm0 2A.5.5 0 015.5 9h3a.5.5 0 010 1h-3A.5.5 0 015 9.5z"/></svg>Rename Bluetooth Device
+      </div>
+      <div class="menu-sep"></div>
       <div class="menu-row" onclick="openFirmwareModal();closeMenus()">
         <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 100 14A7 7 0 008 1zM0 8a8 8 0 1116 0A8 8 0 010 8zm5.904-2.803a.5.5 0 111 0 .5.5 0 01-1 0zM9.5 5.5a.5.5 0 100 1 .5.5 0 000-1zm-3.25 2.5a.5.5 0 100 1 .5.5 0 000-1zm3 0a.5.5 0 100 1 .5.5 0 000-1zm-1.5 2.5a.5.5 0 100 1 .5.5 0 000-1z"/><path d="M8 3a5 5 0 110 10A5 5 0 018 3zm0 1a4 4 0 100 8 4 4 0 000-8z"/></svg>Firmware Update
       </div>
@@ -537,7 +542,7 @@
         <div id="console-toolbar">
           <button id="console-clear" onclick="clearConsole()" title="Clear console">✕ Clear</button>
         </div>
-        <div id="console-output"><span style="color:#4a7a4a"># AgRobotics Console
+        <div id="console-output"><span style="color:#c9e6c9"># AgRobotics Console
 # Connect a robot to begin
 </span></div>
         <div id="console-input-row">
@@ -564,7 +569,7 @@
               </div>
               <div class="ref-info">
                 <div class="ref-title">Menu Bar</div>
-                <div class="ref-desc">The menu bar sits below the title bar and contains three menus. <b>File</b> — New (opens a blank tab), Load Blocks (opens a saved .xml file in a new tab), Save Blocks (saves current tab to .xml), Save Python (exports generated code as .py), Load Example (loads a built-in example into the current tab). <b>View</b> — switches the right panel between MicroPython Code, Console, and Block Reference. <b>Help</b> — opens Block Reference or Building Tips.</div>
+                <div class="ref-desc">The menu bar sits below the title bar and contains three menus. <b>File</b> — New, Load Blocks, Save Blocks, Save Python, Load Example, Rename Bluetooth Device (renames the controller's BLE name, requires USB), Firmware Update (flashes new firmware via USB). <b>View</b> — switches the right panel between MicroPython Code, Console, and Block Reference. <b>Help</b> — opens Block Reference or Robot Building Tips.</div>
               </div>
             </div>
 
@@ -586,7 +591,7 @@
               </div>
               <div class="ref-info">
                 <div class="ref-title">Connect</div>
-                <div class="ref-desc">Opens the connection dialog. Choose <b>Bluetooth (BLE)</b> to connect wirelessly — your browser shows a list of nearby controllers; select your SEEKER device. Choose <b>USB / Serial</b> to connect via a data cable. Once connected the button turns green. Click it again to disconnect. After connecting, the IDE queries the controller and marks occupied slots in the dropdown.</div>
+                <div class="ref-desc">Opens the connection dialog. Choose <b>Bluetooth (BLE)</b> to connect wirelessly — your browser shows a list of nearby AgRobot controllers; select your device (e.g. AgRobot-yoyo). Choose <b>USB / Serial</b> to connect via a data cable. Once connected the button turns green. Click it again to disconnect. After connecting, the IDE queries the controller and marks occupied slots in the dropdown. If Bluetooth drops unexpectedly (e.g. hard reset), the app will automatically attempt to reconnect.</div>
               </div>
             </div>
 
@@ -884,6 +889,10 @@
               <h3>🔁 Loops</h3>
             </div>
             <div class="ref-card">
+              <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">🔁 forever</div></div>
+              <div class="ref-info"><div class="ref-title">Forever</div><div class="ref-desc">Repeats the blocks inside it continuously — exactly like <code>while True:</code> in Python. Use this as your main program loop when you want the robot to keep running until it is stopped or reset. Always place sensor reads, decisions, and actions inside a Forever block for continuous operation.</div></div>
+            </div>
+            <div class="ref-card">
               <div class="ref-block-wrap"><div class="ref-blk" style="background:#4a5568">repeat <div class="ref-oval">10</div> times</div></div>
               <div class="ref-info"><div class="ref-title">Repeat</div><div class="ref-desc">Runs all the blocks inside it a set number of times. Drag other blocks inside the loop to repeat them.</div></div>
             </div>
@@ -1037,6 +1046,66 @@
   </div>
 </div>
 <input type="hidden" id="progName" value="">
+<!-- Load Example Confirm Modal -->
+<div class="modal-overlay" id="loadExampleModal">
+  <div class="modal" style="max-width:380px;text-align:center;">
+    <h2>Load Example</h2>
+    <p style="font-size:.85rem;color:var(--text-mid);margin-bottom:20px;">
+      Load <b id="loadExampleName"></b>?<br>
+      <span style="font-size:.78rem;">This will replace the blocks in the current tab.</span>
+    </p>
+    <div class="modal-btns" style="justify-content:center;">
+      <button class="btn-secondary" onclick="closeLoadExampleModal()">Cancel</button>
+      <button class="btn-primary" onclick="confirmLoadExample()">Load Example</button>
+    </div>
+  </div>
+</div>
+
+<!-- BLE Reconnect Modal -->
+<div class="modal-overlay" id="bleReconnectModal">
+  <div class="modal" style="max-width:360px;text-align:center;">
+    <div style="font-size:2rem;margin-bottom:10px;">📶</div>
+    <h2 style="margin-bottom:10px;">Reconnecting…</h2>
+    <p id="bleReconnectMsg" style="font-size:.85rem;color:var(--text-mid);margin-bottom:20px;min-height:2em;">
+      Attempting to reconnect…
+    </p>
+    <div style="display:flex;justify-content:center;">
+      <button class="btn-secondary" onclick="cancelBleReconnect()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Rename Bluetooth Device Modal -->
+<div class="modal-overlay" id="btRenameModal">
+  <div class="modal" style="max-width:420px;">
+    <h2>📶 Rename Bluetooth Device</h2>
+    <p style="font-size:.84rem;color:var(--text-mid);margin-bottom:14px;">
+      Give your controller a unique name so it's easy to identify when connecting.
+      The name will be prefixed with <b>AgRobot-</b> automatically.
+    </p>
+    <p style="font-size:.78rem;background:#f5f0e4;padding:8px 10px;border-radius:6px;
+       border-left:3px solid var(--green-mid);color:var(--text-mid);margin-bottom:16px;">
+      ⚠️ <b>USB connection required.</b> Connect the controller via USB cable before renaming.
+      The new name takes effect after the controller is power cycled.
+    </p>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <span style="font-size:.84rem;font-weight:700;white-space:nowrap;color:var(--text-dark);">AgRobot-</span>
+      <input id="btRenameInput" type="text" maxlength="20"
+        placeholder="e.g. yoyo"
+        style="flex:1;padding:7px 10px;border:1.5px solid #bbb;border-radius:6px;
+               font-size:.9rem;font-family:inherit;outline:none;"
+        oninput="btRenameValidate()"
+        onkeydown="if(event.key==='Enter')btRenameWrite()">
+    </div>
+    <p id="btRenameHint" style="font-size:.75rem;color:var(--text-mid);margin-bottom:16px;min-height:1.2em;"></p>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeBtRenameModal()">Cancel</button>
+      <button class="btn-primary" id="btRenameBtn" disabled onclick="btRenameWrite()">Save Name</button>
+    </div>
+    <p id="btRenameStatus" style="font-size:.78rem;margin-top:12px;min-height:1.2em;text-align:center;"></p>
+  </div>
+</div>
+
 <div class="modal-overlay" id="fwModal">
   <div class="modal" style="max-width:520px;">
     <h2>🔧 Firmware Update</h2>
@@ -1255,6 +1324,7 @@
 
   <sep></sep>
   <category name="🔁 Loops" colour="#5ba55b">
+    <block type="ag_forever"></block>
     <block type="controls_repeat_ext">
       <value name="TIMES"><shadow type="math_number"><field name="NUM">10</field></shadow></value>
     </block>
@@ -1321,6 +1391,13 @@ Blockly.Blocks['ag_end'] = { init() {
   this.appendDummyInput().appendField('🌾 Ag End');
   this.setPreviousStatement(true); this.setColour(C_CTRL);
   this.setTooltip('Stop program and restart.');
+}};
+Blockly.Blocks['ag_forever'] = { init() {
+  this.appendDummyInput().appendField('🔁 forever');
+  this.appendStatementInput('DO').setCheck(null);
+  this.setPreviousStatement(true); this.setNextStatement(true);
+  this.setColour('#4a5568');
+  this.setTooltip('Repeat the blocks inside forever (while true).');
 }};
 Blockly.Blocks['ag_wait'] = { init() {
   this.appendValueInput('MS').setCheck('Number').appendField('⏱ Wait (ms)');
@@ -1655,6 +1732,12 @@ if (gen && !gen.forBlock) gen.forBlock = {};
 function v(block, name, g) {
   return g.valueToCode(block, name, g.ORDER_NONE) || '0';
 }
+
+// Loops
+gen.forBlock['ag_forever'] = (b, g) => {
+  const body = g.statementToCode(b, 'DO') || '  pass\n';
+  return 'while True:\n' + body;
+};
 
 // Controller
 gen.forBlock['ag_begin'] = () => 'ag.Begin()\n';
@@ -2146,11 +2229,27 @@ function toggleExampleMenu(e) {
   // No longer used — examples are in File menu
 }
 
+let _pendingExampleKey = null;
+
 function loadExample(key) {
   closeMenus();
   if (!key || !EXAMPLES[key]) return;
+  _pendingExampleKey = key;
   const ex = EXAMPLES[key];
-  if (!confirm(`Load "${ex.name}"?\nThis will replace the current tab.`)) return;
+  document.getElementById('loadExampleName').textContent = ex.name;
+  document.getElementById('loadExampleModal').classList.add('open');
+}
+
+function closeLoadExampleModal() {
+  document.getElementById('loadExampleModal').classList.remove('open');
+  _pendingExampleKey = null;
+}
+
+function confirmLoadExample() {
+  const key = _pendingExampleKey;
+  closeLoadExampleModal();
+  if (!key || !EXAMPLES[key]) return;
+  const ex = EXAMPLES[key];
   try {
     workspace.clear();
     Blockly.Xml.domToWorkspace(Blockly.utils.xml.textToDom(ex.xml), workspace);
@@ -2238,6 +2337,7 @@ let bleDevice      = null;
 let bleServer      = null;
 let bleRxChar      = null;  // we write code/commands here
 let bleTxChar      = null;  // we get console output here
+let _bleIntentional = false; // true when user clicks Disconnect
 
 // ═══════════════════════════════════════════════════════════════════
 //  MODAL
@@ -2271,6 +2371,8 @@ async function connectUSB() {
     showToast('USB connected!');
     switchTab('console', document.querySelectorAll('.panel-tab')[1]);
     consolePrint('── USB connected at 115200 baud ──\n');
+    // Listen for physical USB disconnect
+    navigator.serial.addEventListener('disconnect', onSerialDisconnect, { once: true });
     resetSlotStatus();
     setTimeout(querySlotStatus, 600);
   } catch(e) {
@@ -2296,7 +2398,15 @@ function startSerialReader() {
           }
         }
       } catch(e) {
-        if(readerLoopActive) consolePrint('\n[Serial read error: ' + e.message + ']\n');
+        if(readerLoopActive) {
+          consolePrint('\n[Serial read error: ' + e.message + ']\n');
+          // Device was lost / power cycled
+          if(e.name === 'NetworkError' || e.message.includes('device has been lost') ||
+             e.message.includes('disconnected') || !serialPort || !serialPort.readable) {
+            onSerialDisconnect();
+            break;
+          }
+        }
       } finally {
         try { serialReader.releaseLock(); } catch(_){}
         serialReader = null;
@@ -2320,8 +2430,7 @@ async function connectBluetooth() {
     showToast('Opening Bluetooth scanner…');
     bleDevice = await navigator.bluetooth.requestDevice({
       filters: [
-        { namePrefix: 'SEEKER' },
-        { namePrefix: 'Seeker' },
+        { namePrefix: 'AgRobot' },
         { services: [NUS_SERVICE] }
       ],
       optionalServices: [NUS_SERVICE]
@@ -2341,8 +2450,10 @@ async function connectBluetooth() {
     await bleTxChar.startNotifications();
     bleTxChar.addEventListener('characteristicvaluechanged', onBleNotify);
 
+    _bleIntentional = false;
     setConnected(true, 'BLE');
     showToast('BLE connected to ' + bleDevice.name + '!');
+    startBleWatchdog();
     switchTab('console', document.querySelectorAll('.panel-tab')[1]);
     consolePrint('── BLE connected: ' + bleDevice.name + ' ──\n');
     resetSlotStatus();
@@ -2360,10 +2471,107 @@ function onBleNotify(event) {
   document.dispatchEvent(new CustomEvent('_agSerialRx', { detail: text }));
 }
 
-function onBleDisconnected() {
-  consolePrint('\n── BLE disconnected ──\n');
-  bleServer = null; bleRxChar = null; bleTxChar = null; bleDevice = null;
+let _bleWatchdogTimer = null;
+function startBleWatchdog() {
+  stopBleWatchdog();
+  _bleWatchdogTimer = setInterval(() => {
+    if(connType !== 'ble') { stopBleWatchdog(); return; }
+    if(!bleServer || !bleServer.connected) {
+      stopBleWatchdog();
+      onBleDisconnected();
+    }
+  }, 2000);
+}
+function stopBleWatchdog() {
+  if(_bleWatchdogTimer) { clearInterval(_bleWatchdogTimer); _bleWatchdogTimer = null; }
+}
+
+function onSerialDisconnect(e) {
+  // Ignore if already disconnected or if a different port fired
+  if(!connected || connType !== 'usb') return;
+  readerLoopActive = false;
+  try { if(serialReader) { serialReader.cancel(); serialReader = null; } } catch(_){}
+  try { if(serialWriter) { serialWriter.close(); serialWriter = null; } } catch(_){}
+  serialPort = null;
+  consolePrint('\n── USB disconnected ──\n');
   setConnected(false);
+}
+
+
+// ── BLE Reconnect Modal ─────────────────────────────────────────────
+function cancelBleReconnect() {
+  _bleIntentional = true;
+  hideReconnectBanner();
+  bleDevice = null;
+  consolePrint('── BLE reconnect cancelled ──\n');
+}
+
+function showReconnectBanner(msg) {
+  document.getElementById('bleReconnectMsg').textContent = msg;
+  document.getElementById('bleReconnectModal').classList.add('open');
+}
+function hideReconnectBanner(delay) {
+  setTimeout(() => {
+    document.getElementById('bleReconnectModal').classList.remove('open');
+  }, delay || 0);
+}
+
+function onBleDisconnected() {
+  stopBleWatchdog();
+  bleServer = null; bleRxChar = null; bleTxChar = null;
+
+  if(_bleIntentional) {
+    // User clicked Disconnect — clean up and stop
+    bleDevice = null;
+    consolePrint('\n── BLE disconnected ──\n');
+    hideReconnectBanner();
+    setConnected(false);
+    return;
+  }
+
+  // Unexpected drop (hard reset, power cycle) — attempt auto-reconnect
+  const deviceName = bleDevice ? bleDevice.name : 'controller';
+  consolePrint('\n── BLE lost connection to ' + deviceName + ' — reconnecting... ──\n');
+  setConnected(false);
+  showReconnectBanner('Attempting to reconnect to ' + deviceName + '…');
+  _bleAutoReconnect(bleDevice, deviceName, 1);
+}
+
+async function _bleAutoReconnect(device, name, attempt) {
+  const MAX_ATTEMPTS = 6;
+  const DELAY_MS = 3000;
+  if(!device || _bleIntentional || connType === 'usb') return;
+  if(attempt > MAX_ATTEMPTS) {
+    consolePrint('── Auto-reconnect failed after ' + MAX_ATTEMPTS + ' attempts ──\n');
+    showToast('Could not reconnect to ' + name);
+    hideReconnectBanner();
+    bleDevice = null;
+    return;
+  }
+  consolePrint('── Reconnect attempt ' + attempt + '/' + MAX_ATTEMPTS + '... ──\n');
+  showReconnectBanner('🔄  Reconnecting to ' + name + '… (attempt ' + attempt + '/' + MAX_ATTEMPTS + ')');
+  await new Promise(r => setTimeout(r, DELAY_MS));
+  if(_bleIntentional) return;
+  try {
+    bleServer = await device.gatt.connect();
+    const svc   = await bleServer.getPrimaryService(NUS_SERVICE);
+    bleRxChar   = await svc.getCharacteristic(NUS_RX_CHAR);
+    bleTxChar   = await svc.getCharacteristic(NUS_TX_CHAR);
+    await bleTxChar.startNotifications();
+    bleTxChar.addEventListener('characteristicvaluechanged', onBleNotify);
+    device.addEventListener('gattserverdisconnected', onBleDisconnected);
+    _bleIntentional = false;
+    setConnected(true, 'BLE');
+    showToast('Reconnected to ' + name + '!');
+    consolePrint('── Reconnected to ' + name + ' ──\n');
+    hideReconnectBanner(800);
+    hideReconnectBanner(3000);
+    startBleWatchdog();
+    resetSlotStatus();
+    setTimeout(querySlotStatus, 600);
+  } catch(e) {
+    _bleAutoReconnect(device, name, attempt + 1);
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════
@@ -2378,6 +2586,8 @@ async function disconnect() {
     try { if(serialPort)   { await serialPort.close();   serialPort   = null; } } catch(_){}
     consolePrint('── USB disconnected ──\n');
   } else if(connType === 'ble') {
+    _bleIntentional = true;
+    stopBleWatchdog();
     try {
       if(bleTxChar) await bleTxChar.stopNotifications().catch(()=>{});
       if(bleServer && bleServer.connected) bleServer.disconnect();
@@ -2403,8 +2613,8 @@ const EXAMPLES = {
   "4": { name: "Servo Sweep", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">0</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">180</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="ag_wait"><value name="MS"><block type="math_number"><field name="NUM">600</field></block></value><next><block type="ag_set_servo_position"><value name="SERVO"><block type="math_number"><field name="NUM">1</field></block></value><value name="ANGLE"><block type="math_number"><field name="NUM">0</field></block></value><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
   "5": { name: "Pixel Light Show", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_pixel_animation"><field name="ANIM">rainbow</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_animation"><field name="ANIM">chase</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_animation"><field name="ANIM">sparkle</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_animation"><field name="ANIM">comet</field><value name="DURATION"><block type="math_number"><field name="NUM">2</field></block></value><next><block type="ag_pixel_off"><field name="PIX">ABCD</field><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
   "6": { name: "Play a Tune", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="ag_set_note"><field name="NOTE">C4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">E4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">G4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">C5</field><value name="DUR"><block type="math_number"><field name="NUM">0.3</field></block></value><next><block type="ag_set_note"><field name="NOTE">G4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">E4</field><value name="DUR"><block type="math_number"><field name="NUM">0.15</field></block></value><next><block type="ag_set_note"><field name="NOTE">C4</field><value name="DUR"><block type="math_number"><field name="NUM">0.4</field></block></value><next><block type="ag_sound_off"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
-  "7": { name: "Move Forward & Back", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="mv_set_motors"><field name="LEFT">1</field><field name="RIGHT">2</field><next><block type="mv_set_speed"><value name="SPEED"><block type="math_number"><field name="NUM">60</field></block></value><next><block type="mv_set_accel"><value name="RATE"><block type="math_number"><field name="NUM">15</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_move_for"><field name="DIR">backward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_stop"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
-  "8": { name: "Square Pattern", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="mv_set_motors"><field name="LEFT">1</field><field name="RIGHT">2</field><next><block type="mv_set_speed"><value name="SPEED"><block type="math_number"><field name="NUM">50</field></block></value><next><block type="mv_set_wheelbase"><value name="WB"><block type="math_number"><field name="NUM">120</field></block></value><next><block type="mv_set_accel"><value name="RATE"><block type="math_number"><field name="NUM">15</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_stop"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` }
+  "7": { name: "Move Forward & Back", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="mv_robot_config"><field name="LEFT">1</field><field name="RIGHT">2</field><value name="DIAM"><block type="math_number"><field name="NUM">80</field></block></value><value name="WB"><block type="math_number"><field name="NUM">185</field></block></value><next><block type="mv_set_speed"><value name="SPEED"><block type="math_number"><field name="NUM">60</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_move_for"><field name="DIR">backward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_stop"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` },
+  "8": { name: "Square Pattern", xml: `<xml xmlns="https://developers.google.com/blockly/xml"><block type="ag_begin"><next><block type="mv_robot_config"><field name="LEFT">1</field><field name="RIGHT">2</field><value name="DIAM"><block type="math_number"><field name="NUM">80</field></block></value><value name="WB"><block type="math_number"><field name="NUM">185</field></block></value><next><block type="mv_set_speed"><value name="SPEED"><block type="math_number"><field name="NUM">50</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_move_for"><field name="DIR">forward</field><field name="UNIT">cm</field><field name="WAIT">True</field><value name="DIST"><block type="math_number"><field name="NUM">30</field></block></value><next><block type="mv_turn"><field name="DIR">right</field><field name="WAIT">True</field><value name="DEG"><block type="math_number"><field name="NUM">90</field></block></value><next><block type="mv_stop"><next><block type="ag_end"></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></next></block></xml>` }
 };
 
 // Load "Move Forward & Back" as the default startup program
@@ -2925,6 +3135,77 @@ async function querySlotStatus() {
 let _fwFile = null;
 let _fwPort = null;
 
+// ── Rename Bluetooth Device ─────────────────────────────────────────
+function openRenameBluetoothModal() {
+  document.getElementById('btRenameInput').value = '';
+  document.getElementById('btRenameHint').textContent = '';
+  document.getElementById('btRenameStatus').textContent = '';
+  document.getElementById('btRenameStatus').style.color = 'var(--text-mid)';
+  document.getElementById('btRenameBtn').disabled = true;
+  document.getElementById('btRenameModal').classList.add('open');
+  setTimeout(() => document.getElementById('btRenameInput').focus(), 100);
+}
+
+function closeBtRenameModal() {
+  document.getElementById('btRenameModal').classList.remove('open');
+}
+
+function btRenameValidate() {
+  const val = document.getElementById('btRenameInput').value.trim();
+  const hint = document.getElementById('btRenameHint');
+  const btn  = document.getElementById('btRenameBtn');
+  if (!val) {
+    hint.textContent = '';
+    btn.disabled = true;
+    return;
+  }
+  if (/[^a-zA-Z0-9_-]/.test(val)) {
+    hint.textContent = 'Only letters, numbers, hyphens, and underscores allowed.';
+    hint.style.color = '#c53030';
+    btn.disabled = true;
+    return;
+  }
+  hint.textContent = 'Full name will be: AgRobot-' + val;
+  hint.style.color = 'var(--text-mid)';
+  btn.disabled = false;
+}
+
+async function btRenameWrite() {
+  const val = document.getElementById('btRenameInput').value.trim();
+  if (!val) return;
+  if (!connected || connType !== 'usb') {
+    document.getElementById('btRenameStatus').textContent = 'Please connect via USB first.';
+    document.getElementById('btRenameStatus').style.color = '#c53030';
+    return;
+  }
+  const status = document.getElementById('btRenameStatus');
+  const btn = document.getElementById('btRenameBtn');
+  btn.disabled = true;
+  status.style.color = 'var(--text-mid)';
+  status.textContent = 'Writing to controller...';
+
+  const fullName = 'AgRobot-' + val;
+  const fileContent = [
+    '#This file is read everytime system boots up',
+    "#sets the ble advertising name of the device - must have 'AgRobot' prefix",
+    '',
+    'bt_name ="' + fullName + '"'
+  ].join('\n');
+
+  try {
+    await rawReplWriteFile('bt_config.py', fileContent, true);
+    status.style.color = '#2a7d42';
+    status.textContent = '✓ Saved! Power cycle the controller to apply the new name.';
+    // Swap buttons to show Done only
+    document.querySelector('#btRenameModal .modal-btns').innerHTML =
+      '<button class="btn-primary" onclick="closeBtRenameModal()">Done</button>';
+  } catch(e) {
+    status.style.color = '#c53030';
+    status.textContent = 'Error: ' + e.message;
+    btn.disabled = false;
+  }
+}
+
 function openFirmwareModal() {
   _fwFile = null;
   _fwPort = null;
@@ -2973,7 +3254,7 @@ async function fwSelectPort() {
     fwGoStep(2);
   } catch(e) {
     if (e.name !== 'NotAllowedError') {
-      alert('Could not select port: ' + e.message);
+      showToast('Could not select port: ' + e.message);
     }
   }
 }
