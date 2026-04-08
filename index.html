@@ -92,6 +92,7 @@
   .btn-connect.connected{background:linear-gradient(135deg,#2e8b4a,var(--green-light));}
   .btn-upload{background:linear-gradient(135deg,#c85c00,#e07020);color:#fff;}
   .btn-stop{background:linear-gradient(135deg,#9b1c1c,#c53030);color:#fff;}
+  .btn-run{background:linear-gradient(135deg,#2a7d42,#3aa85e);color:#fff;}
   .btn-example{background:linear-gradient(135deg,#1a4a6a,#2a6a9a);color:#fff;}
   .prog-name-wrap{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.2);
     border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;}
@@ -126,6 +127,7 @@
     .btn-upload { padding: 7px 10px; }
     .btn-upload .btn-label { display: inline; font-size: .7rem; }
     .btn-stop .btn-label { display: none; }
+    .btn-run .btn-label { display: none; }
     .sep { display: none; }
     .logo-title { font-size: 1.1rem; }
     .slot-selector label { display: none; }
@@ -148,6 +150,7 @@
   .btn-connect.connected{background:linear-gradient(135deg,#2e8b4a,var(--green-light));}
   .btn-upload{background:linear-gradient(135deg,#c85c00,#e07020);color:#fff;}
   .btn-stop{background:linear-gradient(135deg,#9b1c1c,#c53030);color:#fff;}
+  .btn-run{background:linear-gradient(135deg,#2a7d42,#3aa85e);color:#fff;}
   .btn-example{background:linear-gradient(135deg,#1a4a6a,#2a6a9a);color:#fff;}
   .prog-name-wrap{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.2);
     border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 8px;}
@@ -395,17 +398,23 @@
     <div class="logo-text">
       <div style="display:flex;align-items:baseline;gap:16px;">
         <span class="logo-title">AgRobotics Programming App</span>
-        <span style="font-size:.65rem;font-weight:600;color:rgba(255,255,255,.45);
-          letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;">Powered by Pitsco Education</span>
+        <span style="font-size:.78rem;font-weight:800;color:rgba(255,255,255,.85);
+          letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;
+          text-shadow:0 0 12px rgba(120,220,140,.4);">Powered by Pitsco Education</span>
       </div>
       <span class="logo-sub">Block Programming · MicroPython · ESP32-S3</span>
     </div>
   </div>
   <div class="toolbar">
-    <button class="btn btn-connect" id="connectBtn" onclick="openConnectModal()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V1zm11 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V1z"/></svg>Connect
+    <!-- Group 1: Run / Stop -->
+    <button class="btn btn-run" onclick="runCode()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M11.596 8.697l-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 010 1.393z"/></svg><span class="btn-label">Run</span>
+    </button>
+    <button class="btn btn-stop" onclick="stopProgram()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="3" width="10" height="10" rx="1"/></svg><span class="btn-label">Stop / Reset</span>
     </button>
     <div class="sep"></div>
+    <!-- Group 2: Slot selector + Upload -->
     <div class="slot-selector">
       <label>SLOT</label>
       <div class="slot-dot" id="slotDot" style="background:#ff4444;color:#ff4444;"></div>
@@ -423,10 +432,11 @@
     <button class="btn btn-upload" onclick="uploadToRobot()">
       <svg viewBox="0 0 16 16" fill="currentColor"><path d="M.5 9.9a.5.5 0 01.5.5v2.5a1 1 0 001 1h12a1 1 0 001-1v-2.5a.5.5 0 011 0v2.5a2 2 0 01-2 2H2a2 2 0 01-2-2v-2.5a.5.5 0 01.5-.5z"/><path d="M7.646 1.146a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 2.707V11.5a.5.5 0 01-1 0V2.707L5.354 4.854a.5.5 0 11-.708-.708l3-3z"/></svg><span class="btn-label">Upload to Slot</span>
     </button>
-    <button class="btn btn-stop" onclick="stopProgram()">
-      <svg viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="3" width="10" height="10" rx="1"/></svg><span class="btn-label">Stop / Reset</span>
-    </button>
     <div class="sep"></div>
+    <!-- Group 3: Connect + Status -->
+    <button class="btn btn-connect" id="connectBtn" onclick="openConnectModal()">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M1 1a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1H2a1 1 0 01-1-1V1zm11 0a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 01-1 1h-2a1 1 0 01-1-1V1z"/></svg>Connect
+    </button>
     <div class="status-pill">
       <div class="status-dot" id="statusDot"></div>
       <span id="statusText">Disconnected</span>
@@ -2161,7 +2171,7 @@ function closeMenus() {
 document.addEventListener('click', closeMenus);
 
 function openBuildingTips() {
-  window.open('building-tips.html', '_blank');
+  window.open('agrobotics-building-tips.html', 'ag_building_tips');
 }
 
 async function saveProgram() {
@@ -2657,6 +2667,27 @@ function updateSlotDot() {
 // ═══════════════════════════════════════════════════════════════════
 //  SHARED: write a Python file via raw REPL
 // ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+//  RUN  — writes to _run.py and executes immediately (no slot/launcher)
+// ═══════════════════════════════════════════════════════════════════
+async function runCode() {
+  if(!connected){ showToast('Connect to a robot first!'); openConnectModal(); return; }
+  const code = _cleanCode;
+  if(!code.trim()){ showToast('No code to run'); return; }
+
+  switchTab('console', document.querySelectorAll('.panel-tab')[1]);
+  consolePrint('\n── ▶ Run (' + code.split('\n').length + ' lines) ──\n');
+
+  try {
+    await rawReplWriteFile('_run.py', code, false);
+    consolePrint('── Running _run.py ✓ ──\n');
+    showToast('Running!');
+  } catch(e) {
+    consolePrint('[Run error: ' + e.message + ']\n');
+    showToast('Run failed');
+  }
+}
+
 async function rawReplWriteFile(fname, code, writeOnly) {
   await serialWrite('\x03');
   await sleep(200);
